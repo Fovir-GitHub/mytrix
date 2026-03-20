@@ -17,6 +17,7 @@
         gopls
         gotools
         govulncheck
+        just
       ];
 
       # Shell hooks.
