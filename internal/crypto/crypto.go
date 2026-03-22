@@ -1,4 +1,4 @@
-package bot
+package crypto
 
 import (
 	"context"
@@ -13,7 +13,7 @@ import (
 
 // setupCryptoHelper creates and initializes a new CryptoHelper for the Matrix client.
 // It sets up encryption support using the provided pickle key and database path.
-func setupCryptoHelper(client *mautrix.Client) (*cryptohelper.CryptoHelper, error) {
+func SetupCryptoHelper(client *mautrix.Client) (*cryptohelper.CryptoHelper, error) {
 	dbPath := filepath.Join(config.Config.Datadir, "crypto.db")
 	helper, err := cryptohelper.NewCryptoHelper(client, []byte(config.Config.Bot.PickleKey), dbPath)
 	if err != nil {
@@ -28,7 +28,7 @@ func setupCryptoHelper(client *mautrix.Client) (*cryptohelper.CryptoHelper, erro
 
 // verifyWithRecoveryKey verifies the recovery key and completes the encryption setup.
 // It fetches cross-signing keys from the SSSS service and signs the device and master key.
-func verifyWithRecoveryKey(machine *crypto.OlmMachine) (err error) {
+func VerifyWithRecoveryKey(machine *crypto.OlmMachine) (err error) {
 	ctx := context.Background()
 	keyID, keyData, err := machine.SSSS.GetDefaultKeyData(ctx)
 	if err != nil {
