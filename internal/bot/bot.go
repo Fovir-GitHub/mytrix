@@ -1,6 +1,7 @@
 package bot
 
 import (
+	"context"
 	"fmt"
 	"log/slog"
 
@@ -9,7 +10,7 @@ import (
 	"github.com/Fovir-GitHub/mytrix/internal/handler"
 	"github.com/Fovir-GitHub/mytrix/internal/service"
 	"maunium.net/go/mautrix"
-	"maunium.net/go/mautrix/crypto/cryptohelper"
+	"maunium.net/go/mautrix/event"
 )
 
 // Bot represents a Matrix bot client with sync and encryption support.
@@ -34,7 +35,7 @@ func New() (*Bot, error) {
 	syncer, ready := setupSyncer()
 	client.Syncer = syncer
 
-	cryptoHelper, err := setupCryptoHelper(client)
+	cryptoHelper, err := crypto.SetupCryptoHelper(client)
 	if err != nil {
 		return nil, fmt.Errorf("create cryptohelper failed: %w", err)
 	}
@@ -56,7 +57,7 @@ func New() (*Bot, error) {
 	return bot, nil
 }
 
-func (b *Bot) Start() error {
+func (b *Bot) Start(ctx context.Context) error {
 	go func() {
 		if err := b.Client.Sync(); err != nil {
 			panic(err)
@@ -65,9 +66,15 @@ func (b *Bot) Start() error {
 
 	<-b.Ready
 
-	err := verifyWithRecoveryKey(b.Client.Crypto.(*cryptohelper.CryptoHelper).Machine())
+	err := b.Client.VerifyWithRecoveryKey()
 	if err != nil {
 		return fmt.Errorf("verify recovery key failed: %w", err)
 	}
-	return nil
+
+	<-ctx.Done()
+	return ctx.Err()
+}
+
+func (b *Bot) registerHandler() {
+	b.Syncer.OnEventType(event.EventMessage, b.Handler.Handle)
 }
