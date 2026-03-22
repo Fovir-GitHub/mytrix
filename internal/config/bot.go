@@ -1,7 +1,8 @@
 package config
 
 type BotConfig struct {
-	UserID      string `env:"BOT_USER_ID,required"`
-	AccessToken string `env:"BOT_ACCESS_TOKEN,required"`
-	SessionID   string `env:"SESSION_ID"`
+	Username    string `env:"BOT_USERNAME,required"`
+	Password    string `env:"BOT_PASSWORD,required"`
+	RecoveryKey string `env:"BOT_RECOVERY_KEY,required"`
+	PickleKey   string `env:"BOT_PICKLE_KEY,required"`
 }
