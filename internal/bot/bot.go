@@ -4,15 +4,20 @@ import (
 	"fmt"
 	"log/slog"
 
+	clientpkg "github.com/Fovir-GitHub/mytrix/internal/client"
+	"github.com/Fovir-GitHub/mytrix/internal/crypto"
+	"github.com/Fovir-GitHub/mytrix/internal/handler"
+	"github.com/Fovir-GitHub/mytrix/internal/service"
 	"maunium.net/go/mautrix"
 	"maunium.net/go/mautrix/crypto/cryptohelper"
 )
 
 // Bot represents a Matrix bot client with sync and encryption support.
 type Bot struct {
-	Client *mautrix.Client
-	Syncer *mautrix.DefaultSyncer
-	Ready  chan struct{}
+	Client  *clientpkg.MatrixClient
+	Syncer  *mautrix.DefaultSyncer
+	Ready   chan struct{}
+	Handler *handler.MessageHandler
 }
 
 // New creates and initializes a `Bot` instance.
@@ -35,11 +40,20 @@ func New() (*Bot, error) {
 	}
 	client.Crypto = cryptoHelper
 
-	return &Bot{
-		Client: client,
-		Syncer: syncer,
-		Ready:  ready,
-	}, nil
+	matrixClient := clientpkg.New(client)
+	messageService := service.NewMessageService(matrixClient)
+	messageHandler := handler.NewMessageHandler(messageService)
+
+	bot := &Bot{
+		Client:  matrixClient,
+		Syncer:  syncer,
+		Ready:   ready,
+		Handler: messageHandler,
+	}
+
+	bot.registerHandler()
+
+	return bot, nil
 }
 
 func (b *Bot) Start() error {
