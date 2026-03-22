@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"path/filepath"
 
+	"github.com/Fovir-GitHub/mytrix/internal/config"
 	"maunium.net/go/mautrix"
 )
 
@@ -16,14 +18,16 @@ type Session struct {
 	DeviceID    string `json:"device_id"`
 }
 
-// sessionFile is the path to the file where session data is stored.
-const sessionFile = "db/session.json"
+// sessionFile returns the path to the file where session data is stored.
+func sessionFile() string {
+	return filepath.Join(config.Config.Datadir, "session.json")
+}
 
 // LoadSession reads and decodes the session from the session file.
 // It returns a pointer to the Session struct and any error encountered.
 func LoadSession() (*Session, error) {
 	var s Session
-	data, err := os.ReadFile(sessionFile)
+	data, err := os.ReadFile(sessionFile())
 	slog.Debug(
 		"load session",
 		"session_file", sessionFile,
@@ -51,5 +55,5 @@ func SaveSession(resp *mautrix.RespLogin) error {
 	}
 
 	data, _ := json.MarshalIndent(s, "", "  ")
-	return os.WriteFile(sessionFile, data, 0600)
+	return os.WriteFile(sessionFile(), data, 0600)
 }

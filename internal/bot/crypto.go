@@ -3,6 +3,7 @@ package bot
 import (
 	"context"
 	"fmt"
+	"path/filepath"
 
 	"github.com/Fovir-GitHub/mytrix/internal/config"
 	"maunium.net/go/mautrix"
@@ -13,7 +14,8 @@ import (
 // setupCryptoHelper creates and initializes a new CryptoHelper for the Matrix client.
 // It sets up encryption support using the provided pickle key and database path.
 func setupCryptoHelper(client *mautrix.Client) (*cryptohelper.CryptoHelper, error) {
-	helper, err := cryptohelper.NewCryptoHelper(client, []byte(config.Config.Bot.PickleKey), "db/crypto.db")
+	dbPath := filepath.Join(config.Config.Datadir, "crypto.db")
+	helper, err := cryptohelper.NewCryptoHelper(client, []byte(config.Config.Bot.PickleKey), dbPath)
 	if err != nil {
 		return nil, fmt.Errorf("create cryptohelper failed: %w", err)
 	}

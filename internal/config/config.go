@@ -12,4 +12,6 @@ type MytrixConfig struct {
 	Homeserver string `env:"HOMESERVER,required"`
 	// Bot contains bot-specific configuration.
 	Bot BotConfig
+	// Datadir sets the data directory.
+	Datadir string `env:"DATA_DIR" envDefault:"db"`
 }
