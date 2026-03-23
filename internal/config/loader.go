@@ -14,5 +14,6 @@ func Load() error {
 	}); err != nil {
 		return fmt.Errorf("load config error: %w", err)
 	}
-	return nil
+
+	return Config.validate()
 }
