@@ -8,6 +8,7 @@ import (
 	clientpkg "github.com/Fovir-GitHub/mytrix/internal/client"
 	"github.com/Fovir-GitHub/mytrix/internal/crypto"
 	"github.com/Fovir-GitHub/mytrix/internal/handler"
+	myhttp "github.com/Fovir-GitHub/mytrix/internal/http"
 	"github.com/Fovir-GitHub/mytrix/internal/service"
 	"maunium.net/go/mautrix"
 	"maunium.net/go/mautrix/event"
@@ -42,8 +43,9 @@ func New() (*Bot, error) {
 	client.Crypto = cryptoHelper
 
 	matrixClient := clientpkg.New(client)
-	messageService := service.NewMessageService(matrixClient)
-	messageHandler := handler.NewMessageHandler(messageService)
+	http := myhttp.New()
+	service := service.NewService(http, matrixClient)
+	messageHandler := handler.NewMessageHandler(service)
 
 	bot := &Bot{
 		Client:  matrixClient,
