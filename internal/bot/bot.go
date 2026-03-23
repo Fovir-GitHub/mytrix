@@ -19,7 +19,7 @@ type Bot struct {
 	Client  *clientpkg.MatrixClient
 	Syncer  *mautrix.DefaultSyncer
 	Ready   chan struct{}
-	Handler *handler.MessageHandler
+	Handler *handler.Handler
 }
 
 // New creates and initializes a `Bot` instance.
@@ -45,13 +45,13 @@ func New() (*Bot, error) {
 	matrixClient := clientpkg.New(client)
 	http := myhttp.New()
 	service := service.NewService(http, matrixClient)
-	messageHandler := handler.NewMessageHandler(service)
+	handler := handler.NewHandler(service)
 
 	bot := &Bot{
 		Client:  matrixClient,
 		Syncer:  syncer,
 		Ready:   ready,
-		Handler: messageHandler,
+		Handler: handler,
 	}
 
 	bot.registerHandler()
@@ -62,7 +62,11 @@ func New() (*Bot, error) {
 func (b *Bot) Start(ctx context.Context) error {
 	go func() {
 		if err := b.Client.Sync(); err != nil {
-			panic(err)
+			slog.Error(
+				"runtime error",
+				"err", err,
+			)
+			return
 		}
 	}()
 
