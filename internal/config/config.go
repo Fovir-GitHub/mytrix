@@ -14,4 +14,6 @@ type MytrixConfig struct {
 	Bot BotConfig
 	// Datadir sets the data directory.
 	Datadir string `env:"DATA_DIR" envDefault:"db"`
+	// Gotify contains gotify-specific configuration.
+	Gotify GotifyConfig
 }
