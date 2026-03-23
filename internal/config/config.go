@@ -11,7 +11,7 @@ type MytrixConfig struct {
 	// Homeserver is the Matrix homeserver URL (required).
 	Homeserver string `env:"HOMESERVER,required"`
 	// Datadir sets the data directory.
-	Datadir string `env:"DATA_DIR" envDefault:"db"`
+	Datadir string `env:"DATA_DIR" envDefault:"/data"`
 	// Timeout defines the timeout of http request.
 	Timeout int `env:"TIMEOUT" envDefault:"10"`
 	// Bot contains bot-specific configuration.
