@@ -2,9 +2,11 @@ package service
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/Fovir-GitHub/mytrix/internal/client"
 	"maunium.net/go/mautrix/event"
+	"maunium.net/go/mautrix/id"
 )
 
 type MessageService struct {
@@ -19,16 +21,15 @@ func (s *MessageService) Reply(ctx context.Context, evt *event.Event, text strin
 	return s.client.SendTextMessage(ctx, evt.RoomID, text)
 }
 
-func (s *MessageService) HandleMessage(ctx context.Context, evt *event.Event) {
-	content := evt.Content.AsMessage()
-	if content.MsgType != event.MsgText || evt.Sender == s.client.UserID() {
-		return
+func (s *MessageService) Ping(ctx context.Context, evt *event.Event) error {
+	err := s.client.SendTextMessage(ctx, evt.RoomID, "pong")
+	if err != nil {
+		return fmt.Errorf("ping failed: %w", err)
 	}
+	return nil
 
-	if content.Body == "!ping" {
-		_ = s.client.SendTextMessage(ctx, evt.RoomID, "pong")
-		return
-	}
+}
 
-	_ = s.client.SendTextMessage(ctx, evt.RoomID, "Feedback")
+func (s *MessageService) UserID() id.UserID {
+	return s.client.UserID()
 }
