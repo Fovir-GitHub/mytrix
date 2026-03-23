@@ -11,8 +11,12 @@ type MessageService struct {
 	client *client.MatrixClient
 }
 
-func NewMessageService(c *client.MatrixClient) *MessageService {
+func newMessageService(c *client.MatrixClient) *MessageService {
 	return &MessageService{client: c}
+}
+
+func (s *MessageService) Reply(ctx context.Context, evt *event.Event, text string) error {
+	return s.client.SendTextMessage(ctx, evt.RoomID, text)
 }
 
 func (s *MessageService) HandleMessage(ctx context.Context, evt *event.Event) {
