@@ -10,10 +10,12 @@ type MytrixConfig struct {
 	LogLevel string `env:"LOG_LEVEL" envDefault:"INFO"`
 	// Homeserver is the Matrix homeserver URL (required).
 	Homeserver string `env:"HOMESERVER,required"`
-	// Bot contains bot-specific configuration.
-	Bot BotConfig
 	// Datadir sets the data directory.
 	Datadir string `env:"DATA_DIR" envDefault:"db"`
+	// Timeout defines the timeout of http request.
+	Timeout int `env:"TIMEOUT" envDefault:"10"`
+	// Bot contains bot-specific configuration.
+	Bot BotConfig
 	// Gotify contains gotify-specific configuration.
 	Gotify GotifyConfig
 }
