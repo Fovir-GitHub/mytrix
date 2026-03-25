@@ -11,15 +11,15 @@ import (
 	"maunium.net/go/mautrix/id"
 )
 
-type MatrixClient struct {
+type Client struct {
 	c *mautrix.Client
 }
 
-func New(c *mautrix.Client) *MatrixClient {
-	return &MatrixClient{c: c}
+func New(c *mautrix.Client) *Client {
+	return &Client{c: c}
 }
 
-func (m *MatrixClient) SendTextMessage(ctx context.Context, roomID id.RoomID, text string) error {
+func (m *Client) SendTextMessage(ctx context.Context, roomID id.RoomID, text string) error {
 	content := event.MessageEventContent{
 		MsgType: event.MsgText,
 		Body:    text,
@@ -29,11 +29,11 @@ func (m *MatrixClient) SendTextMessage(ctx context.Context, roomID id.RoomID, te
 	return err
 }
 
-func (m *MatrixClient) Sync() error {
+func (m *Client) Sync() error {
 	return m.c.Sync()
 }
 
-func (m *MatrixClient) VerifyWithRecoveryKey() error {
+func (m *Client) VerifyWithRecoveryKey() error {
 	ch, ok := m.c.Crypto.(*cryptohelper.CryptoHelper)
 	if !ok {
 		return fmt.Errorf("crypto helper type mismatch")
@@ -42,6 +42,6 @@ func (m *MatrixClient) VerifyWithRecoveryKey() error {
 	return crypto.VerifyWithRecoveryKey(ch.Machine())
 }
 
-func (m *MatrixClient) UserID() id.UserID {
+func (m *Client) UserID() id.UserID {
 	return m.c.UserID
 }

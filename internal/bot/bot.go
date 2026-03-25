@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"log/slog"
 
-	clientpkg "github.com/Fovir-GitHub/mytrix/internal/client"
 	"github.com/Fovir-GitHub/mytrix/internal/crypto"
 	"github.com/Fovir-GitHub/mytrix/internal/handler"
 	myhttp "github.com/Fovir-GitHub/mytrix/internal/http"
+	clientpkg "github.com/Fovir-GitHub/mytrix/internal/matrix"
 	"github.com/Fovir-GitHub/mytrix/internal/service"
 	"maunium.net/go/mautrix"
 	"maunium.net/go/mautrix/event"
@@ -16,7 +16,7 @@ import (
 
 // Bot represents a Matrix bot client with sync and encryption support.
 type Bot struct {
-	Client  *clientpkg.MatrixClient
+	Client  *clientpkg.Client
 	Syncer  *mautrix.DefaultSyncer
 	Ready   chan struct{}
 	Handler *handler.Handler

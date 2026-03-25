@@ -3,8 +3,8 @@ package service
 import (
 	"log/slog"
 
-	"github.com/Fovir-GitHub/mytrix/internal/client"
 	"github.com/Fovir-GitHub/mytrix/internal/http"
+	"github.com/Fovir-GitHub/mytrix/internal/matrix"
 )
 
 type Service struct {
@@ -12,7 +12,7 @@ type Service struct {
 	Message *MessageService
 }
 
-func NewService(httpClient *http.Client, matrixClient *client.MatrixClient) *Service {
+func NewService(httpClient *http.Client, matrixClient *client.Client) *Service {
 	slog.Debug("create services")
 	return &Service{
 		Gotify:  newGotifyService(httpClient),

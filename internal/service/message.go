@@ -4,16 +4,16 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/Fovir-GitHub/mytrix/internal/client"
+	"github.com/Fovir-GitHub/mytrix/internal/matrix"
 	"maunium.net/go/mautrix/event"
 	"maunium.net/go/mautrix/id"
 )
 
 type MessageService struct {
-	client *client.MatrixClient
+	client *client.Client
 }
 
-func newMessageService(c *client.MatrixClient) *MessageService {
+func newMessageService(c *client.Client) *MessageService {
 	return &MessageService{client: c}
 }
 
