@@ -20,6 +20,8 @@ type MytrixConfig struct {
 	Bot BotConfig
 	// Gotify contains gotify-specific configuration.
 	Gotify GotifyConfig
-	// WSConfig specifics the websocket configuration.
-	WSConfig WSConfig
+	// WS specifics the websocket configuration.
+	WS WSConfig
+	// Msg contains message-specific configuration.
+	Msg MsgConfig
 }

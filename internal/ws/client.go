@@ -17,7 +17,7 @@ type Client struct {
 func NewClient(url string) *Client {
 	return &Client{
 		url:  url,
-		recv: make(chan []byte, config.Config.WSConfig.RecvBufferSize),
+		recv: make(chan []byte, config.Config.WS.RecvBufferSize),
 	}
 }
 
@@ -26,7 +26,7 @@ func (c *Client) Start() {
 }
 
 func (c *Client) connectLoop() {
-	retryInterval := time.Duration(config.Config.WSConfig.RetryInterval)
+	retryInterval := time.Duration(config.Config.WS.RetryInterval)
 	for {
 		conn, _, err := websocket.DefaultDialer.Dial(c.url, nil)
 		if err != nil {
