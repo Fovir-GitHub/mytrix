@@ -31,12 +31,13 @@ services:
     environment:
       - MYTRIX_LOG_LEVEL=INFO
       - MYTRIX_HOMESERVER=https://matrix.example.com
+      - MYTRIX_ROOM_ID=!roomid:matrix.example.com
       - MYTRIX_BOT_USERNAME=bot@example.com
       - MYTRIX_BOT_PASSWORD=your-bot-password
       - MYTRIX_BOT_RECOVERY_KEY=your-recovery-key
       - MYTRIX_BOT_PICKLE_KEY=random-32-byte-string
       - MYTRIX_GOTIFY_ENABLED=true
-      - MYTRIX_GOTIFY_SERVER=https://gotify.example.com
+      - MYTRIX_GOTIFY_SERVER=gotify.example.com
       - MYTRIX_GOTIFY_TOKEN=your-gotify-token
 ```
 
@@ -56,6 +57,7 @@ All configuration is done via environment variables.
 | ------------------- | ---------------------------------------- | ---------- |
 | `MYTRIX_LOG_LEVEL`  | Logging level (DEBUG, INFO, WARN, ERROR) | `INFO`     |
 | `MYTRIX_HOMESERVER` | Matrix homeserver URL                    | (required) |
+| `MYTRIX_ROOM_ID`    | Matrix room ID                           | (required) |
 | `MYTRIX_DATA_DIR`   | Data directory for storing sessions      | `data`     |
 | `MYTRIX_TIMEOUT`    | HTTP request timeout in seconds          | `10`       |
 
@@ -70,11 +72,11 @@ All configuration is done via environment variables.
 
 ### Gotify Configuration
 
-| Variable                | Description              | Default                                  |
-| ----------------------- | ------------------------ | ---------------------------------------- |
-| `MYTRIX_GOTIFY_ENABLED` | Enable Gotify forwarding | false                                    |
-| `MYTRIX_GOTIFY_SERVER`  | Gotify server URL        | required if `MYTRIX_GOTIFY_ENABLED=true` |
-| `MYTRIX_GOTIFY_TOKEN`   | Gotify API token         | required if `MYTRIX_GOTIFY_ENABLED=true` |
+| Variable                | Description                       | Default                                  |
+| ----------------------- | --------------------------------- | ---------------------------------------- |
+| `MYTRIX_GOTIFY_ENABLED` | Enable Gotify forwarding          | false                                    |
+| `MYTRIX_GOTIFY_SERVER`  | Gotify server URL (for WebSocket) | required if `MYTRIX_GOTIFY_ENABLED=true` |
+| `MYTRIX_GOTIFY_TOKEN`   | Gotify API token                  | required if `MYTRIX_GOTIFY_ENABLED=true` |
 
 ## Development
 
@@ -102,3 +104,4 @@ just run
 - [`mautrix/go`](https://github.com/mautrix/go): A Golang Matrix framework.
 - [`caarlos0/env`](https://github.com/caarlos0/env): A simple, zero-dependencies library to parse environment variables into structs
 - [Blog by Dominik Chrástecký](https://chrastecky.dev/programming/creating-a-simple-encrypted-matrix-bot-in-go): Tutorial for this project.
+- [gorilla/websocket](https://github.com/gorilla/websocket): A fast, well-tested and widely used WebSocket implementation for Go.
