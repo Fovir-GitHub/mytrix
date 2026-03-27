@@ -8,14 +8,14 @@ import (
 )
 
 type Service struct {
-	Gotify  GotifyService
+	Gotify  *GotifyService
 	Message *MessageService
 }
 
-func NewService(httpClient *http.Client, matrixClient *client.Client) *Service {
+func NewService(httpClient *http.Client, matrixClient *matrix.Client) *Service {
 	slog.Debug("create services")
 	return &Service{
-		Gotify:  newGotifyService(httpClient),
+		Gotify:  newGotifyService(),
 		Message: newMessageService(matrixClient),
 	}
 }
