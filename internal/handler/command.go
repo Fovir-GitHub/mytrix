@@ -10,6 +10,7 @@ import (
 
 func (h *Handler) registerCommands() {
 	h.commands["!ping"] = h.handlePing
+	slog.Info("commands registered")
 }
 
 func (h *Handler) HandleCommand(ctx context.Context, evt *event.Event) {
