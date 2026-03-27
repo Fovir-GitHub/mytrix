@@ -10,16 +10,18 @@ import (
 	myhttp "github.com/Fovir-GitHub/mytrix/internal/http"
 	clientpkg "github.com/Fovir-GitHub/mytrix/internal/matrix"
 	"github.com/Fovir-GitHub/mytrix/internal/service"
+	"github.com/Fovir-GitHub/mytrix/internal/ws"
 	"maunium.net/go/mautrix"
 	"maunium.net/go/mautrix/event"
 )
 
 // Bot represents a Matrix bot client with sync and encryption support.
 type Bot struct {
-	Client  *clientpkg.Client
-	Syncer  *mautrix.DefaultSyncer
-	Ready   chan struct{}
-	Handler *handler.Handler
+	Client    *clientpkg.Client
+	WsManager *ws.Manager
+	Syncer    *mautrix.DefaultSyncer
+	Ready     chan struct{}
+	Handler   *handler.Handler
 }
 
 // New creates and initializes a `Bot` instance.
@@ -46,15 +48,18 @@ func New() (*Bot, error) {
 	http := myhttp.New()
 	service := service.NewService(http, matrixClient)
 	handler := handler.NewHandler(service)
+	wsManager := ws.NewManager()
 
 	bot := &Bot{
-		Client:  matrixClient,
-		Syncer:  syncer,
-		Ready:   ready,
-		Handler: handler,
+		Client:    matrixClient,
+		WsManager: wsManager,
+		Syncer:    syncer,
+		Ready:     ready,
+		Handler:   handler,
 	}
 
 	bot.registerHandler()
+	bot.registerWs()
 
 	return bot, nil
 }
@@ -70,6 +75,23 @@ func (b *Bot) Start(ctx context.Context) error {
 		}
 	}()
 
+	go func() {
+		for event := range b.WsManager.Events() {
+			slog.Debug(
+				"receive websocket event",
+				"source", event.Source,
+				"data", string(event.Data),
+			)
+			err := b.Handler.HandleWSEvent(ctx, event)
+			if err != nil {
+				slog.Error(
+					"handle websocket event failed",
+					"err", err,
+				)
+			}
+		}
+	}()
+
 	<-b.Ready
 
 	err := b.Client.VerifyWithRecoveryKey()
@@ -82,5 +104,5 @@ func (b *Bot) Start(ctx context.Context) error {
 }
 
 func (b *Bot) registerHandler() {
-	b.Syncer.OnEventType(event.EventMessage, b.Handler.Handle)
+	b.Syncer.OnEventType(event.EventMessage, b.Handler.HandleCommand)
 }
