@@ -10,6 +10,8 @@ type MytrixConfig struct {
 	LogLevel string `env:"LOG_LEVEL" envDefault:"INFO"`
 	// Homeserver is the Matrix homeserver URL (required).
 	Homeserver string `env:"HOMESERVER,required"`
+	// RoomID is the chat room with bot.
+	RoomID string `env:"ROOM_ID,required"`
 	// Datadir sets the data directory.
 	Datadir string `env:"DATA_DIR" envDefault:"/data"`
 	// Timeout defines the timeout of http request.
