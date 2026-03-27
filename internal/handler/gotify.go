@@ -4,23 +4,15 @@ import (
 	"context"
 	"fmt"
 
-	"maunium.net/go/mautrix/event"
+	"github.com/Fovir-GitHub/mytrix/internal/config"
+	"github.com/Fovir-GitHub/mytrix/internal/model"
+	"maunium.net/go/mautrix/id"
 )
 
-func (h *Handler) handleGotify(ctx context.Context, evt *event.Event) error {
-	const defaultMessage = "no message found"
-
-	msgs, err := h.service.Gotify.FetchMessages()
+func (h *Handler) handleGotify(ctx context.Context, event *model.WsEvent) error {
+	msg, err := h.service.Gotify.HandleEvent(event)
 	if err != nil {
-		h.service.Message.Reply(ctx, evt, defaultMessage)
-		return fmt.Errorf("fetch message failed: %w", err)
+		return fmt.Errorf("handle gotify event failed: %w", err)
 	}
-
-	if len(msgs) == 0 {
-		h.service.Message.Reply(ctx, evt, defaultMessage)
-	} else {
-		h.service.Message.Reply(ctx, evt, msgs[0].Message)
-	}
-
-	return nil
+	return h.service.Message.Reply(ctx, id.RoomID(config.Config.RoomID), msg.Message)
 }
