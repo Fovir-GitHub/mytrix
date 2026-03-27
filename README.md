@@ -70,6 +70,13 @@ All configuration is done via environment variables.
 | `MYTRIX_BOT_RECOVERY_KEY` | Encryption recovery key            | `abcd efgh ijkl`        |
 | `MYTRIX_BOT_PICKLE_KEY`   | Key for encrypting crypto storage  | `random-32-byte-string` |
 
+### Message Configuration
+
+| Variable                    | Description                        | Example                     |
+| --------------------------- | ---------------------------------- | --------------------------- |
+| `MYTRIX_MSG_ALLOW_MARKDOWN` | Allow Markdown in message contents | `true` (default) or `false` |
+| `MYTRIX_MSG_ALLOW_HTML`     | Allow HTML in message contents     | `false` (default) or `true` |
+
 ### Gotify Configuration
 
 | Variable                | Description                       | Default                                  |

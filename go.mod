@@ -8,6 +8,8 @@ require (
 	maunium.net/go/mautrix v0.26.4
 )
 
+require github.com/yuin/goldmark v1.7.16 // indirect
+
 require (
 	filippo.io/edwards25519 v1.2.0 // indirect
 	github.com/gorilla/websocket v1.5.3

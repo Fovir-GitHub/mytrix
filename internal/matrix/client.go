@@ -4,10 +4,12 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/Fovir-GitHub/mytrix/internal/config"
 	"github.com/Fovir-GitHub/mytrix/internal/crypto"
 	"maunium.net/go/mautrix"
 	"maunium.net/go/mautrix/crypto/cryptohelper"
 	"maunium.net/go/mautrix/event"
+	"maunium.net/go/mautrix/format"
 	"maunium.net/go/mautrix/id"
 )
 
@@ -20,11 +22,8 @@ func New(c *mautrix.Client) *Client {
 }
 
 func (m *Client) SendTextMessage(ctx context.Context, roomID id.RoomID, text string) error {
-	content := event.MessageEventContent{
-		MsgType: event.MsgText,
-		Body:    text,
-	}
-
+	cfg := config.Config.Msg
+	content := format.RenderMarkdown(text, cfg.AllowMarkdown, cfg.AllowHTML)
 	_, err := m.c.SendMessageEvent(ctx, roomID, event.EventMessage, content)
 	return err
 }
