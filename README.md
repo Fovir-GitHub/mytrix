@@ -79,11 +79,12 @@ All configuration is done via environment variables.
 
 ### Gotify Configuration
 
-| Variable                | Description                       | Default                                  |
-| ----------------------- | --------------------------------- | ---------------------------------------- |
-| `MYTRIX_GOTIFY_ENABLED` | Enable Gotify forwarding          | false                                    |
-| `MYTRIX_GOTIFY_SERVER`  | Gotify server URL (for WebSocket) | required if `MYTRIX_GOTIFY_ENABLED=true` |
-| `MYTRIX_GOTIFY_TOKEN`   | Gotify API token                  | required if `MYTRIX_GOTIFY_ENABLED=true` |
+| Variable                | Description                              | Default                                                      |
+| ----------------------- | ---------------------------------------- | ------------------------------------------------------------ |
+| `MYTRIX_GOTIFY_ENABLED` | Enable Gotify forwarding                 | false                                                        |
+| `MYTRIX_GOTIFY_SERVER`  | Gotify server URL (for WebSocket)        | required if `MYTRIX_GOTIFY_ENABLED=true`                     |
+| `MYTRIX_GOTIFY_TOKEN`   | Gotify API token                         | required if `MYTRIX_GOTIFY_ENABLED=true`                     |
+| `MYTRIX_GOTIFY_FORMAT`  | Gotify message format (support Markdown) | see [internal/config/gotify.go](./internal/config/gotify.go) |
 
 ## Development
 

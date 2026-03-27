@@ -14,5 +14,5 @@ func (h *Handler) handleGotify(ctx context.Context, event *model.WsEvent) error 
 	if err != nil {
 		return fmt.Errorf("handle gotify event failed: %w", err)
 	}
-	return h.service.Message.Reply(ctx, id.RoomID(config.Config.RoomID), msg.Message)
+	return h.service.Message.Reply(ctx, id.RoomID(config.Config.RoomID), msg.ToMarkdown())
 }
