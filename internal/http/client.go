@@ -44,8 +44,7 @@ func (c *Client) Do(req *http.Request) (*http.Response, error) {
 
 	if resp.StatusCode >= 400 {
 		body, _ := io.ReadAll(resp.Body)
-		resp.Body.Close()
-
+		err := resp.Body.Close()
 		slog.Error(
 			"http request returned error",
 			"method", req.Method,
@@ -54,6 +53,9 @@ func (c *Client) Do(req *http.Request) (*http.Response, error) {
 			"body", string(body),
 			"duration", time.Since(start),
 		)
+		if err != nil {
+			return nil, fmt.Errorf("http response close failed: %w", err)
+		}
 
 		return nil, fmt.Errorf("http %d: %s", resp.StatusCode, string(body))
 	}
