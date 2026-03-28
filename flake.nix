@@ -19,11 +19,13 @@
       # Add packages here.
       buildInputs = with pkgs; [
         go
+        golangci-lint
         gopls
         gotools
         govulncheck
         just
         olm
+        pre-commit
       ];
 
       # Shell hooks.
