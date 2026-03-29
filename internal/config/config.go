@@ -18,10 +18,12 @@ type MytrixConfig struct {
 	Timeout int `env:"TIMEOUT" envDefault:"10"`
 	// Bot contains bot-specific configuration.
 	Bot BotConfig
-	// Gotify contains gotify-specific configuration.
+	// Gotify contains Gotify-specific configuration.
 	Gotify GotifyConfig
 	// WS specifics the websocket configuration.
 	WS WSConfig
 	// Msg contains message-specific configuration.
 	Msg MsgConfig
+	// Wakapi contains Wakapi-specific configurartion.
+	Wakapi WakapiConfig
 }
