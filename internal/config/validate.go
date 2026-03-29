@@ -1,13 +1,17 @@
 package config
 
-import "fmt"
+import "errors"
 
 func (mc *MytrixConfig) validate() error {
-	if mc.Gotify.Enabled {
-		if mc.Gotify.Server == "" || mc.Gotify.Token == "" {
-			return fmt.Errorf("MYTRIX_GOTIFY_SERVER and MYTRIX_GOTIFY_TOKEN are required when MYTRIX_GOTIFY_ENABLE=true")
+	var errs []error
+	validators := []func() error{
+		mc.validateGotify,
+		mc.validateWakapi,
+	}
+	for _, validator := range validators {
+		if err := validator(); err != nil {
+			errs = append(errs, err)
 		}
 	}
-
-	return nil
+	return errors.Join(errs...)
 }
