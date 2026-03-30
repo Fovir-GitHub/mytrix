@@ -112,4 +112,4 @@ just run
 - [`mautrix/go`](https://github.com/mautrix/go): A Golang Matrix framework.
 - [`caarlos0/env`](https://github.com/caarlos0/env): A simple, zero-dependencies library to parse environment variables into structs
 - [Blog by Dominik Chrástecký](https://chrastecky.dev/programming/creating-a-simple-encrypted-matrix-bot-in-go): Tutorial for this project.
-- [gorilla/websocket](https://github.com/gorilla/websocket): A fast, well-tested and widely used WebSocket implementation for Go.
+- [`gorilla/websocket`](https://github.com/gorilla/websocket): A fast, well-tested and widely used WebSocket implementation for Go.
