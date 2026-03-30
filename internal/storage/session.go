@@ -55,5 +55,5 @@ func SaveSession(resp *mautrix.RespLogin) error {
 	}
 
 	data, _ := json.MarshalIndent(s, "", "  ")
-	return os.WriteFile(sessionFile(), data, 0600)
+	return os.WriteFile(sessionFile(), data, 0o600)
 }

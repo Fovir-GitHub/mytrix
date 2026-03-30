@@ -27,7 +27,6 @@ func (g GotifyMessage) ToMarkdown() string {
 		"ID":      g.ID,
 		"Date":    date,
 	})
-
 	if err != nil {
 		slog.Error(
 			"parse gotify message to markdown failed",

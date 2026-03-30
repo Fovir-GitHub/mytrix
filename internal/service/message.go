@@ -27,7 +27,6 @@ func (s *MessageService) Ping(ctx context.Context, evt *event.Event) error {
 		return fmt.Errorf("ping failed: %w", err)
 	}
 	return nil
-
 }
 
 func (s *MessageService) UserID() id.UserID {
