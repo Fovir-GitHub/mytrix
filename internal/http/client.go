@@ -1,6 +1,7 @@
 package http
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"log/slog"
@@ -69,4 +70,16 @@ func (c *Client) Do(req *http.Request) (*http.Response, error) {
 	)
 
 	return resp, nil
+}
+
+func (c *Client) DoJSON(req *http.Request, v any) error {
+	resp, err := c.Do(req)
+	if err != nil {
+		return fmt.Errorf("receive response failed: %w", err)
+	}
+	defer resp.Body.Close() // nolint
+	if err := json.NewDecoder(resp.Body).Decode(v); err != nil {
+		return fmt.Errorf("parse json failed: %w", err)
+	}
+	return nil
 }
