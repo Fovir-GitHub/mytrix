@@ -10,6 +10,7 @@ import (
 
 func (h *Handler) registerCommands() {
 	h.commands["!ping"] = h.handlePing
+	h.commands["!wakapi"] = h.handleWakapiCommand
 	slog.Info("commands registered")
 }
 
