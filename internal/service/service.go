@@ -5,6 +5,7 @@ import (
 
 	"github.com/Fovir-GitHub/mytrix/internal/http"
 	"github.com/Fovir-GitHub/mytrix/internal/matrix"
+	"github.com/Fovir-GitHub/mytrix/internal/scheduler"
 )
 
 type Service struct {
@@ -13,11 +14,11 @@ type Service struct {
 	Wakapi  WakapiService
 }
 
-func NewService(httpClient *http.Client, matrixClient *matrix.Client) *Service {
+func NewService(httpClient *http.Client, matrixClient *matrix.Client, schedulerClient *scheduler.Scheduler) *Service {
 	slog.Debug("create services")
 	return &Service{
 		Gotify:  newGotifyService(),
 		Message: newMessageService(matrixClient),
-		Wakapi:  newWakapiService(httpClient),
+		Wakapi:  newWakapiService(httpClient, schedulerClient),
 	}
 }

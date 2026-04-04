@@ -9,6 +9,7 @@ import (
 	"github.com/Fovir-GitHub/mytrix/internal/handler"
 	myhttp "github.com/Fovir-GitHub/mytrix/internal/http"
 	clientpkg "github.com/Fovir-GitHub/mytrix/internal/matrix"
+	"github.com/Fovir-GitHub/mytrix/internal/scheduler"
 	"github.com/Fovir-GitHub/mytrix/internal/service"
 	"github.com/Fovir-GitHub/mytrix/internal/ws"
 	"maunium.net/go/mautrix"
@@ -22,6 +23,7 @@ type Bot struct {
 	Syncer    *mautrix.DefaultSyncer
 	Ready     chan struct{}
 	Handler   *handler.Handler
+	Scheduler *scheduler.Scheduler
 }
 
 // New creates and initializes a `Bot` instance.
@@ -46,7 +48,8 @@ func New() (*Bot, error) {
 
 	matrixClient := clientpkg.New(client)
 	http := myhttp.New()
-	service := service.NewService(http, matrixClient)
+	scheduler := scheduler.NewScheduler()
+	service := service.NewService(http, matrixClient, scheduler)
 	handler := handler.NewHandler(service)
 	wsManager := ws.NewManager()
 
@@ -56,15 +59,19 @@ func New() (*Bot, error) {
 		Syncer:    syncer,
 		Ready:     ready,
 		Handler:   handler,
+		Scheduler: scheduler,
 	}
 
 	bot.registerHandler()
 	bot.registerWs()
+	bot.registerScheduler()
 
 	return bot, nil
 }
 
 func (b *Bot) Start(ctx context.Context) error {
+	b.Scheduler.Start()
+
 	go func() {
 		if err := b.Client.Sync(); err != nil {
 			slog.Error(

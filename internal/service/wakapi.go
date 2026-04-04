@@ -11,6 +11,7 @@ import (
 	"github.com/Fovir-GitHub/mytrix/internal/config"
 	myhttp "github.com/Fovir-GitHub/mytrix/internal/http"
 	"github.com/Fovir-GitHub/mytrix/internal/model"
+	"github.com/Fovir-GitHub/mytrix/internal/scheduler"
 	"github.com/Fovir-GitHub/mytrix/internal/utils"
 )
 
@@ -25,9 +26,10 @@ type RealWakapiService struct {
 	server string
 	apiKey string
 	userID string
+	s      *scheduler.Scheduler
 }
 
-func newWakapiService(c *myhttp.Client) WakapiService {
+func newWakapiService(c *myhttp.Client, s *scheduler.Scheduler) WakapiService {
 	cfg := config.Config.Wakapi
 	if !cfg.Enabled {
 		return &NoopWakapiService{}
@@ -38,6 +40,7 @@ func newWakapiService(c *myhttp.Client) WakapiService {
 		server: cfg.Server,
 		apiKey: cfg.APIKey,
 		userID: cfg.UserID,
+		s:      s,
 	}
 }
 
