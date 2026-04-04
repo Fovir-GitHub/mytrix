@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"log/slog"
+	"strings"
 	"text/template"
 )
 
@@ -55,3 +56,25 @@ const (
 	WakapiIntervalAny          WakapiInterval = "any"
 	WakapiIntervalAllTime      WakapiInterval = "all_time"
 )
+
+var intervalMap = map[string]WakapiInterval{
+	"today":     WakapiIntervalToday,
+	"yesterday": WakapiIntervalYesterday,
+	"weekly":    WakapiIntervalWeek,
+	"monthly":   WakapiInterval30Days,
+	"yearly":    WakapiIntervalYear,
+	"7d":        WakapiIntervalLast7Days,
+	"30d":       WakapiInterval30Days,
+	"6m":        WakapiIntervalLast6Months,
+	"12m":       WakapiIntervalLast12Months,
+	"1y":        WakapiIntervalLastYear,
+}
+
+func ParseWakapiInterval(s string) (WakapiInterval, error) {
+	k := strings.ToLower(strings.TrimSpace(s))
+	slog.Debug("parse wakapi interval", "original", s, "key", k)
+	if v, ok := intervalMap[k]; ok {
+		return v, nil
+	}
+	return "", fmt.Errorf("invalid interval: %s", s)
+}
