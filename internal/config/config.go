@@ -16,6 +16,8 @@ type MytrixConfig struct {
 	Datadir string `env:"DATA_DIR" envDefault:"/data"`
 	// Timeout defines the timeout of http request.
 	Timeout int `env:"TIMEOUT" envDefault:"10"`
+	// TZ sets the timezone.
+	TZ string `env:"TZ" envDefault:""`
 	// Bot contains bot-specific configuration.
 	Bot BotConfig
 	// Gotify contains Gotify-specific configuration.
