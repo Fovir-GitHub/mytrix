@@ -1,40 +1,10 @@
 package model
 
 import (
-	"bytes"
 	"fmt"
 	"log/slog"
 	"strings"
-	"text/template"
 )
-
-type WakapiLanguage struct {
-	Name    string  `json:"name"`
-	Text    string  `json:"text"`
-	Percent float32 `json:"percent"`
-}
-
-func (w WakapiLanguage) ToMarkdown() string {
-	mdTmpl := "{{.Lang}} {{.Text}} {{.Percent}}"
-	tmpl := template.Must(template.New(SourceWakapi).Parse(mdTmpl))
-	var buf bytes.Buffer
-	percent := fmt.Sprintf("%.2f%%", w.Percent)
-	err := tmpl.Execute(&buf, map[string]any{
-		"Lang":    w.Name,
-		"Text":    w.Text,
-		"Percent": percent,
-	})
-	if err != nil {
-		slog.Error(
-			"parse wakapi message to markdown failed",
-			"name", w.Name,
-			"text", w.Text,
-			"percent", percent,
-		)
-		return fmt.Sprintf("Lang: %s\tText: %s\tPercent: %s", w.Name, w.Text, percent)
-	}
-	return buf.String()
-}
 
 type WakapiInterval string
 

@@ -24,6 +24,10 @@ type WakapiConfig struct {
 	MonthlyReportCron string `env:"WAKAPI_MONTHLY_REPORT_CRON" envDefault:"0 9 1 * *"`
 	// YearlyReportCron sets the time to send yearly report.
 	YearlyReportCron string `env:"WAKAPI_YEARLY_REPORT_CRON" envDefault:"0 9 1 1 *"`
+	// LangFormat sets the template of language report.
+	LangFormat string `env:"WAKAPI_LANG_FORMAT" envDefault:"{{.Lang}} {{.Text}} {{.Percent}}"`
+	// DataFormat sets the template of Wakapi data report.
+	DataFormat string `env:"WAKAPI_DATA_FORMAT" envDefault:"{{.Interval}} Report\n\n{{.Lang}}\n\nTotal: {{.Total}}"`
 }
 
 func (mc *MytrixConfig) validateWakapi() error {

@@ -9,24 +9,12 @@ import (
 )
 
 func (h *Handler) fetchWakapiReport(interval model.WakapiInterval) (string, error) {
-	langs, err := h.service.Wakapi.FetchLanguages(interval)
+	data, err := h.service.Wakapi.FetchData(interval)
 	if err != nil {
 		slog.Error("fetch wakapi data failed", "err", err)
 		return "", err
 	}
-
-	slog.Debug("received wakapi languages", "len", len(langs))
-	if len(langs) <= 0 {
-		return "no data", nil
-	}
-
-	var msg string
-	for _, lang := range langs {
-		msg += (lang.ToMarkdown() + "\n")
-	}
-	msg = strings.TrimSpace(msg)
-	msg = "```text\n" + msg + "\n```"
-	return msg, nil
+	return data.ToMarkdown(), nil
 }
 
 func getWakapiInterval(msg string) (model.WakapiInterval, error) {
