@@ -22,12 +22,11 @@ type langView struct {
 func (wl WakapiLanguage) ToMarkdown() string {
 	var buf bytes.Buffer
 	percent := fmt.Sprintf("%.2f%%", wl.Percent)
-	err := wakapiLangTmpl.Execute(&buf, langView{
+	if err := wakapiLangTmpl.Execute(&buf, langView{
 		Lang:    wl.Name,
 		Text:    wl.Text,
 		Percent: percent,
-	})
-	if err != nil {
+	}); err != nil {
 		slog.Error(
 			"parse wakapi message to markdown failed",
 			"name", wl.Name,
