@@ -1,6 +1,7 @@
 package model
 
 import (
+	"log/slog"
 	"text/template"
 
 	"github.com/Fovir-GitHub/mytrix/internal/config"
@@ -14,10 +15,11 @@ var (
 
 func InitTemplates() {
 	cfg := config.Config
-
 	gotifyTmpl = createTmpl("gotify", cfg.Gotify.Format)
 	wakapiLangTmpl = createTmpl("wakapi_lang", cfg.Wakapi.LangFormat)
 	wakapiDataTmpl = createTmpl("wakapi_data", cfg.Wakapi.DataFormat)
+
+	slog.Info("templates initiailized")
 }
 
 func createTmpl(name, format string) *template.Template {
