@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"log/slog"
+	"time"
 
 	"github.com/Fovir-GitHub/mytrix/internal/model"
 	"github.com/Fovir-GitHub/mytrix/internal/service"
@@ -10,17 +11,19 @@ import (
 )
 
 type Handler struct {
-	service  *service.Service
-	commands map[string]func(context.Context, *event.Event) error
-	events   map[string]func(context.Context, *model.WsEvent) error
+	service   *service.Service
+	commands  map[string]func(context.Context, *event.Event) error
+	events    map[string]func(context.Context, *model.WsEvent) error
+	startTime time.Time
 }
 
 func NewHandler(s *service.Service) *Handler {
 	slog.Debug("create handler")
 	h := &Handler{
-		service:  s,
-		commands: make(map[string]func(context.Context, *event.Event) error),
-		events:   make(map[string]func(context.Context, *model.WsEvent) error),
+		service:   s,
+		commands:  make(map[string]func(context.Context, *event.Event) error),
+		events:    make(map[string]func(context.Context, *model.WsEvent) error),
+		startTime: time.Now(),
 	}
 
 	h.registerCommands()

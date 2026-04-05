@@ -20,6 +20,11 @@ func (h *Handler) HandleCommand(ctx context.Context, evt *event.Event) {
 		return
 	}
 
+	if evt.Timestamp < h.startTime.UnixMilli() {
+		slog.Debug("receive old message, skipped", "msg", content.Body)
+		return
+	}
+
 	if evt.Sender == h.service.Message.UserID() {
 		slog.Debug("receive own message, skipped")
 		return
