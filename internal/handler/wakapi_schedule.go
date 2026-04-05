@@ -29,17 +29,18 @@ func (h *Handler) handleWakapiSchedule(ctx context.Context, interval model.Wakap
 }
 
 func (h *Handler) WakapiScheduleList() []scheduler.ScheduledJob {
+	cfg := config.Config.Wakapi
 	return []scheduler.ScheduledJob{
 		{
-			Cron: "0 9 * * *",
+			Cron: cfg.DailyReportCron,
 			Job:  func() { h.handleWakapiSchedule(context.Background(), model.WakapiIntervalYesterday, "Daily Report") },
 		},
 		{
-			Cron: "0 9 1 * *",
+			Cron: cfg.MonthlyReportCron,
 			Job:  func() { h.handleWakapiSchedule(context.Background(), model.WakapiIntervalLast30Days, "Monthly Report") },
 		},
 		{
-			Cron: "0 9 1 1 *",
+			Cron: cfg.YearlyReportCron,
 			Job: func() {
 				h.handleWakapiSchedule(context.Background(), model.WakapiIntervalLast12Months, "Yearly Report")
 			},
