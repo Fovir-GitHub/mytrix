@@ -9,6 +9,7 @@ import (
 	"github.com/Fovir-GitHub/mytrix/internal/bot"
 	"github.com/Fovir-GitHub/mytrix/internal/config"
 	"github.com/Fovir-GitHub/mytrix/internal/logger"
+	"github.com/Fovir-GitHub/mytrix/internal/model"
 	_ "maunium.net/go/mautrix/crypto/goolm"
 )
 
@@ -19,6 +20,7 @@ func main() {
 	}
 	logger.Init()
 	slog.Info("main start")
+	model.InitTemplates()
 
 	b, err := bot.New()
 	if err != nil {

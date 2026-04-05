@@ -4,10 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"log/slog"
-	"text/template"
 	"time"
-
-	"github.com/Fovir-GitHub/mytrix/internal/config"
 )
 
 type GotifyMessage struct {
@@ -17,15 +14,21 @@ type GotifyMessage struct {
 	Date    time.Time `json:"date"`
 }
 
+type gotifyView struct {
+	Title   string
+	Message string
+	ID      int
+	Date    string
+}
+
 func (g GotifyMessage) ToMarkdown() string {
-	tmpl := template.Must(template.New(SourceGotify).Parse(config.Config.Gotify.Format))
 	var buf bytes.Buffer
 	date := g.Date.Format("2006-01-02 15:04:05")
-	err := tmpl.Execute(&buf, map[string]any{
-		"Title":   g.Title,
-		"Message": g.Message,
-		"ID":      g.ID,
-		"Date":    date,
+	err := gotifyTmpl.Execute(&buf, gotifyView{
+		Title:   g.Title,
+		Message: g.Message,
+		ID:      g.ID,
+		Date:    date,
 	})
 	if err != nil {
 		slog.Error(
