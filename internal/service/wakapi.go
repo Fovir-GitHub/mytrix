@@ -6,17 +6,15 @@ import (
 	"log/slog"
 	"net/http"
 	"net/url"
-	"sort"
 
 	"github.com/Fovir-GitHub/mytrix/internal/config"
 	myhttp "github.com/Fovir-GitHub/mytrix/internal/http"
 	"github.com/Fovir-GitHub/mytrix/internal/model"
 	"github.com/Fovir-GitHub/mytrix/internal/scheduler"
-	"github.com/Fovir-GitHub/mytrix/internal/utils"
 )
 
 type WakapiService interface {
-	FetchLanguages(model.WakapiInterval) ([]model.WakapiLanguage, error)
+	FetchData(model.WakapiInterval) (*model.WakapiData, error)
 }
 
 type NoopWakapiService struct{}
@@ -44,15 +42,13 @@ func newWakapiService(c *myhttp.Client, s *scheduler.Scheduler) WakapiService {
 	}
 }
 
-func (w *NoopWakapiService) FetchLanguages(model.WakapiInterval) ([]model.WakapiLanguage, error) {
+func (w *NoopWakapiService) FetchData(model.WakapiInterval) (*model.WakapiData, error) {
 	return nil, fmt.Errorf("wakapi is not enabled")
 }
 
-func (w *RealWakapiService) FetchLanguages(interval model.WakapiInterval) ([]model.WakapiLanguage, error) {
+func (w *RealWakapiService) FetchData(interval model.WakapiInterval) (*model.WakapiData, error) {
 	var data struct {
-		Data struct {
-			Languages []model.WakapiLanguage `json:"languages"`
-		} `json:"data"`
+		Data model.WakapiData `json:"data"`
 	}
 
 	const basePath = "/api/compat/wakatime/v1/"
@@ -76,10 +72,5 @@ func (w *RealWakapiService) FetchLanguages(interval model.WakapiInterval) ([]mod
 	if err := w.c.DoJSON(req, &data); err != nil {
 		return nil, fmt.Errorf("get json failed: %w", err)
 	}
-
-	langs := data.Data.Languages
-	langs = utils.Filter(langs, func(w *model.WakapiLanguage) bool { return w.Percent >= 0.01 })
-	sort.Slice(langs, func(i, j int) bool { return langs[i].Percent > langs[j].Percent })
-
-	return langs, nil
+	return &data.Data, nil
 }
