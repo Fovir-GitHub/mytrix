@@ -36,9 +36,6 @@ services:
       - MYTRIX_BOT_PASSWORD=your-bot-password
       - MYTRIX_BOT_RECOVERY_KEY=your-recovery-key
       - MYTRIX_BOT_PICKLE_KEY=random-32-byte-string
-      - MYTRIX_GOTIFY_ENABLED=true
-      - MYTRIX_GOTIFY_SERVER=gotify.example.com
-      - MYTRIX_GOTIFY_TOKEN=your-gotify-token
 ```
 
 Then start the service:
@@ -53,13 +50,14 @@ All configuration is done via environment variables.
 
 ### General Settings
 
-| Variable            | Description                              | Default    |
-| ------------------- | ---------------------------------------- | ---------- |
-| `MYTRIX_LOG_LEVEL`  | Logging level (DEBUG, INFO, WARN, ERROR) | `INFO`     |
-| `MYTRIX_HOMESERVER` | Matrix homeserver URL                    | (required) |
-| `MYTRIX_ROOM_ID`    | Matrix room ID                           | (required) |
-| `MYTRIX_DATA_DIR`   | Data directory for storing sessions      | `data`     |
-| `MYTRIX_TIMEOUT`    | HTTP request timeout in seconds          | `10`       |
+| Variable            | Description                              | Default      |
+| ------------------- | ---------------------------------------- | ------------ |
+| `MYTRIX_LOG_LEVEL`  | Logging level (DEBUG, INFO, WARN, ERROR) | `INFO`       |
+| `MYTRIX_HOMESERVER` | Matrix homeserver URL                    | (required)   |
+| `MYTRIX_ROOM_ID`    | Matrix room ID                           | (required)   |
+| `MYTRIX_DATA_DIR`   | Data directory for storing sessions      | `data`       |
+| `MYTRIX_TIMEOUT`    | HTTP request timeout in seconds          | `10`         |
+| `MYTRIX_TZ`         | Timezone                                 | `time.Local` |
 
 ### Bot Configuration
 
@@ -81,10 +79,24 @@ All configuration is done via environment variables.
 
 | Variable                | Description                              | Default                                                      |
 | ----------------------- | ---------------------------------------- | ------------------------------------------------------------ |
-| `MYTRIX_GOTIFY_ENABLED` | Enable Gotify forwarding                 | false                                                        |
-| `MYTRIX_GOTIFY_SERVER`  | Gotify server URL (for WebSocket)        | required if `MYTRIX_GOTIFY_ENABLED=true`                     |
+| `MYTRIX_GOTIFY_ENABLED` | Enable Gotify forwarding                 | `false`                                                      |
+| `MYTRIX_GOTIFY_SERVER`  | Gotify server URL (no scheme)            | required if `MYTRIX_GOTIFY_ENABLED=true`                     |
 | `MYTRIX_GOTIFY_TOKEN`   | Gotify API token                         | required if `MYTRIX_GOTIFY_ENABLED=true`                     |
 | `MYTRIX_GOTIFY_FORMAT`  | Gotify message format (support Markdown) | see [internal/config/gotify.go](./internal/config/gotify.go) |
+
+### Wakapi Configuration
+
+| Variable                            | Description                     | Default                                  |
+| ----------------------------------- | ------------------------------- | ---------------------------------------- |
+| `MYTRIX_WAKAPI_ENABLED`             | Enable Wakapi integration       | `false`                                  |
+| `MYTRIX_WAKAPI_SERVER`              | Wakapi server (no scheme)       | required if `MYTRIX_WAKAPI_ENABLED=true` |
+| `MYTRIX_WAKAPI_API_KEY`             | API key to access Wakapi server | required if `MYTRIX_WAKAPI_ENABLED=true` |
+| `MYTRIX_WAKAPI_USER_ID`             | User ID of Wakapi user          | `current`                                |
+| `MYTRIX_WAKAPI_DAILY_REPORT_CRON`   | Time to send daily report       | `0 9 * * *`                              |
+| `MYTRIX_WAKAPI_MONTHLY_REPORT_CRON` | Time to send monthly report     | `0 9 1 * *`                              |
+| `MYTRIX_WAKAPI_YEARLY_REPORT_CRON`  | Time to send yearly report      | `0 9 1 1 *`                              |
+
+> _Tip:_ To disable daily, monthly, or yearly report, the cron can be set to `0 0 31 2 *` so it will not be triggered.
 
 ## Development
 
