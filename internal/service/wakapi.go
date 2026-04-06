@@ -4,11 +4,10 @@ import (
 	"encoding/base64"
 	"fmt"
 	"log/slog"
-	"net/http"
 	"net/url"
 
 	"github.com/Fovir-GitHub/mytrix/internal/config"
-	myhttp "github.com/Fovir-GitHub/mytrix/internal/http"
+	"github.com/Fovir-GitHub/mytrix/internal/http"
 	"github.com/Fovir-GitHub/mytrix/internal/model"
 	"github.com/Fovir-GitHub/mytrix/internal/scheduler"
 )
@@ -20,14 +19,14 @@ type WakapiService interface {
 type NoopWakapiService struct{}
 
 type RealWakapiService struct {
-	c      *myhttp.Client
+	c      *http.Client
 	server string
 	apiKey string
 	userID string
 	s      *scheduler.Scheduler
 }
 
-func newWakapiService(c *myhttp.Client, s *scheduler.Scheduler) WakapiService {
+func newWakapiService(c *http.Client, s *scheduler.Scheduler) WakapiService {
 	cfg := config.Config.Wakapi
 	if !cfg.Enabled {
 		return &NoopWakapiService{}
@@ -59,7 +58,7 @@ func (w *RealWakapiService) FetchData(interval model.WakapiInterval) (*model.Wak
 	u = u.JoinPath(basePath, "users", w.userID, "stats", string(interval))
 
 	auth := fmt.Sprintf("Basic %s", base64.StdEncoding.EncodeToString([]byte(w.apiKey)))
-	req, err := myhttp.NewRequest(
+	req, err := http.NewRequest(
 		http.MethodGet,
 		u.String(),
 		nil,

@@ -6,8 +6,15 @@ import (
 	"net/http"
 )
 
-func NewRequest(method, url string, body io.Reader, headers map[string]string) (*http.Request, error) {
-	req, err := http.NewRequest(method, url, body)
+type httpMethod struct{ v string }
+
+var (
+	MethodGet  = httpMethod{http.MethodGet}
+	MethodPost = httpMethod{http.MethodPost}
+)
+
+func NewRequest(method httpMethod, url string, body io.Reader, headers map[string]string) (*http.Request, error) {
+	req, err := http.NewRequest(method.v, url, body)
 	if err != nil {
 		return nil, fmt.Errorf("create http request failed: %w", err)
 	}
