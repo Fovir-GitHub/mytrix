@@ -20,6 +20,7 @@ func main() {
 	}
 	logger.Init()
 	slog.Info("main start")
+	config.SetTimeZone()
 	model.InitTemplates()
 
 	b, err := bot.New()
