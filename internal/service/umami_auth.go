@@ -56,7 +56,7 @@ func (ru *RealUmamiService) getToken() (string, error) {
 	return data.Token, nil
 }
 
-func (ru *RealUmamiService) isTokenValid() bool {
+func (ru *RealUmamiService) IsTokenValid() bool {
 	u := ru.createURL("/api/auth/verify")
 	req, err := myhttp.NewRequest(myhttp.MethodPost,
 		u.String(),
@@ -78,4 +78,14 @@ func (ru *RealUmamiService) isTokenValid() bool {
 	slog.Debug("validate umami token", "token", ru.token, "valid", valid)
 
 	return valid
+}
+
+func (ru *RealUmamiService) updateToken() {
+	t, err := ru.getToken()
+	if err != nil {
+		slog.Error("update umami token failed", "err", err)
+		return
+	}
+	ru.token = t
+	slog.Info("umami token updated")
 }
