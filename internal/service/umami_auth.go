@@ -5,9 +5,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"log/slog"
+	"net/http"
 	"net/url"
 
-	"github.com/Fovir-GitHub/mytrix/internal/http"
+	myhttp "github.com/Fovir-GitHub/mytrix/internal/http"
 )
 
 func (ru *RealUmamiService) createURL(path string) *url.URL {
@@ -16,6 +17,10 @@ func (ru *RealUmamiService) createURL(path string) *url.URL {
 		Host:   ru.server,
 		Path:   path,
 	}
+}
+
+func (ru *RealUmamiService) setAuthHeader(req *http.Request) {
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", ru.token))
 }
 
 func (ru *RealUmamiService) getToken() (string, error) {
@@ -35,8 +40,8 @@ func (ru *RealUmamiService) getToken() (string, error) {
 	}
 
 	u := ru.createURL("/api/auth/login")
-	req, err := http.NewRequest(
-		http.MethodPost,
+	req, err := myhttp.NewRequest(
+		myhttp.MethodPost,
 		u.String(),
 		bytes.NewReader(bodyData),
 		map[string]string{"Content-Type": "application/json"},
@@ -49,4 +54,28 @@ func (ru *RealUmamiService) getToken() (string, error) {
 	}
 	slog.Debug("get umami token", "token", data.Token)
 	return data.Token, nil
+}
+
+func (ru *RealUmamiService) isTokenValid() bool {
+	u := ru.createURL("/api/auth/verify")
+	req, err := myhttp.NewRequest(myhttp.MethodPost,
+		u.String(),
+		nil,
+		map[string]string{"Accept": "application/json"},
+	)
+	if err != nil {
+		slog.Error("validate umami token failed to create request", "err", err)
+		return false
+	}
+	ru.setAuthHeader(req)
+
+	resp, err := ru.c.Do(req)
+	if err != nil {
+		slog.Debug("validate umami token failed", "token", ru.token, "err", err)
+		return false
+	}
+	valid := resp.StatusCode == http.StatusOK
+	slog.Debug("validate umami token", "token", ru.token, "valid", valid)
+
+	return valid
 }
