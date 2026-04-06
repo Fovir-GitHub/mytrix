@@ -28,4 +28,6 @@ type MytrixConfig struct {
 	Msg MsgConfig
 	// Wakapi contains Wakapi-specific configurartion.
 	Wakapi WakapiConfig
+	// Umami contains Umami-specific configuration.
+	Umami UmamiConfig
 }

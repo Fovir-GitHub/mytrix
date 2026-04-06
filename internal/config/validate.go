@@ -7,6 +7,7 @@ func (mc *MytrixConfig) validate() error {
 	validators := []func() error{
 		mc.validateGotify,
 		mc.validateWakapi,
+		mc.validateUmami,
 	}
 	for _, validator := range validators {
 		if err := validator(); err != nil {
