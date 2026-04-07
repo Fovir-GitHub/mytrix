@@ -27,7 +27,7 @@ const (
 	WakapiIntervalAllTime      WakapiInterval = "all_time"
 )
 
-var intervalMap = map[string]WakapiInterval{
+var wakapiIntervalMap = map[string]WakapiInterval{
 	"today":     WakapiIntervalToday,
 	"yesterday": WakapiIntervalYesterday,
 	"weekly":    WakapiIntervalWeek,
@@ -43,7 +43,7 @@ var intervalMap = map[string]WakapiInterval{
 func ParseWakapiInterval(s string) (WakapiInterval, error) {
 	k := strings.ToLower(strings.TrimSpace(s))
 	slog.Debug("parse wakapi interval", "original", s, "key", k)
-	if v, ok := intervalMap[k]; ok {
+	if v, ok := wakapiIntervalMap[k]; ok {
 		return v, nil
 	}
 	return "", fmt.Errorf("invalid interval: %s", s)
