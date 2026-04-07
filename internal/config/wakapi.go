@@ -3,10 +3,9 @@ package config
 import (
 	"errors"
 	"fmt"
-
-	"github.com/robfig/cron/v3"
 )
 
+// TODO: add weekly cron
 type WakapiConfig struct {
 	// Enabled determines whether to enable Wakapi feature.
 	Enabled bool `env:"WAKAPI_ENABLED" envDefault:"false"`
@@ -47,11 +46,6 @@ func (mc *MytrixConfig) validateWakapi() error {
 		err := fmt.Errorf("MYTRIX_WAKAPI_SERVER and MYTRIX_WAKAPI_API_KEY are required when MYTRIX_WAKAPI_ENABLED=true")
 		errs = append(errs, err)
 	}
-
-	for _, c := range crons {
-		if _, err := cron.ParseStandard(c); err != nil {
-			errs = append(errs, err)
-		}
-	}
+	errs = append(errs, mc.validateCrons(crons))
 	return errors.Join(errs...)
 }
