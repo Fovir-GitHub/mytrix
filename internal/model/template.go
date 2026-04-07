@@ -11,6 +11,7 @@ var (
 	gotifyTmpl     *template.Template
 	wakapiLangTmpl *template.Template
 	wakapiDataTmpl *template.Template
+	umamiDataTmpl  *template.Template
 )
 
 func InitTemplates() {
@@ -18,6 +19,7 @@ func InitTemplates() {
 	gotifyTmpl = createTmpl("gotify", cfg.Gotify.Format)
 	wakapiLangTmpl = createTmpl("wakapi_lang", cfg.Wakapi.LangFormat)
 	wakapiDataTmpl = createTmpl("wakapi_data", cfg.Wakapi.DataFormat)
+	umamiDataTmpl = createTmpl("umami_stat", cfg.Umami.Format)
 
 	slog.Info("templates initiailized")
 }

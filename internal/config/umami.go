@@ -7,6 +7,7 @@ type UmamiConfig struct {
 	Server   string `env:"UMAMI_SERVER"`
 	Username string `env:"UMAMI_USERNAME"`
 	Password string `env:"UMAMI_PASSWORD"`
+	Format   string `env:"UMAMI_FORMAT" envDefault:"- {{.Name}} - {{.Domain}}\n\t- Visitors: {{.Visitors}}\n\t- Visits: {{.Visits}}\n\tBounces Rate: {{.BouncesRate}}"`
 }
 
 func (mc *MytrixConfig) validateUmami() error {
