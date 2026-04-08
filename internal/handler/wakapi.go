@@ -8,15 +8,6 @@ import (
 	"github.com/Fovir-GitHub/mytrix/internal/model"
 )
 
-func (h *Handler) fetchWakapiReport(interval model.WakapiInterval) (string, error) {
-	data, err := h.service.Wakapi.FetchData(interval)
-	if err != nil {
-		slog.Error("fetch wakapi data failed", "err", err)
-		return "", err
-	}
-	return data.ToMarkdown(), nil
-}
-
 func getWakapiInterval(msg string) (model.WakapiInterval, error) {
 	defaultInterval := config.Config.Wakapi.DefaultInterval
 	parts := strings.Fields(msg)

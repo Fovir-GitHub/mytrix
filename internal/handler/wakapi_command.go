@@ -11,14 +11,13 @@ func (h *Handler) handleWakapiCommand(ctx context.Context, evt *event.Event) err
 	interval, err := getWakapiInterval(evt.Content.AsMessage().Body)
 	if err != nil {
 		slog.Error("get wakapi interval failed, reply errors", "err", err)
-		replyErr := h.service.Message.Reply(ctx, evt.RoomID, err.Error())
-		if replyErr != nil {
+		if replyErr := h.service.Message.Reply(ctx, evt.RoomID, err.Error()); replyErr != nil {
 			return replyErr
 		}
 		return err
 	}
 
-	report, err := h.fetchWakapiReport(interval)
+	report, err := h.service.Wakapi.FetchReport(interval)
 	if err != nil {
 		slog.Error("fetch wakapi report failed", "err", err)
 		return err

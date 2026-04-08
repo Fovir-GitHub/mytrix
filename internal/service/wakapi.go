@@ -13,10 +13,13 @@ import (
 )
 
 type WakapiService interface {
-	FetchData(model.WakapiInterval) (*model.WakapiData, error)
+	fetchData(model.WakapiInterval) (*model.WakapiData, error)
+	FetchReport(model.WakapiInterval) (string, error)
 }
 
-type NoopWakapiService struct{}
+type NoopWakapiService struct {
+	err error
+}
 
 type RealWakapiService struct {
 	c      *http.Client
@@ -29,7 +32,9 @@ type RealWakapiService struct {
 func newWakapiService(c *http.Client, s *scheduler.Scheduler) WakapiService {
 	cfg := config.Config.Wakapi
 	if !cfg.Enabled {
-		return &NoopWakapiService{}
+		return &NoopWakapiService{
+			err: fmt.Errorf("wakapi is not enabled"),
+		}
 	}
 	slog.Info("wakapi enabled")
 	return &RealWakapiService{
@@ -41,11 +46,15 @@ func newWakapiService(c *http.Client, s *scheduler.Scheduler) WakapiService {
 	}
 }
 
-func (w *NoopWakapiService) FetchData(model.WakapiInterval) (*model.WakapiData, error) {
-	return nil, fmt.Errorf("wakapi is not enabled")
+func (w *NoopWakapiService) fetchData(model.WakapiInterval) (*model.WakapiData, error) {
+	return nil, w.err
 }
 
-func (w *RealWakapiService) FetchData(interval model.WakapiInterval) (*model.WakapiData, error) {
+func (w *NoopWakapiService) FetchReport(model.WakapiInterval) (string, error) {
+	return "", w.err
+}
+
+func (w *RealWakapiService) fetchData(interval model.WakapiInterval) (*model.WakapiData, error) {
 	var data struct {
 		Data model.WakapiData `json:"data"`
 	}
@@ -72,4 +81,12 @@ func (w *RealWakapiService) FetchData(interval model.WakapiInterval) (*model.Wak
 		return nil, fmt.Errorf("get json failed: %w", err)
 	}
 	return &data.Data, nil
+}
+
+func (w *RealWakapiService) FetchReport(interval model.WakapiInterval) (string, error) {
+	data, err := w.fetchData(interval)
+	if err != nil {
+		return "", fmt.Errorf("fetch wakapi data failed: %w", err)
+	}
+	return data.ToMarkdown(), nil
 }
