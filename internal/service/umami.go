@@ -29,8 +29,9 @@ type RealUmamiService struct {
 
 func newUmamiService(c *myhttp.Client) UmamiService {
 	cfg := config.Config.Umami
+	noop := &NoopUmamiService{err: fmt.Errorf("umami is not enabled")}
 	if !cfg.Enabled {
-		return &NoopUmamiService{err: fmt.Errorf("umami is not enabled")}
+		return noop
 	}
 
 	slog.Info("umami enabled")
@@ -42,8 +43,8 @@ func newUmamiService(c *myhttp.Client) UmamiService {
 	}
 	t, err := us.getToken()
 	if err != nil {
-		slog.Error("get token failed", "err", err)
-		return &NoopUmamiService{}
+		slog.Error("get token failed, umami is disabled", "err", err)
+		return noop
 	}
 	us.token = t
 	return us
@@ -121,7 +122,7 @@ func (ru *RealUmamiService) FetchReport(interval *model.UmamiInterval) string {
 	websites, err := ru.fetchWebsiteData(interval)
 	if err != nil {
 		slog.Error("fetch umami website data failed", "err", err)
-		return ""
+		return err.Error()
 	}
 	return ru.generateReport(websites)
 }
