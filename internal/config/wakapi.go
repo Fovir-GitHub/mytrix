@@ -5,7 +5,6 @@ import (
 	"fmt"
 )
 
-// TODO: add weekly cron
 type WakapiConfig struct {
 	// Enabled determines whether to enable Wakapi feature.
 	Enabled bool `env:"WAKAPI_ENABLED" envDefault:"false"`
@@ -19,6 +18,8 @@ type WakapiConfig struct {
 	DefaultInterval string `env:"WAKAPI_DEFAULT_INTERVAL" envDefault:"today"`
 	// DailyReportCron sets the time to send daily report.
 	DailyReportCron string `env:"WAKAPI_DAILY_REPORT_CRON" envDefault:"0 9 * * *"`
+	// WeeklyReportCron sets the time to send weekly report.
+	WeeklyReportCron string `env:"WAKAPI_WEEKLY_REPORT_CRON" envDefault:"0 9 * * 1"`
 	// MonthlyReportCron sets the time to send monthly report.
 	MonthlyReportCron string `env:"WAKAPI_MONTHLY_REPORT_CRON" envDefault:"0 9 1 * *"`
 	// YearlyReportCron sets the time to send yearly report.
@@ -38,6 +39,7 @@ func (mc *MytrixConfig) validateWakapi() error {
 	var errs []error
 	crons := []string{
 		cfg.DailyReportCron,
+		cfg.WeeklyReportCron,
 		cfg.MonthlyReportCron,
 		cfg.YearlyReportCron,
 	}

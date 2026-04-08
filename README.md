@@ -94,6 +94,7 @@ All configuration is done via environment variables.
 | `MYTRIX_WAKAPI_API_KEY`             | API key to access Wakapi server | required if `MYTRIX_WAKAPI_ENABLED=true`                     |
 | `MYTRIX_WAKAPI_USER_ID`             | User ID of Wakapi user          | `current`                                                    |
 | `MYTRIX_WAKAPI_DAILY_REPORT_CRON`   | Time to send daily report       | `0 9 * * *`                                                  |
+| `MYTRIX_WAKAPI_WEEKLY_REPORT_CRON`  | Time to send weekly report      | `0 9 * * 1`                                                  |
 | `MYTRIX_WAKAPI_MONTHLY_REPORT_CRON` | Time to send monthly report     | `0 9 1 * *`                                                  |
 | `MYTRIX_WAKAPI_YEARLY_REPORT_CRON`  | Time to send yearly report      | `0 9 1 1 *`                                                  |
 | `MYTRIX_WAKAPI_LANG_FORMAT`         | Template of language format     | see [internal/config/wakapi.go](./internal/config/wakapi.go) |

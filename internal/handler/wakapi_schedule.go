@@ -36,6 +36,10 @@ func (h *Handler) WakapiScheduleList() []scheduler.ScheduledJob {
 			Job:  func() { h.handleWakapiSchedule(context.Background(), model.WakapiIntervalYesterday, "Daily Report") },
 		},
 		{
+			Cron: cfg.WeeklyReportCron,
+			Job:  func() { h.handleWakapiSchedule(context.Background(), model.WakapiIntervalLast7Days, "Weekly Report") },
+		},
+		{
 			Cron: cfg.MonthlyReportCron,
 			Job:  func() { h.handleWakapiSchedule(context.Background(), model.WakapiIntervalLast30Days, "Monthly Report") },
 		},
