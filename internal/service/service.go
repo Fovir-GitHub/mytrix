@@ -11,6 +11,7 @@ import (
 type Service struct {
 	Gotify  *GotifyService
 	Message *MessageService
+	Umami   UmamiService
 	Wakapi  WakapiService
 }
 
@@ -19,6 +20,7 @@ func NewService(httpClient *http.Client, matrixClient *matrix.Client, schedulerC
 	return &Service{
 		Gotify:  newGotifyService(),
 		Message: newMessageService(matrixClient),
+		Umami:   newUmamiService(httpClient),
 		Wakapi:  newWakapiService(httpClient, schedulerClient),
 	}
 }
