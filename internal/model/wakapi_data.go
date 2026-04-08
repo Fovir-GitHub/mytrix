@@ -18,22 +18,27 @@ type dataView struct {
 	Total    string
 }
 
+func (wd WakapiData) toView() *dataView {
+	lang := generateLangReport(wd.Langs)
+	return &dataView{
+		Interval: wd.ReadableInterval,
+		Lang:     lang,
+		Total:    wd.TotalTime,
+	}
+}
+
 func (wd WakapiData) ToMarkdown() string {
 	var buf bytes.Buffer
-	langReport := generateLangReport(wd.Langs)
-	if err := wakapiDataTmpl.Execute(&buf, dataView{
-		Interval: wd.ReadableInterval,
-		Lang:     langReport,
-		Total:    wd.TotalTime,
-	}); err != nil {
+	view := wd.toView()
+	if err := wakapiDataTmpl.Execute(&buf, view); err != nil {
 		slog.Error(
 			"wakapi data to markdown failed",
-			"interval", wd.ReadableInterval,
-			"langReport", langReport,
-			"total", wd.TotalTime,
+			"interval", view.Interval,
+			"lang", view.Lang,
+			"total", view.Total,
 			"err", err,
 		)
-		return fmt.Sprintf("Interval: %s\nLang Report: %s\nTotal: %s\n", wd.ReadableInterval, langReport, wd.TotalTime)
+		return fmt.Sprintf("Interval: %s\nLang Report: %s\nTotal: %s\n", view.Interval, view.Lang, view.Total)
 	}
 	return buf.String()
 }
