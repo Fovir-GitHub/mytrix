@@ -41,13 +41,16 @@ func (wl WakapiLanguage) ToMarkdown() string {
 
 func generateLangReport(langs []WakapiLanguage) string {
 	if len(langs) <= 0 {
+		slog.Warn("no lanuage found, return empty report", "len", len(langs))
 		return ""
 	}
 
-	var msg string
+	var msg strings.Builder
+	msg.WriteString("```text\n")
 	for _, lang := range langs {
-		msg += (lang.ToMarkdown() + "\n")
+		msg.WriteString(lang.ToMarkdown())
+		msg.WriteString("\n")
 	}
-	msg = strings.TrimSpace(msg)
-	return "```text\n" + msg + "\n```"
+	msg.WriteString("```")
+	return msg.String()
 }
