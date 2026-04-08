@@ -3,6 +3,7 @@ package config
 import (
 	"errors"
 	"fmt"
+	"slices"
 )
 
 type WakapiConfig struct {
@@ -48,6 +49,25 @@ func (mc *MytrixConfig) validateWakapi() error {
 		err := fmt.Errorf("MYTRIX_WAKAPI_SERVER and MYTRIX_WAKAPI_API_KEY are required when MYTRIX_WAKAPI_ENABLED=true")
 		errs = append(errs, err)
 	}
+	if !validateWakapiInterval(cfg.DefaultInterval) {
+		errs = append(errs, fmt.Errorf("invalid default wakapi interval: %s", cfg.DefaultInterval))
+	}
 	errs = append(errs, mc.validateCrons(crons))
 	return errors.Join(errs...)
+}
+
+func validateWakapiInterval(interval string) bool {
+	valid := []string{
+		"today",
+		"yesterday",
+		"weekly",
+		"monthly",
+		"yearly",
+		"7d",
+		"30d",
+		"6m",
+		"12m",
+		"1y",
+	}
+	return slices.Contains(valid, interval)
 }
