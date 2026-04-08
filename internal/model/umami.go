@@ -28,7 +28,12 @@ type UmamiWebsiteView struct {
 }
 
 func (u *UmamiWebsite) toView() *UmamiWebsiteView {
-	bouncesRate := fmt.Sprintf("%.2f%%", float64(u.Stat.Bounces)/float64(u.Stat.Visits)*100)
+	var bouncesRate string
+	if u.Stat.Visits == 0 {
+		bouncesRate = "0%"
+	} else {
+		bouncesRate = fmt.Sprintf("%.2f%%", float64(u.Stat.Bounces)/float64(u.Stat.Visits)*100)
+	}
 
 	return &UmamiWebsiteView{
 		Name:        u.Name,
