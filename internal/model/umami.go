@@ -19,7 +19,7 @@ type UmamiWebsiteStat struct {
 	Bounces  int `json:"bounces"`
 }
 
-type UmamiWebsiteView struct {
+type umamiWebsiteView struct {
 	Name        string
 	Domain      string
 	Visitors    int
@@ -27,7 +27,7 @@ type UmamiWebsiteView struct {
 	BouncesRate string
 }
 
-func (u *UmamiWebsite) toView() *UmamiWebsiteView {
+func (u *UmamiWebsite) toView() *umamiWebsiteView {
 	var bouncesRate string
 	if u.Stat.Visits == 0 {
 		bouncesRate = "0%"
@@ -35,7 +35,7 @@ func (u *UmamiWebsite) toView() *UmamiWebsiteView {
 		bouncesRate = fmt.Sprintf("%.2f%%", float64(u.Stat.Bounces)/float64(u.Stat.Visits)*100)
 	}
 
-	return &UmamiWebsiteView{
+	return &umamiWebsiteView{
 		Name:        u.Name,
 		Domain:      u.Domain,
 		Visitors:    u.Stat.Visitors,
