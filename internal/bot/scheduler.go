@@ -7,8 +7,15 @@ import (
 )
 
 func (b *Bot) registerScheduler() {
+	jobList := []func() []scheduler.ScheduledJob{
+		b.Handler.WakapiScheduleList,
+		b.Handler.UmamiScheduleList,
+	}
+
 	var jobs []scheduler.ScheduledJob
-	jobs = append(jobs, b.Handler.WakapiScheduleList()...)
+	for _, l := range jobList {
+		jobs = append(jobs, l()...)
+	}
 	for _, j := range jobs {
 		b.Scheduler.Register(j.Cron, j.Job)
 	}
