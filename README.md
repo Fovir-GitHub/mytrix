@@ -26,7 +26,7 @@ Create a `compose.yml` file:
 ```yaml
 services:
   mytrix:
-    image: ghcr.io/fovir-github/mytrix:main
+    image: ghcr.io/fovir-github/mytrix:latest
     container_name: mytrix
     volumes:
       - ./mytrix:/data
@@ -101,7 +101,7 @@ All configuration is done via environment variables.
 | `MYTRIX_WAKAPI_LANG_FORMAT`         | Template of language format     | see [internal/config/wakapi.go](./internal/config/wakapi.go) |
 | `MYTRIX_WAKAPI_DATA_FORMAT`         | Template of Wakapi data format  | see [internal/config/wakapi.go](./internal/config/wakapi.go) |
 
-> _Tip:_ To disable daily, monthly, or yearly report, the cron can be set to `0 0 31 2 *` so it will not be triggered.
+> _Tip:_ To disable reports, the cron can be set to `0 0 31 2 *` so it will not be triggered.
 
 ### Umami Configuration
 
@@ -118,7 +118,7 @@ All configuration is done via environment variables.
 | `MYTRIX_UMAMI_MONTHLY_REPORT_CRON` | Time to send monthly report                                     | `0 9 1 * *`                                                |
 | `MYTRIX_UMAMI_YEARLY_REPORT_CRON`  | Time to send yearly report                                      | `0 9 1 1 *`                                                |
 
-> _Tip:_ To disable daily, monthly, or yearly report, the cron can be set to `0 0 31 2 *` so it will not be triggered.
+> _Tip:_ To disable reports, the cron can be set to `0 0 31 2 *` so it will not be triggered.
 
 ## Development
 
