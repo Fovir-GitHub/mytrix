@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"fmt"
 	"log/slog"
 
 	"github.com/Fovir-GitHub/mytrix/internal/matrix"
@@ -27,11 +26,7 @@ func (s *MessageService) Reply(ctx context.Context, roomID id.RoomID, text strin
 }
 
 func (s *MessageService) Ping(ctx context.Context, evt *event.Event) error {
-	err := s.Reply(ctx, evt.RoomID, "pong")
-	if err != nil {
-		return fmt.Errorf("ping failed: %w", err)
-	}
-	return nil
+	return s.Reply(ctx, evt.RoomID, "pong")
 }
 
 func (s *MessageService) UserID() id.UserID {

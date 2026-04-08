@@ -46,14 +46,7 @@ func getUmamiInterval(msg string) *model.UmamiInterval {
 func (h *Handler) handleUmamiSchedule(ctx context.Context, interval *model.UmamiInterval) {
 	roomID := config.Config.RoomID
 	report := h.service.Umami.FetchReport(interval)
-	if err := h.service.Message.Reply(ctx, id.RoomID(roomID), report); err != nil {
-		slog.Error(
-			"send message failed",
-			"report", report,
-			"roomID", roomID,
-			"err", err,
-		)
-	}
+	_ = h.service.Message.Reply(ctx, id.RoomID(roomID), report)
 }
 
 func (h *Handler) UmamiScheduleList() []scheduler.ScheduledJob {
