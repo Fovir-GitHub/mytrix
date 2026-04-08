@@ -1,6 +1,11 @@
 package model
 
-import "time"
+import (
+	"fmt"
+	"log/slog"
+	"strings"
+	"time"
+)
 
 type UmamiInterval struct {
 	Start time.Time
@@ -52,4 +57,20 @@ func UmamiIntervalLastYear() *UmamiInterval {
 		Start: getStartDate(&lastYearStart),
 		End:   getEndDate(&lastYearEnd),
 	}
+}
+
+var UmamiIntervalMap = map[string]func() *UmamiInterval{
+	"daily":   UmamiIntervalYesterday,
+	"weekly":  UmamiIntervalLastWeek,
+	"monthly": UmamiIntervalLastMonth,
+	"yearly":  UmamiIntervalLastYear,
+}
+
+func ParseUmamiInterval(s string) (*UmamiInterval, error) {
+	k := strings.ToLower(strings.TrimSpace(s))
+	slog.Debug("parse umami interval", "original", s, "key", k)
+	if v, ok := UmamiIntervalMap[k]; ok {
+		return v(), nil
+	}
+	return nil, fmt.Errorf("invalid interval: %s", s)
 }
