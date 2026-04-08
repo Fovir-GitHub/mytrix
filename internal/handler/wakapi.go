@@ -27,6 +27,6 @@ func getWakapiInterval(msg string) (model.WakapiInterval, error) {
 		)
 		return model.WakapiInterval(defaultInterval), err
 	}
-	slog.Info("got wakapi interval", "interval", interval)
+	slog.Debug("got wakapi interval", "interval", interval)
 	return interval, nil
 }

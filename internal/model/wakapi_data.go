@@ -30,6 +30,7 @@ func (wd WakapiData) toView() *dataView {
 func (wd WakapiData) ToMarkdown() string {
 	var buf bytes.Buffer
 	view := wd.toView()
+	slog.Debug("wakapi data to view", "view", view)
 	if err := wakapiDataTmpl.Execute(&buf, view); err != nil {
 		slog.Error(
 			"wakapi data to markdown failed",

@@ -31,6 +31,7 @@ func newUmamiService(c *myhttp.Client) UmamiService {
 	cfg := config.Config.Umami
 	noop := &NoopUmamiService{err: fmt.Errorf("umami is not enabled")}
 	if !cfg.Enabled {
+		slog.Info("umami disabled")
 		return noop
 	}
 
@@ -51,6 +52,8 @@ func newUmamiService(c *myhttp.Client) UmamiService {
 }
 
 func (ru *RealUmamiService) fetchWebsites() ([]*model.UmamiWebsite, error) {
+	slog.Debug("fetch umami websites start")
+
 	var data struct {
 		Data []*model.UmamiWebsite `json:"data"`
 	}
@@ -75,10 +78,14 @@ func (ru *RealUmamiService) fetchWebsites() ([]*model.UmamiWebsite, error) {
 			return nil, fmt.Errorf("umami fetch websites failed: %w", err)
 		}
 	}
-	return data.Data, nil
+	websites := data.Data
+	slog.Debug("got umami websites", "len", len(websites))
+	return websites, nil
 }
 
 func (ru *RealUmamiService) fetchWebsiteStat(website *model.UmamiWebsite, interval *model.UmamiInterval) (*model.UmamiWebsiteStat, error) {
+	slog.Debug("fetch umami website stat begin", "name", website.Name)
+
 	var stat *model.UmamiWebsiteStat
 	const basePath = "/api/websites"
 	u := ru.createURL("")
@@ -97,10 +104,13 @@ func (ru *RealUmamiService) fetchWebsiteStat(website *model.UmamiWebsite, interv
 	if err := ru.c.DoJSON(req, &stat); err != nil {
 		return nil, fmt.Errorf("umami fetch website stat failed: %w", err)
 	}
+	slog.Debug("fetched umami website stat", "stat", stat)
 	return stat, nil
 }
 
 func (ru *RealUmamiService) fetchWebsiteData(interval *model.UmamiInterval) ([]*model.UmamiWebsite, error) {
+	slog.Debug("fetch umami website data begin")
+
 	websites, err := ru.fetchWebsites()
 	if err != nil {
 		return nil, fmt.Errorf("fetch umami websites failed: %w", err)
@@ -115,10 +125,12 @@ func (ru *RealUmamiService) fetchWebsiteData(interval *model.UmamiInterval) ([]*
 		w.Stat = stat
 		res = append(res, w)
 	}
+	slog.Debug("umami website data fetched", "len", len(res))
 	return res, nil
 }
 
 func (ru *RealUmamiService) FetchReport(interval *model.UmamiInterval) string {
+	slog.Debug("fetch umami report start", "interval", interval)
 	websites, err := ru.fetchWebsiteData(interval)
 	if err != nil {
 		slog.Error("fetch umami website data failed", "err", err)

@@ -15,10 +15,7 @@ func (h *Handler) registerWSHandler() {
 func (h *Handler) HandleWSEvent(ctx context.Context, event *model.WsEvent) error {
 	for name, handler := range h.events {
 		if event.Source == name {
-			slog.Debug(
-				"handle event",
-				"name", name,
-			)
+			slog.Debug("handle event", "name", name)
 			return handler(ctx, event)
 		}
 	}

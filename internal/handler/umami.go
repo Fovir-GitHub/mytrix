@@ -40,10 +40,12 @@ func getUmamiInterval(msg string) *model.UmamiInterval {
 		)
 		return defaultInterval
 	}
+	slog.Debug("got umami interval", "interval", interval)
 	return interval
 }
 
 func (h *Handler) handleUmamiSchedule(ctx context.Context, interval *model.UmamiInterval) {
+	slog.Debug("handle umami schedule", "interval", interval)
 	roomID := config.Config.RoomID
 	report := h.service.Umami.FetchReport(interval)
 	_ = h.service.Message.Reply(ctx, id.RoomID(roomID), report)

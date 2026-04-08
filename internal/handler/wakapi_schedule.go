@@ -14,7 +14,7 @@ func (h *Handler) handleWakapiSchedule(ctx context.Context, interval model.Wakap
 	roomID := config.Config.RoomID
 	report, err := h.service.Wakapi.FetchReport(interval)
 	if err != nil {
-		slog.Error("fetch wakapi report failed", "err", err)
+		slog.Error("fetch wakapi report failed", "interval", interval, "err", err)
 		return
 	}
 	_ = h.service.Message.Reply(ctx, id.RoomID(roomID), report)

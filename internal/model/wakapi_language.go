@@ -40,6 +40,7 @@ func (wl WakapiLanguage) ToMarkdown() string {
 }
 
 func generateLangReport(langs []WakapiLanguage) string {
+	slog.Debug("generate language report begin", "len", len(langs))
 	if len(langs) <= 0 {
 		slog.Warn("no lanuage found, return empty report", "len", len(langs))
 		return ""

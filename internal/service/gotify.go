@@ -16,6 +16,7 @@ func newGotifyService() *GotifyService {
 		slog.Info("gotify enabled")
 		return &GotifyService{}
 	}
+	slog.Info("gotify disabled")
 	return nil
 }
 

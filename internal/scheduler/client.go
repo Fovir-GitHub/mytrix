@@ -23,6 +23,7 @@ func NewScheduler() *Scheduler {
 }
 
 func (s *Scheduler) Start() {
+	slog.Info("start the scheduler")
 	s.c.Start()
 }
 
@@ -30,5 +31,7 @@ func (s *Scheduler) Register(t string, job func()) {
 	_, err := s.c.AddFunc(t, job)
 	if err != nil {
 		slog.Error("register schedule failed", "time", t, "err", err)
+		return
 	}
+	slog.Info("registered scheduler", "time", t)
 }

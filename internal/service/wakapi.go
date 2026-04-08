@@ -32,6 +32,7 @@ type RealWakapiService struct {
 func newWakapiService(c *http.Client, s *scheduler.Scheduler) WakapiService {
 	cfg := config.Config.Wakapi
 	if !cfg.Enabled {
+		slog.Info("wakapi disabled")
 		return &NoopWakapiService{
 			err: fmt.Errorf("wakapi is not enabled"),
 		}
@@ -55,6 +56,7 @@ func (w *NoopWakapiService) FetchReport(model.WakapiInterval) (string, error) {
 }
 
 func (w *RealWakapiService) fetchData(interval model.WakapiInterval) (*model.WakapiData, error) {
+	slog.Debug("fetch wakapi data start", "interval", string(interval))
 	var data struct {
 		Data model.WakapiData `json:"data"`
 	}
@@ -80,10 +82,12 @@ func (w *RealWakapiService) fetchData(interval model.WakapiInterval) (*model.Wak
 	if err := w.c.DoJSON(req, &data); err != nil {
 		return nil, fmt.Errorf("get json failed: %w", err)
 	}
+	slog.Debug("wakapi data fetched")
 	return &data.Data, nil
 }
 
 func (w *RealWakapiService) FetchReport(interval model.WakapiInterval) (string, error) {
+	slog.Debug("fetch wakapi report start", "interval", string(interval))
 	data, err := w.fetchData(interval)
 	if err != nil {
 		return "", fmt.Errorf("fetch wakapi data failed: %w", err)
