@@ -7,6 +7,7 @@ A Matrix bot written in Go.
 - Matrix bot functionality
 - [Gotify](https://gotify.net/) notification forwarding
 - [Wakapi](https://github.com/muety/wakapi) report generation.
+- [Umami](https://github.com/umami-software/umami) report generation.
 - End-to-end encryption support
 - Session persistence
 
@@ -99,6 +100,23 @@ All configuration is done via environment variables.
 | `MYTRIX_WAKAPI_YEARLY_REPORT_CRON`  | Time to send yearly report      | `0 9 1 1 *`                                                  |
 | `MYTRIX_WAKAPI_LANG_FORMAT`         | Template of language format     | see [internal/config/wakapi.go](./internal/config/wakapi.go) |
 | `MYTRIX_WAKAPI_DATA_FORMAT`         | Template of Wakapi data format  | see [internal/config/wakapi.go](./internal/config/wakapi.go) |
+
+> _Tip:_ To disable daily, monthly, or yearly report, the cron can be set to `0 0 31 2 *` so it will not be triggered.
+
+### Umami Configuration
+
+| Variable                           | Description                                                     | Default                                                    |
+| ---------------------------------- | --------------------------------------------------------------- | ---------------------------------------------------------- |
+| `MYTRIX_UMAMI_ENABLED`             | Enable Umami integration                                        | `false`                                                    |
+| `MYTRIX_UMAMI_SERVER`              | Server of Umami                                                 | required if `MYTRIX_UMAMI_ENABLED=true`                    |
+| `MYTRIX_UMAMI_USERNAME`            | Umami username                                                  | required if `MYTRIX_UMAMI_ENABLED=true`                    |
+| `MYTRIX_UMAMI_PASSWORD`            | Password of Umami user                                          | required if `MYTRIX_UMAMI_ENABLED=true`                    |
+| `MYTRIX_UMAMI_DEFAULT_INTERVAL`    | Default query interval when no argument passed to Umami command | `daily`                                                    |
+| `MYTRIX_UMAMI_FORMAT`              | Template of report format                                       | see [internal/config/umami.go](./internal/config/umami.go) |
+| `MYTRIX_UMAMI_DAILY_REPORT_CRON`   | Time to send daily report                                       | `0 9 * * *`                                                |
+| `MYTRIX_UMAMI_WEEKLY_REPORT_CRON`  | Time to send weekly report                                      | `0 9 * * 1`                                                |
+| `MYTRIX_UMAMI_MONTHLY_REPORT_CRON` | Time to send monthly report                                     | `0 9 1 * *`                                                |
+| `MYTRIX_UMAMI_YEARLY_REPORT_CRON`  | Time to send yearly report                                      | `0 9 1 1 *`                                                |
 
 > _Tip:_ To disable daily, monthly, or yearly report, the cron can be set to `0 0 31 2 *` so it will not be triggered.
 
