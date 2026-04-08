@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"fmt"
+	"log/slog"
 
 	"github.com/Fovir-GitHub/mytrix/internal/matrix"
 	"maunium.net/go/mautrix/event"
@@ -18,7 +19,11 @@ func newMessageService(c *matrix.Client) *MessageService {
 }
 
 func (s *MessageService) Reply(ctx context.Context, roomID id.RoomID, text string) error {
-	return s.client.SendTextMessage(ctx, roomID, text)
+	if err := s.client.SendTextMessage(ctx, roomID, text); err != nil {
+		slog.Error("send message failed", "roomID", roomID.String(), "text", text, "err", err)
+		return err
+	}
+	return nil
 }
 
 func (s *MessageService) Ping(ctx context.Context, evt *event.Event) error {
