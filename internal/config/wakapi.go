@@ -68,6 +68,7 @@ func validateWakapiInterval(interval string) bool {
 		"6m",
 		"12m",
 		"1y",
+		"all",
 	}
 	return slices.Contains(valid, interval)
 }

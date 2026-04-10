@@ -38,6 +38,7 @@ var wakapiIntervalMap = map[string]WakapiInterval{
 	"6m":        WakapiIntervalLast6Months,
 	"12m":       WakapiIntervalLast12Months,
 	"1y":        WakapiIntervalLastYear,
+	"all":       WakapiIntervalAllTime,
 }
 
 func ParseWakapiInterval(s string) (WakapiInterval, error) {
