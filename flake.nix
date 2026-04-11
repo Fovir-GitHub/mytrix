@@ -24,8 +24,10 @@
         gotools
         govulncheck
         just
+        litecli
         olm
         pre-commit
+        sqlite
       ];
 
       # Shell hooks.

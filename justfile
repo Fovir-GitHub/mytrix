@@ -5,3 +5,7 @@ run:
 lint:
   # Run lint.
   golangci-lint run
+
+db path:
+  # Exec into database.
+  litecli {{path}}
