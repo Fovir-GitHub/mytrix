@@ -10,6 +10,7 @@ import (
 	"github.com/Fovir-GitHub/mytrix/internal/http"
 	"github.com/Fovir-GitHub/mytrix/internal/model"
 	"github.com/Fovir-GitHub/mytrix/internal/scheduler"
+	"github.com/Fovir-GitHub/mytrix/internal/utils"
 )
 
 type WakapiService interface {
@@ -83,6 +84,11 @@ func (w *RealWakapiService) fetchData(interval model.WakapiInterval) (*model.Wak
 		return nil, fmt.Errorf("get json failed: %w", err)
 	}
 	slog.Debug("wakapi data fetched")
+
+	data.Data.Langs = utils.Filter(data.Data.Langs, func(lang *model.WakapiLanguage) bool {
+		return lang.Percent >= 0.01
+	})
+
 	return &data.Data, nil
 }
 
