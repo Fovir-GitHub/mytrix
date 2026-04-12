@@ -1,3 +1,11 @@
+/**
+Package config provides mytrix configuration settings and validations.
+
+All module-related configurations (e.g., Gotify, Umami, etc.), should provides a `validate` function to check whether the configuration is valid.
+
+If a module has schedulers, it should provides a cron list, and use `validateCrons` to validate its cron expressions.
+*/
+
 package config
 
 // Config holds the global configuration instance for the application.

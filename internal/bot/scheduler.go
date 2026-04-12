@@ -6,6 +6,9 @@ import (
 	"github.com/Fovir-GitHub/mytrix/internal/scheduler"
 )
 
+// registerScheduler registers schedulers from various modules by collecting scheduled jobs from
+// Wakapi and Umami handlers and registering them with the scheduler.
+// If a module has schedulers, it should provide a scheduler list and add it to jobList.
 func (b *Bot) registerScheduler() {
 	jobList := []func() []scheduler.ScheduledJob{
 		b.Handler.WakapiScheduleList,

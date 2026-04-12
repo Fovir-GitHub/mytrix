@@ -12,6 +12,8 @@ import (
 	"maunium.net/go/mautrix/id"
 )
 
+// handleUmamiCommand processes the !umami command from a Matrix event.
+// It extracts the interval from the message content, fetches the corresponding Umami report, and sends it to the room where the command was issued.
 func (h *Handler) handleUmamiCommand(ctx context.Context, evt *event.Event) error {
 	slog.Debug("handle umami command start")
 	interval := getUmamiInterval(evt.Content.AsMessage().Body)
@@ -19,6 +21,10 @@ func (h *Handler) handleUmamiCommand(ctx context.Context, evt *event.Event) erro
 	return h.service.Message.Reply(ctx, evt.RoomID, report)
 }
 
+// getUmamiInterval extracts the Umami interval from the given message string.
+// It splits the message into fields and checks the second field for a valid interval.
+// If no interval is provided or the provided interval is invalid, it falls back to
+// the configured default interval. It returns a pointer to the selected UmamiInterval.
 func getUmamiInterval(msg string) *model.UmamiInterval {
 	defaultInterval := model.UmamiIntervalMap[config.Config.Umami.DefaultInterval]()
 	slog.Debug("start getUmamiInterval", "defaultInterval", config.Config.Umami.DefaultInterval)
@@ -44,6 +50,8 @@ func getUmamiInterval(msg string) *model.UmamiInterval {
 	return interval
 }
 
+// handleUmamiSchedule handles scheduled Umami report generation and sending.
+// It fetches an Umami report for the specified interval and sends it to the configured Matrix room.
 func (h *Handler) handleUmamiSchedule(ctx context.Context, interval *model.UmamiInterval) {
 	slog.Debug("handle umami schedule", "interval", interval)
 	roomID := config.Config.RoomID
@@ -51,6 +59,9 @@ func (h *Handler) handleUmamiSchedule(ctx context.Context, interval *model.Umami
 	_ = h.service.Message.Reply(ctx, id.RoomID(roomID), report)
 }
 
+// UmamiScheduleList returns a list of scheduled jobs for Umami report generation.
+// It maps configured cron expressions to their corresponding interval functions,
+// creating scheduled jobs for daily, weekly, monthly, and yearly reports.
 func (h *Handler) UmamiScheduleList() []scheduler.ScheduledJob {
 	cfg := config.Config.Umami
 	m := map[string]func() *model.UmamiInterval{

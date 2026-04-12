@@ -13,15 +13,26 @@ import (
 	"github.com/Fovir-GitHub/mytrix/internal/utils"
 )
 
+// WakapiService interface defines methods for Wakapi service implementations.
+// It provides methods to fetch Wakapi data and generate reports.
 type WakapiService interface {
+	// fetchData retrieves Wakapi data for the given interval.
+	// It returns the WakapiData and any error encountered.
 	fetchData(model.WakapiInterval) (*model.WakapiData, error)
+
+	// FetchReport generates a formatted report for the given Wakapi interval.
+	// It returns the report as a string and any error encountered.
 	FetchReport(model.WakapiInterval) (string, error)
 }
 
+// NoopWakapiService is a WakapiService implementation that returns errors.
+// It is used when Wakapi is disabled in the configuration.
 type NoopWakapiService struct {
 	err error
 }
 
+// RealWakapiService implements WakapiService for real Wakapi API interactions.
+// It holds the HTTP client, server configuration, API key, user ID, and scheduler.
 type RealWakapiService struct {
 	c      *http.Client
 	server string
@@ -30,6 +41,9 @@ type RealWakapiService struct {
 	s      *scheduler.Scheduler
 }
 
+// newWakapiService creates a WakapiService based on configuration.
+// If Wakapi is enabled, it returns a RealWakapiService; otherwise, it returns a NoopWakapiService.
+// It takes an HTTP client and scheduler as dependencies.
 func newWakapiService(c *http.Client, s *scheduler.Scheduler) WakapiService {
 	cfg := config.Config.Wakapi
 	if !cfg.Enabled {
@@ -48,14 +62,22 @@ func newWakapiService(c *http.Client, s *scheduler.Scheduler) WakapiService {
 	}
 }
 
+// fetchData returns nil and the stored error for any interval.
+// It is used when Wakapi is disabled to simulate a service failure.
 func (w *NoopWakapiService) fetchData(model.WakapiInterval) (*model.WakapiData, error) {
 	return nil, w.err
 }
 
+// FetchReport returns an empty string and the stored error for any interval.
+// It is used when Wakapi is disabled to simulate a service failure.
 func (w *NoopWakapiService) FetchReport(model.WakapiInterval) (string, error) {
 	return "", w.err
 }
 
+// fetchData retrieves Wakapi data for the specified interval from the Wakapi API.
+// It constructs the request URL, adds authentication, and processes the response.
+// Language data is filtered to only include entries with percentage >= 0.01%.
+// Returns the WakapiData and any error encountered during the process.
 func (w *RealWakapiService) fetchData(interval model.WakapiInterval) (*model.WakapiData, error) {
 	slog.Debug("fetch wakapi data start", "interval", string(interval))
 	var data struct {
@@ -92,6 +114,9 @@ func (w *RealWakapiService) fetchData(interval model.WakapiInterval) (*model.Wak
 	return &data.Data, nil
 }
 
+// FetchReport generates a formatted report for the given Wakapi interval.
+// It fetches the Wakapi data and converts it to markdown format.
+// Returns the formatted report string and any error encountered.
 func (w *RealWakapiService) FetchReport(interval model.WakapiInterval) (string, error) {
 	slog.Debug("fetch wakapi report start", "interval", string(interval))
 	data, err := w.fetchData(interval)

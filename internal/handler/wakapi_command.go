@@ -1,3 +1,4 @@
+// Package handler handles incoming events and commands.
 package handler
 
 import (
@@ -8,6 +9,9 @@ import (
 	"maunium.net/go/mautrix/event"
 )
 
+// handleWakapiCommand processes the !wakapi command from a Matrix event.
+// It extracts the time interval from the message content, fetches the corresponding Wakapi report, and sends it to the room where the command was issued.
+// If the interval cannot be parsed, it sends the error message back to the room.
 func (h *Handler) handleWakapiCommand(ctx context.Context, evt *event.Event) error {
 	interval, err := getWakapiInterval(evt.Content.AsMessage().Body)
 	if err != nil {

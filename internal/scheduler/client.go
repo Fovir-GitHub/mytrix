@@ -1,3 +1,5 @@
+// Package scheduler provides job scheduling functionality.
+// It uses the robfig/cron library to schedule and execute jobs.
 package scheduler
 
 import (

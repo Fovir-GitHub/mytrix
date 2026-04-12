@@ -1,3 +1,5 @@
+// Package crypto provides functions for setting up cryptographic support in the bot.
+// It handles encryption setup for Matrix client sessions.
 package crypto
 
 import (
@@ -11,8 +13,9 @@ import (
 	"maunium.net/go/mautrix/crypto/cryptohelper"
 )
 
-// setupCryptoHelper creates and initializes a new CryptoHelper for the Matrix client.
-// It sets up encryption support using the provided pickle key and database path.
+// SetupCryptoHelper sets up and returns a new CryptoHelper for the given Matrix client.
+// It initializes encryption support using the configured pickle key and stores the database
+// in the bot's data directory. The caller is responsible for managing the helper's lifecycle.
 func SetupCryptoHelper(client *mautrix.Client) (*cryptohelper.CryptoHelper, error) {
 	dbPath := filepath.Join(config.Config.Datadir, "crypto.db")
 	helper, err := cryptohelper.NewCryptoHelper(client, []byte(config.Config.Bot.PickleKey), dbPath)

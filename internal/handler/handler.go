@@ -1,3 +1,4 @@
+// Package handler handles incoming events and commands.
 package handler
 
 import (
@@ -17,6 +18,8 @@ type Handler struct {
 	startTime time.Time
 }
 
+// NewHandler returns a new Handler with the given service.
+// It initializes the command and event maps and registers handlers.
 func NewHandler(s *service.Service) *Handler {
 	slog.Debug("create handler")
 	h := &Handler{

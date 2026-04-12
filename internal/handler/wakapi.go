@@ -1,3 +1,4 @@
+// Package handler handles incoming events and commands.
 package handler
 
 import (
@@ -8,6 +9,11 @@ import (
 	"github.com/Fovir-GitHub/mytrix/internal/model"
 )
 
+// getWakapiInterval extracts the Wakapi interval from the given message string.
+// It splits the message into fields and checks the second field for a valid interval.
+// If no interval is provided or the provided interval is invalid, it falls back to
+// the configured default interval. It returns the interval and an error if parsing fails,
+// otherwise it returns the interval and nil.
 func getWakapiInterval(msg string) (model.WakapiInterval, error) {
 	defaultInterval := config.Config.Wakapi.DefaultInterval
 	parts := strings.Fields(msg)

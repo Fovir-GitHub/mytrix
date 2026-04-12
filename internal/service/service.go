@@ -1,3 +1,4 @@
+// Package service contains service implementations for various integrations.
 package service
 
 import (

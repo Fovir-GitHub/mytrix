@@ -19,6 +19,9 @@ type langView struct {
 	Percent string
 }
 
+// ToMarkdown returns the WakapiLanguage formatted as a markdown string.
+// It formats the language name, text, and percentage using a template.
+// If template execution fails, it falls back to a tab-separated string representation.
 func (wl WakapiLanguage) ToMarkdown() string {
 	var buf bytes.Buffer
 	percent := fmt.Sprintf("%.2f%%", wl.Percent)

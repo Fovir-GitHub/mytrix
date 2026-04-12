@@ -8,6 +8,8 @@ import (
 
 type WakapiInterval string
 
+// Wakapi interval constants representing different time periods for data retrieval.
+// These constants map to the API endpoint paths used by Wakapi.
 const (
 	WakapiIntervalToday        WakapiInterval = "today"
 	WakapiIntervalYesterday    WakapiInterval = "yesterday"
@@ -27,6 +29,9 @@ const (
 	WakapiIntervalAllTime      WakapiInterval = "all_time"
 )
 
+// wakapiIntervalMap maps string representations to WakapiInterval constants.
+// It is used to parse user-provided interval strings into the correct enum values.
+// Note: "monthly" maps to 30 days, and various shorthand notations map to their full representations.
 var wakapiIntervalMap = map[string]WakapiInterval{
 	"today":     WakapiIntervalToday,
 	"yesterday": WakapiIntervalYesterday,
@@ -41,6 +46,10 @@ var wakapiIntervalMap = map[string]WakapiInterval{
 	"all":       WakapiIntervalAllTime,
 }
 
+// ParseWakapiInterval parses the given string into a WakapiInterval constant.
+// It converts the input to lowercase and trims spaces before looking it up in the interval map.
+// If the string matches a known interval, it returns the corresponding WakapiInterval value.
+// Otherwise, it returns an error indicating an invalid interval.
 func ParseWakapiInterval(s string) (WakapiInterval, error) {
 	k := strings.ToLower(strings.TrimSpace(s))
 	slog.Debug("parse wakapi interval", "original", s, "key", k)

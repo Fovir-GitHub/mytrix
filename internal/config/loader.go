@@ -9,6 +9,7 @@ import (
 	"github.com/caarlos0/env/v11"
 )
 
+// Load loads the configuration from environment variables, returning an error if unsuccessful.
 func Load() error {
 	Config = &MytrixConfig{}
 
@@ -21,6 +22,9 @@ func Load() error {
 	return Config.validate()
 }
 
+// SetTimeZone sets the bot's timezone from the environment variable.
+// It loads the specified timezone and assigns it to time.Local, falling back to the
+// local timezone if the specified timezone is invalid.
 func SetTimeZone() {
 	tz := Config.TZ
 	if tz != "" {

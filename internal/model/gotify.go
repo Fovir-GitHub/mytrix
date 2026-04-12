@@ -21,6 +21,9 @@ type gotifyView struct {
 	Date    string
 }
 
+// ToMarkdown returns the GotifyMessage formatted as a markdown string.
+// It formats the message title, content, ID, and date using a template.
+// If template execution fails, it falls back to a formatted string representation.
 func (g GotifyMessage) ToMarkdown() string {
 	var buf bytes.Buffer
 	date := g.Date.Format("2006-01-02 15:04:05")

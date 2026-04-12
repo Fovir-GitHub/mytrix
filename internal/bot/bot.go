@@ -1,3 +1,4 @@
+// Package bot contains bot-related functionality.
 package bot
 
 import (
@@ -8,7 +9,7 @@ import (
 	"github.com/Fovir-GitHub/mytrix/internal/crypto"
 	"github.com/Fovir-GitHub/mytrix/internal/handler"
 	myhttp "github.com/Fovir-GitHub/mytrix/internal/http"
-	clientpkg "github.com/Fovir-GitHub/mytrix/internal/matrix"
+	"github.com/Fovir-GitHub/mytrix/internal/matrix"
 	"github.com/Fovir-GitHub/mytrix/internal/scheduler"
 	"github.com/Fovir-GitHub/mytrix/internal/service"
 	"github.com/Fovir-GitHub/mytrix/internal/ws"
@@ -18,7 +19,7 @@ import (
 
 // Bot represents a Matrix bot client with sync and encryption support.
 type Bot struct {
-	Client    *clientpkg.Client
+	Client    *matrix.Client
 	WsManager *ws.Manager
 	Syncer    *mautrix.DefaultSyncer
 	Ready     chan struct{}
@@ -26,9 +27,9 @@ type Bot struct {
 	Scheduler *scheduler.Scheduler
 }
 
-// New creates and initializes a `Bot` instance.
+// New creates and initializes a Bot instance.
 // It sets up the Matrix client, syncer, and encryption helper.
-// After creation, call `Start()` to begin syncing.
+// After creation, call Start() to begin syncing.
 func New() (*Bot, error) {
 	slog.Debug("new bot start")
 
@@ -46,7 +47,7 @@ func New() (*Bot, error) {
 	}
 	client.Crypto = cryptoHelper
 
-	matrixClient := clientpkg.New(client)
+	matrixClient := matrix.New(client)
 	http := myhttp.New()
 	scheduler := scheduler.NewScheduler()
 	service := service.NewService(http, matrixClient, scheduler)
@@ -69,6 +70,9 @@ func New() (*Bot, error) {
 	return bot, nil
 }
 
+// Start begins the bot's operation.
+// It starts the scheduler, Matrix sync, and WebSocket event handling.
+// The function blocks until the context is cancelled.
 func (b *Bot) Start(ctx context.Context) error {
 	b.Scheduler.Start()
 
@@ -110,6 +114,8 @@ func (b *Bot) Start(ctx context.Context) error {
 	return ctx.Err()
 }
 
+// registerHandler registers the command handler for Matrix message events by setting up
+// the syncer to call HandleCommand when a message event is received.
 func (b *Bot) registerHandler() {
 	b.Syncer.OnEventType(event.EventMessage, b.Handler.HandleCommand)
 }
