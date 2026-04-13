@@ -3,7 +3,7 @@ package service
 import (
 	"testing"
 
-	"github.com/Fovir-GitHub/mytrix/internal/model"
+	"codeberg.org/Fovir/mytrix/internal/model"
 )
 
 func TestGotifyService_HandleEvent(t *testing.T) {

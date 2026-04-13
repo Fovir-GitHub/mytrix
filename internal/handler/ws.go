@@ -4,7 +4,7 @@ import (
 	"context"
 	"log/slog"
 
-	"github.com/Fovir-GitHub/mytrix/internal/model"
+	"codeberg.org/Fovir/mytrix/internal/model"
 )
 
 // registerWSHandler registers WebSocket event handlers mapping event sources to their respective handler functions.

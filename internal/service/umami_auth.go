@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"net/url"
 
-	myhttp "github.com/Fovir-GitHub/mytrix/internal/http"
+	myhttp "codeberg.org/Fovir/mytrix/internal/http"
 )
 
 func (ru *RealUmamiService) createURL(path string) *url.URL {

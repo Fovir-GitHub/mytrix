@@ -6,10 +6,10 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/Fovir-GitHub/mytrix/internal/bot"
-	"github.com/Fovir-GitHub/mytrix/internal/config"
-	"github.com/Fovir-GitHub/mytrix/internal/logger"
-	"github.com/Fovir-GitHub/mytrix/internal/model"
+	"codeberg.org/Fovir/mytrix/internal/bot"
+	"codeberg.org/Fovir/mytrix/internal/config"
+	"codeberg.org/Fovir/mytrix/internal/logger"
+	"codeberg.org/Fovir/mytrix/internal/model"
 	_ "maunium.net/go/mautrix/crypto/goolm"
 )
 

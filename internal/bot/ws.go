@@ -4,8 +4,8 @@ package bot
 import (
 	"net/url"
 
-	"github.com/Fovir-GitHub/mytrix/internal/config"
-	"github.com/Fovir-GitHub/mytrix/internal/model"
+	"codeberg.org/Fovir/mytrix/internal/config"
+	"codeberg.org/Fovir/mytrix/internal/model"
 )
 
 // registerWs registers the Gotify WebSocket with the manager if Gotify is enabled in the configuration.

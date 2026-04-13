@@ -1,4 +1,4 @@
-module github.com/Fovir-GitHub/mytrix
+module codeberg.org/Fovir/mytrix
 
 go 1.25.7
 

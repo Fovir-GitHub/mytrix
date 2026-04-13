@@ -4,9 +4,9 @@ package service
 import (
 	"log/slog"
 
-	"github.com/Fovir-GitHub/mytrix/internal/http"
-	"github.com/Fovir-GitHub/mytrix/internal/matrix"
-	"github.com/Fovir-GitHub/mytrix/internal/scheduler"
+	"codeberg.org/Fovir/mytrix/internal/http"
+	"codeberg.org/Fovir/mytrix/internal/matrix"
+	"codeberg.org/Fovir/mytrix/internal/scheduler"
 )
 
 type Service struct {

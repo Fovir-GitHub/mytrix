@@ -5,7 +5,7 @@ package feed
 import (
 	"fmt"
 
-	"github.com/Fovir-GitHub/mytrix/internal/model"
+	"codeberg.org/Fovir/mytrix/internal/model"
 	"github.com/mmcdole/gofeed"
 )
 

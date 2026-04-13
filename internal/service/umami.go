@@ -5,9 +5,9 @@ import (
 	"log/slog"
 	"strings"
 
-	"github.com/Fovir-GitHub/mytrix/internal/config"
-	myhttp "github.com/Fovir-GitHub/mytrix/internal/http"
-	"github.com/Fovir-GitHub/mytrix/internal/model"
+	"codeberg.org/Fovir/mytrix/internal/config"
+	myhttp "codeberg.org/Fovir/mytrix/internal/http"
+	"codeberg.org/Fovir/mytrix/internal/model"
 )
 
 // UmamiService interface defines methods for Umami service implementations.

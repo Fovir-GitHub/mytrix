@@ -4,7 +4,7 @@ import (
 	"log/slog"
 	"text/template"
 
-	"github.com/Fovir-GitHub/mytrix/internal/config"
+	"codeberg.org/Fovir/mytrix/internal/config"
 )
 
 var (

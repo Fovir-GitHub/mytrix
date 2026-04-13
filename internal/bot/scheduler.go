@@ -3,7 +3,7 @@ package bot
 import (
 	"log/slog"
 
-	"github.com/Fovir-GitHub/mytrix/internal/scheduler"
+	"codeberg.org/Fovir/mytrix/internal/scheduler"
 )
 
 // registerScheduler registers schedulers from various modules by collecting scheduled jobs from

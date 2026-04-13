@@ -4,7 +4,7 @@ import (
 	"context"
 	"log/slog"
 
-	"github.com/Fovir-GitHub/mytrix/internal/matrix"
+	"codeberg.org/Fovir/mytrix/internal/matrix"
 	"maunium.net/go/mautrix/event"
 	"maunium.net/go/mautrix/id"
 )

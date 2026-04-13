@@ -5,9 +5,9 @@ import (
 	"log/slog"
 	"strings"
 
-	"github.com/Fovir-GitHub/mytrix/internal/config"
-	"github.com/Fovir-GitHub/mytrix/internal/model"
-	"github.com/Fovir-GitHub/mytrix/internal/scheduler"
+	"codeberg.org/Fovir/mytrix/internal/config"
+	"codeberg.org/Fovir/mytrix/internal/model"
+	"codeberg.org/Fovir/mytrix/internal/scheduler"
 	"maunium.net/go/mautrix/event"
 	"maunium.net/go/mautrix/id"
 )

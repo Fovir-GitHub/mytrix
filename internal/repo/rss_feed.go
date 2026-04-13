@@ -1,7 +1,7 @@
 package repo
 
 import (
-	"github.com/Fovir-GitHub/mytrix/internal/model"
+	"codeberg.org/Fovir/mytrix/internal/model"
 	"gorm.io/gorm"
 )
 

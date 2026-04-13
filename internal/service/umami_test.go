@@ -4,7 +4,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/Fovir-GitHub/mytrix/internal/config"
+	"codeberg.org/Fovir/mytrix/internal/config"
 )
 
 func TestNewUmamiService_Disabled(t *testing.T) {

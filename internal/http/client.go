@@ -11,7 +11,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/Fovir-GitHub/mytrix/internal/config"
+	"codeberg.org/Fovir/mytrix/internal/config"
 )
 
 // Client is a wrapper around *http.Client with timeout configuration and logging.

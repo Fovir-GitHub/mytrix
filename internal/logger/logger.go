@@ -4,7 +4,7 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/Fovir-GitHub/mytrix/internal/config"
+	"codeberg.org/Fovir/mytrix/internal/config"
 	"github.com/lmittmann/tint"
 )
 

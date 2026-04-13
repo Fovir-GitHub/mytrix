@@ -5,8 +5,8 @@ import (
 	"log/slog"
 	"strings"
 
-	"github.com/Fovir-GitHub/mytrix/internal/config"
-	"github.com/Fovir-GitHub/mytrix/internal/model"
+	"codeberg.org/Fovir/mytrix/internal/config"
+	"codeberg.org/Fovir/mytrix/internal/model"
 )
 
 // getWakapiInterval extracts the Wakapi interval from the given message string.

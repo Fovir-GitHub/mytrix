@@ -5,7 +5,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Fovir-GitHub/mytrix/internal/config"
+	"codeberg.org/Fovir/mytrix/internal/config"
 	"github.com/gorilla/websocket"
 )
 

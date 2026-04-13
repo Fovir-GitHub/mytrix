@@ -3,7 +3,7 @@ package logger
 import (
 	"testing"
 
-	"github.com/Fovir-GitHub/mytrix/internal/config"
+	"codeberg.org/Fovir/mytrix/internal/config"
 	"log/slog"
 )
 

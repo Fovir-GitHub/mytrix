@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/Fovir-GitHub/mytrix/internal/config"
-	"github.com/Fovir-GitHub/mytrix/internal/storage"
+	"codeberg.org/Fovir/mytrix/internal/config"
+	"codeberg.org/Fovir/mytrix/internal/storage"
 	"maunium.net/go/mautrix"
 	"maunium.net/go/mautrix/id"
 )

@@ -6,8 +6,8 @@ import (
 	"log/slog"
 	"time"
 
-	"github.com/Fovir-GitHub/mytrix/internal/model"
-	"github.com/Fovir-GitHub/mytrix/internal/service"
+	"codeberg.org/Fovir/mytrix/internal/model"
+	"codeberg.org/Fovir/mytrix/internal/service"
 	"maunium.net/go/mautrix/event"
 )
 

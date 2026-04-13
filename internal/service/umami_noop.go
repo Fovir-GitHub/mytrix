@@ -1,7 +1,7 @@
 package service
 
 import (
-	"github.com/Fovir-GitHub/mytrix/internal/model"
+	"codeberg.org/Fovir/mytrix/internal/model"
 )
 
 type NoopUmamiService struct {

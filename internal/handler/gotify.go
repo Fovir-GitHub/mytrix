@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/Fovir-GitHub/mytrix/internal/config"
-	"github.com/Fovir-GitHub/mytrix/internal/model"
+	"codeberg.org/Fovir/mytrix/internal/config"
+	"codeberg.org/Fovir/mytrix/internal/model"
 	"maunium.net/go/mautrix/id"
 )
 

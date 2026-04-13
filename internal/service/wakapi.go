@@ -6,11 +6,11 @@ import (
 	"log/slog"
 	"net/url"
 
-	"github.com/Fovir-GitHub/mytrix/internal/config"
-	"github.com/Fovir-GitHub/mytrix/internal/http"
-	"github.com/Fovir-GitHub/mytrix/internal/model"
-	"github.com/Fovir-GitHub/mytrix/internal/scheduler"
-	"github.com/Fovir-GitHub/mytrix/internal/utils"
+	"codeberg.org/Fovir/mytrix/internal/config"
+	"codeberg.org/Fovir/mytrix/internal/http"
+	"codeberg.org/Fovir/mytrix/internal/model"
+	"codeberg.org/Fovir/mytrix/internal/scheduler"
+	"codeberg.org/Fovir/mytrix/internal/utils"
 )
 
 // WakapiService interface defines methods for Wakapi service implementations.
