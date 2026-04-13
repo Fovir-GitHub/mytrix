@@ -9,3 +9,7 @@ lint:
 db path:
   # Exec into database.
   litecli {{path}}
+
+test:
+  # Run testings.
+  go test ./... -v
