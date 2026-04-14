@@ -26,7 +26,7 @@ Create a `compose.yml` file:
 ```yaml
 services:
   mytrix:
-    image: ghcr.io/fovir-github/mytrix:latest
+    image: fovir/mytrix:latest
     container_name: mytrix
     volumes:
       - ./mytrix:/data
