@@ -13,7 +13,7 @@ type MessageService struct {
 	client *matrix.Client
 }
 
-func newMessageService(c *matrix.Client) *MessageService {
+func NewMessageService(c *matrix.Client) *MessageService {
 	slog.Info("create message service")
 	return &MessageService{client: c}
 }

@@ -13,9 +13,9 @@ import (
 // It provides functionality to process and decode Gotify notifications.
 type GotifyService struct{}
 
-// newGotifyService creates a GotifyService based on the configuration.
+// NewGotifyService creates a GotifyService based on the configuration.
 // It returns a new GotifyService instance if Gotify is enabled, otherwise it returns nil.
-func newGotifyService() *GotifyService {
+func NewGotifyService() *GotifyService {
 	if config.Config.Gotify.Enabled {
 		slog.Info("gotify enabled")
 		return &GotifyService{}

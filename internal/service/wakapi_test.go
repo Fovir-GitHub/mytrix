@@ -21,7 +21,7 @@ func TestNewWakapiService_Disabled(t *testing.T) {
 	config.Config.Wakapi.Enabled = false
 	defer func() { config.Config.Wakapi.Enabled = originalEnabled }()
 
-	service := newWakapiService(nil, nil)
+	service := NewWakapiService(nil, nil)
 	if service == nil {
 		t.Fatalf("Expected non-nil service")
 	}
@@ -53,7 +53,7 @@ func TestNewWakapiService_Enabled(t *testing.T) {
 		config.Config.Wakapi.UserID = originalUserID
 	}()
 
-	service := newWakapiService(&http.Client{}, &scheduler.Scheduler{})
+	service := NewWakapiService(&http.Client{}, &scheduler.Scheduler{})
 	if service == nil {
 		t.Fatalf("Expected non-nil service")
 	}

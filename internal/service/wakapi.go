@@ -41,10 +41,10 @@ type RealWakapiService struct {
 	s      *scheduler.Scheduler
 }
 
-// newWakapiService creates a WakapiService based on configuration.
+// NewWakapiService creates a WakapiService based on configuration.
 // If Wakapi is enabled, it returns a RealWakapiService; otherwise, it returns a NoopWakapiService.
 // It takes an HTTP client and scheduler as dependencies.
-func newWakapiService(c *http.Client, s *scheduler.Scheduler) WakapiService {
+func NewWakapiService(c *http.Client, s *scheduler.Scheduler) WakapiService {
 	cfg := config.Config.Wakapi
 	if !cfg.Enabled {
 		slog.Info("wakapi disabled")

@@ -47,10 +47,29 @@ func New() (*Bot, error) {
 	}
 	client.Crypto = cryptoHelper
 
+	db, err := setupDB()
+	if err != nil {
+		return nil, fmt.Errorf("create database failed: %w", err)
+	}
+
 	matrixClient := matrix.New(client)
 	http := myhttp.New()
 	scheduler := scheduler.NewScheduler()
-	service := service.NewService(http, matrixClient, scheduler)
+
+	gotifySrv := service.NewGotifyService()
+	msgSrv := service.NewMessageService(matrixClient)
+	umamiSrv := service.NewUmamiService(http)
+	wakapiSrv := service.NewWakapiService(http, scheduler)
+	rssSrv := service.NewRSSService(db)
+
+	service := &service.Service{
+		Gotify:  gotifySrv,
+		Message: msgSrv,
+		Umami:   umamiSrv,
+		Wakapi:  wakapiSrv,
+		RSS:     rssSrv,
+	}
+
 	handler := handler.NewHandler(service)
 	wsManager := ws.NewManager()
 

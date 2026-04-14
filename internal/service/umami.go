@@ -40,7 +40,7 @@ type RealUmamiService struct {
 	password string
 }
 
-func newUmamiService(c *myhttp.Client) UmamiService {
+func NewUmamiService(c *myhttp.Client) UmamiService {
 	cfg := config.Config.Umami
 	noop := &NoopUmamiService{err: fmt.Errorf("umami is not enabled")}
 	if !cfg.Enabled {

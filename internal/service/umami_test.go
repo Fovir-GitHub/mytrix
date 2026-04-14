@@ -18,7 +18,7 @@ func TestNewUmamiService_Disabled(t *testing.T) {
 	config.Config.Umami.Enabled = false
 	defer func() { config.Config.Umami.Enabled = originalEnabled }()
 
-	service := newUmamiService(nil)
+	service := NewUmamiService(nil)
 	if service == nil {
 		t.Fatalf("Expected non-nil service")
 	}
