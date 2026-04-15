@@ -14,9 +14,10 @@ import (
 // If the interval cannot be parsed, it sends the error message back to the room.
 func (h *Handler) handleWakapiCommand(ctx context.Context, evt *event.Event) error {
 	interval, err := getWakapiInterval(evt.Content.AsMessage().Body)
+	reply := h.getReply(ctx, evt)
 	if err != nil {
 		slog.Error("get wakapi interval failed, reply errors", "err", err)
-		replyErr := h.service.Message.Reply(ctx, evt.RoomID, err.Error())
+		replyErr := reply(err.Error())
 		return errors.Join(err, replyErr)
 	}
 
@@ -25,5 +26,5 @@ func (h *Handler) handleWakapiCommand(ctx context.Context, evt *event.Event) err
 		slog.Error("fetch wakapi report failed", "err", err)
 		return err
 	}
-	return h.service.Message.Reply(ctx, evt.RoomID, report)
+	return reply(report)
 }
