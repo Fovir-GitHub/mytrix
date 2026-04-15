@@ -13,6 +13,7 @@ func (b *Bot) registerScheduler() {
 	jobList := []func() []scheduler.ScheduledJob{
 		b.Handler.WakapiScheduleList,
 		b.Handler.UmamiScheduleList,
+		b.Handler.RSSScheduleList,
 	}
 
 	var jobs []scheduler.ScheduledJob
