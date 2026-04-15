@@ -72,10 +72,10 @@ All configuration is done via environment variables.
 
 ### Message Configuration
 
-| Variable                    | Description                        | Example                     |
-| --------------------------- | ---------------------------------- | --------------------------- |
-| `MYTRIX_MSG_ALLOW_MARKDOWN` | Allow Markdown in message contents | `true` (default) or `false` |
-| `MYTRIX_MSG_ALLOW_HTML`     | Allow HTML in message contents     | `false` (default) or `true` |
+| Variable                    | Description                        | Default |
+| --------------------------- | ---------------------------------- | ------- |
+| `MYTRIX_MSG_ALLOW_MARKDOWN` | Allow Markdown in message contents | `true`  |
+| `MYTRIX_MSG_ALLOW_HTML`     | Allow HTML in message contents     | `false` |
 
 ### Gotify Configuration
 
