@@ -1,6 +1,8 @@
 package repo
 
 import (
+	"log/slog"
+
 	"codeberg.org/Fovir/mytrix/internal/model"
 	"gorm.io/gorm"
 )
@@ -21,4 +23,25 @@ func NewRSSFeedRepo(db *gorm.DB) *RSSFeedRepo {
 // It uses GORM's Create method and returns any error encountered.
 func (r *RSSFeedRepo) Create(feed *model.RSSFeed) error {
 	return r.db.Create(feed).Error
+}
+
+func (r *RSSFeedRepo) Delete(id int) error {
+	return r.db.Delete(&model.RSSFeed{}, id).Error
+}
+
+func (r *RSSFeedRepo) SelectFeedByID(id int) (*model.RSSFeed, error) {
+	var feed *model.RSSFeed
+	if err := r.db.First(&feed, id).Error; err != nil {
+		return nil, err
+	}
+	return feed, nil
+}
+
+func (r *RSSFeedRepo) AllFeeds() ([]model.RSSFeed, error) {
+	var feeds []model.RSSFeed
+	if err := r.db.Find(&feeds).Error; err != nil {
+		return nil, err
+	}
+	slog.Debug("fetch feeds", "len", len(feeds))
+	return feeds, nil
 }
