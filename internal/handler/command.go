@@ -13,6 +13,7 @@ func (h *Handler) registerCommands() {
 	h.commands["!ping"] = h.handlePing
 	h.commands["!umami"] = h.handleUmamiCommand
 	h.commands["!wakapi"] = h.handleWakapiCommand
+	h.commands["!rss"] = h.handleRSSCommand
 	slog.Info("commands registered")
 }
 
