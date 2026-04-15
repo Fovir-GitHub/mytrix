@@ -12,6 +12,7 @@ var (
 	wakapiLangTmpl *template.Template
 	wakapiDataTmpl *template.Template
 	umamiDataTmpl  *template.Template
+	rssItemTmpl    *template.Template
 )
 
 func InitTemplates() {
@@ -20,6 +21,7 @@ func InitTemplates() {
 	wakapiLangTmpl = createTmpl("wakapi_lang", cfg.Wakapi.LangFormat)
 	wakapiDataTmpl = createTmpl("wakapi_data", cfg.Wakapi.DataFormat)
 	umamiDataTmpl = createTmpl("umami_stat", cfg.Umami.Format)
+	rssItemTmpl = createTmpl("rss_item", cfg.RSS.Format)
 
 	slog.Info("templates initiailized")
 }
