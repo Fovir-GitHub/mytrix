@@ -28,19 +28,20 @@ func New() *Parser {
 func (p *Parser) ParseURL(u string) (*model.RSSFeed, []model.RSSItem, error) {
 	feed, err := p.p.ParseURL(u)
 	if err != nil {
-		return nil, nil, fmt.Errorf("parse url %s failed: %w", u, err)
+		return nil, nil, fmt.Errorf("parse url failed (url=%s): %w", u, err)
 	}
 
-	var rssItems []model.RSSItem
-	items := feed.Items
-	for _, item := range items {
-		rssItem := model.RSSItem{
+	rssItems := make([]model.RSSItem, 0, len(feed.Items))
+	for _, item := range feed.Items {
+		rssItems = append(rssItems, model.RSSItem{
 			GUID:  item.GUID,
 			Link:  item.Link,
 			Title: item.Title,
-		}
-		rssItems = append(rssItems, rssItem)
+		})
 	}
 
-	return &model.RSSFeed{URL: feed.FeedLink, Title: feed.Title}, rssItems, nil
+	return &model.RSSFeed{
+		URL:   feed.FeedLink,
+		Title: feed.Title,
+	}, rssItems, nil
 }
