@@ -59,6 +59,9 @@ func (r *RealRSSService) DeleteFeed(id int) error {
 	if err := r.feedRepo.Delete(id); err != nil {
 		return fmt.Errorf("delete feed failed (id=%d): %w", id, err)
 	}
+	if err := r.itemRepo.DeleteByFeedId(id); err != nil {
+		return fmt.Errorf("delete feed items failed (feed_id=%d): %w", id, err)
+	}
 	slog.Info("rss feed deleted", "id", id)
 	return nil
 }
@@ -104,6 +107,7 @@ func (r *RealRSSService) updateFeed(feed *model.RSSFeed) (string, error) {
 	}
 
 	for _, item := range items {
+		item.FeedID = feed.ID
 		if err := r.addItem(&item); err != nil {
 			slog.Debug("item insert failed", "feed_url", feed.URL, "guid", item.GUID)
 			errs = append(errs, fmt.Errorf("insert item failed (feed_url=%s, guid=%s): %w", feed.URL, item.GUID, err))
