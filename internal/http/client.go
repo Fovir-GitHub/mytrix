@@ -24,8 +24,7 @@ type Client struct {
 // It sets up the client with the specified timeout and logs the timeout at debug level.
 func New() *Client {
 	timeout := time.Duration(config.Config.Timeout)
-	slog.Debug(
-		"create http client",
+	slog.Info("create http client",
 		"timeout", timeout,
 	)
 	return &Client{

@@ -23,12 +23,11 @@ func (s *MessageService) Reply(ctx context.Context, roomID id.RoomID, text strin
 		slog.Error("send message failed", "roomID", roomID.String(), "text", text, "err", err)
 		return err
 	}
-	slog.Debug("sent message", "roomID", roomID.String(), "msg", text)
+	slog.Debug("sent message", "roomID", roomID.String(), "len", len(text))
 	return nil
 }
 
 func (s *MessageService) Ping(ctx context.Context, evt *event.Event) error {
-	slog.Debug("ping command called")
 	return s.Reply(ctx, evt.RoomID, "pong")
 }
 

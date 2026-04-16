@@ -28,7 +28,7 @@ func sessionFile() string {
 func LoadSession() (*Session, error) {
 	var s Session
 	data, err := os.ReadFile(sessionFile())
-	slog.Debug(
+	slog.Info(
 		"load session",
 		"session_file", sessionFile,
 	)

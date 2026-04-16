@@ -16,7 +16,7 @@ func (h *Handler) handleWakapiCommand(ctx context.Context, evt *event.Event) err
 	interval, err := getWakapiInterval(evt.Content.AsMessage().Body)
 	reply := h.getReply(ctx, evt)
 	if err != nil {
-		slog.Error("get wakapi interval failed, reply errors", "err", err)
+		slog.Error("get wakapi interval failed", "err", err)
 		replyErr := reply("Invalid Wakapi interval")
 		return errors.Join(err, replyErr)
 	}

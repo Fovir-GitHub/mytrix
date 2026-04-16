@@ -16,11 +16,12 @@ type GotifyService struct{}
 // NewGotifyService creates a GotifyService based on the configuration.
 // It returns a new GotifyService instance if Gotify is enabled, otherwise it returns nil.
 func NewGotifyService() *GotifyService {
-	if config.Config.Gotify.Enabled {
-		slog.Info("gotify enabled")
+	cfg := config.Config.Gotify
+	slog.Info("gotify service initialized",
+		"enabled", cfg.Enabled, "server", cfg.Server)
+	if cfg.Enabled {
 		return &GotifyService{}
 	}
-	slog.Info("gotify disabled")
 	return nil
 }
 

@@ -23,5 +23,6 @@ func (b *Bot) registerScheduler() {
 	for _, j := range jobs {
 		b.Scheduler.Register(j.Cron, j.Job)
 	}
-	slog.Info("schedulers registered")
+	slog.Info("schedulers registered",
+		"count", len(jobs))
 }

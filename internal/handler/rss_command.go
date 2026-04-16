@@ -70,6 +70,7 @@ func (h *Handler) handleRSSList(ctx context.Context, evt *event.Event) error {
 		slog.Error("list RSS feeds failed", "err", err)
 		return reply("failed to list RSS feeds")
 	}
+	slog.Debug("list rss feeds", "feeds", len(feeds))
 
 	if len(feeds) <= 0 {
 		return reply("empty list")

@@ -35,5 +35,5 @@ func (s *Scheduler) Register(t string, job func()) {
 		slog.Error("register schedule failed", "time", t, "err", err)
 		return
 	}
-	slog.Info("registered scheduler", "time", t)
+	slog.Debug("registered scheduler", "time", t)
 }

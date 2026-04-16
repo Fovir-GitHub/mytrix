@@ -31,8 +31,6 @@ type Bot struct {
 // It sets up the Matrix client, syncer, and encryption helper.
 // After creation, call Start() to begin syncing.
 func New() (*Bot, error) {
-	slog.Debug("new bot start")
-
 	client, err := newClient()
 	if err != nil {
 		return nil, fmt.Errorf("create bot failed: %w", err)
@@ -109,13 +107,12 @@ func (b *Bot) Start(ctx context.Context) error {
 		for event := range b.WsManager.Events() {
 			slog.Debug(
 				"receive websocket event",
-				"source", event.Source,
-				"data", string(event.Data),
-			)
+				"source", event.Source)
 			err := b.Handler.HandleWSEvent(ctx, event)
 			if err != nil {
 				slog.Error(
 					"handle websocket event failed",
+					"source", event.Source,
 					"err", err,
 				)
 			}

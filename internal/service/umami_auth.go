@@ -47,12 +47,12 @@ func (ru *RealUmamiService) getToken() (string, error) {
 		map[string]string{"Content-Type": "application/json"},
 	)
 	if err != nil {
-		return "", fmt.Errorf("get umami token failed: %w", err)
+		return "", fmt.Errorf("fetch umami token failed: %w", err)
 	}
 	if err := ru.c.DoJSON(req, &data); err != nil {
-		return "", fmt.Errorf("get umami token failed: %w", err)
+		return "", fmt.Errorf("fetch umami token failed: %w", err)
 	}
-	slog.Debug("get umami token", "token", data.Token)
+	slog.Debug("umami token fetched")
 	return data.Token, nil
 }
 
@@ -64,26 +64,20 @@ func (ru *RealUmamiService) IsTokenValid() bool {
 		map[string]string{"Accept": "application/json"},
 	)
 	if err != nil {
-		slog.Error("validate umami token failed to create request", "err", err)
 		return false
 	}
 	ru.setAuthHeader(req)
-
 	resp, err := ru.c.Do(req)
 	if err != nil {
-		slog.Debug("validate umami token failed", "token", ru.token, "err", err)
 		return false
 	}
 	valid := resp.StatusCode == http.StatusOK
-	slog.Debug("validate umami token", "token", ru.token, "valid", valid)
-
 	return valid
 }
 
 func (ru *RealUmamiService) updateToken() {
 	t, err := ru.getToken()
 	if err != nil {
-		slog.Error("update umami token failed", "err", err)
 		return
 	}
 	ru.token = t

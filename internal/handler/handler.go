@@ -21,16 +21,15 @@ type Handler struct {
 // NewHandler returns a new Handler with the given service.
 // It initializes the command and event maps and registers handlers.
 func NewHandler(s *service.Service) *Handler {
-	slog.Debug("create handler")
 	h := &Handler{
 		service:   s,
 		commands:  make(map[string]func(context.Context, *event.Event) error),
 		events:    make(map[string]func(context.Context, *model.WsEvent) error),
 		startTime: time.Now(),
 	}
-
 	h.registerCommands()
 	h.registerWSHandler()
+	slog.Info("handler initialized")
 	return h
 }
 

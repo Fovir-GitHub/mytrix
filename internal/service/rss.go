@@ -27,6 +27,7 @@ type RealRSSService struct {
 
 func NewRSSService(db *gorm.DB) RSSService {
 	cfg := config.Config.RSS
+	slog.Info("rss service initialized", "enabled", cfg.Enabled)
 	if !cfg.Enabled {
 		return &NoopRSSService{
 			err: fmt.Errorf("RSS is not enabled"),
@@ -49,6 +50,7 @@ func (r *RealRSSService) AddFeed(u string) error {
 	if err := r.feedRepo.Create(feed); err != nil {
 		return fmt.Errorf("create rss feed failed (url=%s): %w", u, err)
 	}
+	slog.Info("rss feed added", "url", u)
 	return nil
 }
 
@@ -56,6 +58,7 @@ func (r *RealRSSService) DeleteFeed(id int) error {
 	if err := r.feedRepo.Delete(id); err != nil {
 		return fmt.Errorf("delete feed failed (id=%d): %w", id, err)
 	}
+	slog.Info("rss feed deleted", "id", id)
 	return nil
 }
 
@@ -69,11 +72,13 @@ func (r *RealRSSService) Update() ([]model.RSSItem, error) {
 	if err != nil {
 		return nil, fmt.Errorf("update feeds failed: %w", err)
 	}
+	slog.Debug("rss update start", "feeds_len", len(feeds))
 
 	for _, feed := range feeds {
 		items, err := r.updateFeed(&feed)
 		if err != nil {
 			errs = append(errs, err)
+			slog.Warn("feed update failed", "feed_id", feed.ID, "err", err)
 			continue
 		}
 		res = append(res, items...)
@@ -81,6 +86,7 @@ func (r *RealRSSService) Update() ([]model.RSSItem, error) {
 	if len(errs) > 0 {
 		return res, errors.Join(errs...)
 	}
+	slog.Info("rss update finished", "feeds_len", len(feeds), "items_len", len(res))
 
 	return res, nil
 }
@@ -98,6 +104,7 @@ func (r *RealRSSService) updateFeed(feed *model.RSSFeed) ([]model.RSSItem, error
 
 	for _, item := range items {
 		if err := r.addItem(&item); err != nil {
+			slog.Debug("item insert failed", "feed_url", feed.URL, "guid", item.GUID)
 			errs = append(errs, fmt.Errorf("insert item failed (feed_url=%s, guid=%s): %w", feed.URL, item.GUID, err))
 			continue
 		}
@@ -107,7 +114,8 @@ func (r *RealRSSService) updateFeed(feed *model.RSSFeed) ([]model.RSSItem, error
 		slog.Warn(
 			"some items failed",
 			"feed_url", feed.URL,
-			"len", len(errs),
+			"failed", len(errs),
+			"total", len(items),
 		)
 		return updated, fmt.Errorf("update feed failed (url=%s): %w", feed.URL, errors.Join(errs...))
 	}

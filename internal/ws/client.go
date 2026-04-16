@@ -58,7 +58,7 @@ func (c *Client) connectLoop() {
 			time.Sleep(retryInterval * time.Second)
 			continue
 		}
-		slog.Debug(
+		slog.Info(
 			"websocket connected",
 			"url", c.url,
 		)
@@ -78,19 +78,15 @@ func (c *Client) readLoop(conn *websocket.Conn) bool {
 	for {
 		_, msg, err := conn.ReadMessage()
 		if err != nil {
-			slog.Error(
-				"websocket read error",
-				"err", err,
-			)
+			slog.Error("websocket read error",
+				"err", err)
 			if err := conn.Close(); err != nil {
 				slog.Error("websocket connection close failed", "err", err)
 			}
 			return true
 		}
-		slog.Debug(
-			"websocket message received",
-			"msg", string(msg),
-		)
+		slog.Info("websocket message received",
+			"len", len(msg))
 		select {
 		case c.recv <- msg:
 		case <-c.done:

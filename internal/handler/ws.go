@@ -10,7 +10,7 @@ import (
 // registerWSHandler registers WebSocket event handlers mapping event sources to their respective handler functions.
 func (h *Handler) registerWSHandler() {
 	h.events[model.SourceGotify] = h.handleGotify
-	slog.Info("websocket handler registered")
+	slog.Info("websocket handler registered", "count", len(h.events))
 }
 
 // HandleWSEvent handles incoming WebSocket events.
@@ -19,7 +19,7 @@ func (h *Handler) registerWSHandler() {
 func (h *Handler) HandleWSEvent(ctx context.Context, event *model.WsEvent) error {
 	for name, handler := range h.events {
 		if event.Source == name {
-			slog.Debug("handle event", "name", name)
+			slog.Debug("handle websocket event", "source", name)
 			return handler(ctx, event)
 		}
 	}

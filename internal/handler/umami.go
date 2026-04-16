@@ -15,8 +15,10 @@ import (
 // handleUmamiCommand processes the !umami command from a Matrix event.
 // It extracts the interval from the message content, fetches the corresponding Umami report, and sends it to the room where the command was issued.
 func (h *Handler) handleUmamiCommand(ctx context.Context, evt *event.Event) error {
-	slog.Debug("handle umami command start")
 	interval := getUmamiInterval(evt.Content.AsMessage().Body)
+	slog.Debug("handle umami command start",
+		"start", interval.Start.String(),
+		"end", interval.End.String())
 	report := h.service.Umami.FetchReport(interval)
 	return h.service.Message.Reply(ctx, evt.RoomID, report)
 }
@@ -27,14 +29,12 @@ func (h *Handler) handleUmamiCommand(ctx context.Context, evt *event.Event) erro
 // the configured default interval. It returns a pointer to the selected UmamiInterval.
 func getUmamiInterval(msg string) *model.UmamiInterval {
 	defaultInterval := model.UmamiIntervalMap[config.Config.Umami.DefaultInterval]()
-	slog.Debug("start getUmamiInterval", "defaultInterval", config.Config.Umami.DefaultInterval)
 	parts := strings.Fields(msg)
 	if len(parts) < 2 {
 		slog.Warn("no interval provided, fallback to default interval", "defaultInterval", defaultInterval)
 		return defaultInterval
 	}
 	intervalStr := parts[1]
-	slog.Debug("get umami interval", "intervalStr", intervalStr)
 	interval, err := model.ParseUmamiInterval(intervalStr)
 	if err != nil {
 		slog.Warn(
@@ -46,7 +46,7 @@ func getUmamiInterval(msg string) *model.UmamiInterval {
 		)
 		return defaultInterval
 	}
-	slog.Debug("got umami interval", "interval", interval)
+	slog.Debug("got umami interval", "input", intervalStr, "resolved", interval)
 	return interval
 }
 

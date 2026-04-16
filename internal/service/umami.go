@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"fmt"
 	"log/slog"
 	"strings"
@@ -24,15 +25,16 @@ type RealUmamiService struct {
 	password string
 }
 
+// TODO: add login retry
 func NewUmamiService(c *myhttp.Client) UmamiService {
 	cfg := config.Config.Umami
+	slog.Info("umami initialized", "enabled", cfg.Enabled, "server", cfg.Server)
+
 	noop := &NoopUmamiService{err: fmt.Errorf("umami is not enabled")}
 	if !cfg.Enabled {
-		slog.Info("umami disabled")
 		return noop
 	}
 
-	slog.Info("umami enabled")
 	us := &RealUmamiService{
 		c:        c,
 		server:   cfg.Server,
@@ -69,7 +71,7 @@ func (ru *RealUmamiService) fetchWebsites() ([]*model.UmamiWebsite, error) {
 
 	err = ru.c.DoJSON(req, &data)
 	if err != nil {
-		slog.Warn("umami fetch websites failed, retry to login", "err", err)
+		slog.Warn("umami fetch websites failed, retry with new token", "err", err)
 		ru.updateToken()
 		if err := ru.c.DoJSON(req, &data); err != nil {
 			return nil, fmt.Errorf("fetch umami websites failed: %w", err)
@@ -101,28 +103,39 @@ func (ru *RealUmamiService) fetchWebsiteStat(website *model.UmamiWebsite, interv
 	if err := ru.c.DoJSON(req, &stat); err != nil {
 		return nil, fmt.Errorf("fetch umami website stat failed (name=%s, domain=%s): %w", website.Name, website.Domain, err)
 	}
-	slog.Debug("fetched umami website stat", "stat", stat)
+	slog.Debug("fetched umami website stat", "name", website.Name, "visits", stat.Visitors)
 	return stat, nil
 }
 
 func (ru *RealUmamiService) fetchWebsiteData(interval *model.UmamiInterval) ([]*model.UmamiWebsite, error) {
-	slog.Debug("fetch umami website data begin")
-
 	websites, err := ru.fetchWebsites()
 	if err != nil {
 		return nil, fmt.Errorf("fetch umami website data failed: %w", err)
 	}
 
-	var res []*model.UmamiWebsite
+	var (
+		res  []*model.UmamiWebsite
+		errs []error
+	)
 	for _, w := range websites {
 		stat, err := ru.fetchWebsiteStat(w, interval)
 		if err != nil {
-			return nil, fmt.Errorf("fetch website data failed: %w", err)
+			slog.Warn("fetch website data failed", "name", w.Name, "err", err)
+			errs = append(errs, fmt.Errorf("fetch website data failed: %w", err))
+			continue
 		}
 		w.Stat = stat
 		res = append(res, w)
 	}
-	slog.Debug("umami website data fetched", "len", len(res))
+
+	slog.Info("umami website data fetched", "len", len(res))
+	if len(errs) > 0 {
+		joined := errors.Join(errs...)
+		slog.Warn("fetch umami website data partially failed",
+			"err", joined)
+		return res, joined
+	}
+
 	return res, nil
 }
 
@@ -130,7 +143,6 @@ func (ru *RealUmamiService) FetchReport(interval *model.UmamiInterval) string {
 	slog.Debug("fetch umami report start", "interval", interval)
 	websites, err := ru.fetchWebsiteData(interval)
 	if err != nil {
-		slog.Error("fetch umami website data failed", "err", err)
 		return err.Error()
 	}
 	return ru.generateReport(websites)

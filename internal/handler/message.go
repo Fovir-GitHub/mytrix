@@ -9,5 +9,12 @@ import (
 
 func (h *Handler) handlePing(ctx context.Context, evt *event.Event) error {
 	slog.Debug("handle ping command")
-	return h.service.Message.Ping(ctx, evt)
+	if err := h.service.Message.Ping(ctx, evt); err != nil {
+		slog.Error("handle ping failed",
+			"room", evt.RoomID.String(),
+			"sender", evt.Sender.String(),
+			"err", err)
+		return err
+	}
+	return nil
 }

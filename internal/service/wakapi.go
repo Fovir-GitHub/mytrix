@@ -42,13 +42,13 @@ type RealWakapiService struct {
 // It takes an HTTP client and scheduler as dependencies.
 func NewWakapiService(c *http.Client, s *scheduler.Scheduler) WakapiService {
 	cfg := config.Config.Wakapi
+	slog.Info("wakapi service initialized",
+		"enabled", cfg.Enabled,
+		"server", cfg.Server,
+		"user", cfg.UserID)
 	if !cfg.Enabled {
-		slog.Info("wakapi disabled")
-		return &NoopWakapiService{
-			err: fmt.Errorf("wakapi is not enabled"),
-		}
+		return &NoopWakapiService{err: fmt.Errorf("wakapi is not enabled")}
 	}
-	slog.Info("wakapi enabled")
 	return &RealWakapiService{
 		c:      c,
 		server: cfg.Server,
@@ -95,11 +95,12 @@ func (w *RealWakapiService) fetchData(interval model.WakapiInterval) (*model.Wak
 	if err := w.c.DoJSON(req, &data); err != nil {
 		return nil, fmt.Errorf("fetch wakapi data failed: %w", err)
 	}
-	slog.Debug("wakapi data fetched")
 
 	data.Data.Langs = utils.Filter(data.Data.Langs, func(lang *model.WakapiLanguage) bool {
 		return lang.Percent >= 0.01
 	})
+
+	slog.Info("wakapi data fetched", "lang_len", len(data.Data.Langs))
 
 	return &data.Data, nil
 }

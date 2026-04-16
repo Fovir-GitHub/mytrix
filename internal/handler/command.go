@@ -14,7 +14,8 @@ func (h *Handler) registerCommands() {
 	h.commands["!umami"] = h.handleUmamiCommand
 	h.commands["!wakapi"] = h.handleWakapiCommand
 	h.commands["!rss"] = h.handleRSSCommand
-	slog.Info("commands registered")
+	slog.Info("bot command initialized",
+		"count", len(h.commands))
 }
 
 // HandleCommand processes incoming Matrix message events for bot commands.
@@ -27,12 +28,13 @@ func (h *Handler) HandleCommand(ctx context.Context, evt *event.Event) {
 	}
 
 	if evt.Timestamp < h.startTime.UnixMilli() {
-		slog.Debug("receive old message, skipped", "msg", content.Body)
+		slog.Debug("message skipped (old timestamp)",
+			"room", evt.RoomID.String())
 		return
 	}
 
 	if evt.Sender == h.service.Message.UserID() {
-		slog.Debug("receive own message, skipped")
+		slog.Debug("message skipped (own message)")
 		return
 	}
 
@@ -41,14 +43,16 @@ func (h *Handler) HandleCommand(ctx context.Context, evt *event.Event) {
 		"received text message",
 		"room", evt.RoomID,
 		"sender", evt.Sender,
-		"body", body,
+		"len", len(body),
 	)
 
 	for prefix, handler := range h.commands {
 		if strings.HasPrefix(body, prefix) {
 			if err := handler(ctx, evt); err != nil {
 				slog.Error(
-					"handle error",
+					"command handler failed",
+					"room", evt.RoomID.String(),
+					"sender", evt.Sender.String(),
 					"err", err,
 				)
 			}
