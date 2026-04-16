@@ -42,8 +42,9 @@ func (r *RSSItemRepo) Create(item *model.RSSItem) error {
 		if err := r.db.Unscoped().Save(&existing).Error; err != nil {
 			return fmt.Errorf("save rss item failed (guid=%s): %w", item.GUID, err)
 		}
+		return nil
 	}
-	return nil
+	return fmt.Errorf("rss item already exists (guid=%s)", item.GUID)
 }
 
 // DeleteByFeedId removes all RSSItems associated with a specific feed ID from the database.

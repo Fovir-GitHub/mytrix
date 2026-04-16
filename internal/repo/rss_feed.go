@@ -41,9 +41,10 @@ func (r *RSSFeedRepo) Create(feed *model.RSSFeed) error {
 		if err := r.db.Unscoped().Save(&existing).Error; err != nil {
 			return fmt.Errorf("save rss feed failed (url=%s): %w", feed.URL, err)
 		}
+		return nil
 	}
 
-	return nil
+	return fmt.Errorf("rss feed already exists (url=%s)", feed.URL)
 }
 
 // Delete removes an RSSFeed from the database by ID.
