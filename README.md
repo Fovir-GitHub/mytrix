@@ -8,6 +8,7 @@ A Matrix bot written in Go.
 - [Gotify](https://gotify.net/) notification forwarding
 - [Wakapi](https://github.com/muety/wakapi) report generation.
 - [Umami](https://github.com/umami-software/umami) report generation.
+- RSS integration.
 - End-to-end encryption support
 - Session persistence
 
@@ -119,6 +120,15 @@ All configuration is done via environment variables.
 | `MYTRIX_UMAMI_YEARLY_REPORT_CRON`  | Time to send yearly report                                      | `0 9 1 1 *`                                                |
 
 > _Tip:_ To disable reports, the cron can be set to `0 0 31 2 *` so it will not be triggered.
+
+### RSS Configuration
+
+| Variable                 | Description                    | Default                                                |
+| ------------------------ | ------------------------------ | ------------------------------------------------------ |
+| `MYTRIX_RSS_ENABLED`     | Enable RSS integration         | `false`                                                |
+| `MYTRIX_RSS_FEED_FORMAT` | Template of RSS feeds          | see [internal/config/rss.go](./internal/config/rss.go) |
+| `MYTRIX_RSS_ITEM_FORMAT` | Template of RSS items          | see [internal/config/rss.go](./internal/config/rss.go) |
+| `MYTRIX_RSS_CRON`        | Interval of fetching RSS feeds | `0 * * * *`                                            |
 
 ## Development
 
