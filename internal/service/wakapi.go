@@ -16,10 +16,6 @@ import (
 // WakapiService interface defines methods for Wakapi service implementations.
 // It provides methods to fetch Wakapi data and generate reports.
 type WakapiService interface {
-	// fetchData retrieves Wakapi data for the given interval.
-	// It returns the WakapiData and any error encountered.
-	fetchData(model.WakapiInterval) (*model.WakapiData, error)
-
 	// FetchReport generates a formatted report for the given Wakapi interval.
 	// It returns the report as a string and any error encountered.
 	FetchReport(model.WakapiInterval) (string, error)
@@ -60,12 +56,6 @@ func NewWakapiService(c *http.Client, s *scheduler.Scheduler) WakapiService {
 		userID: cfg.UserID,
 		s:      s,
 	}
-}
-
-// fetchData returns nil and the stored error for any interval.
-// It is used when Wakapi is disabled to simulate a service failure.
-func (w *NoopWakapiService) fetchData(model.WakapiInterval) (*model.WakapiData, error) {
-	return nil, w.err
 }
 
 // FetchReport returns an empty string and the stored error for any interval.

@@ -74,12 +74,3 @@ func TestNoopWakapiService_FetchData(t *testing.T) {
 		t.Errorf("Expected empty string, got %q", data)
 	}
 }
-
-func TestNoopWakapiService_FetchReport(t *testing.T) {
-	testErr := errors.New("test error")
-	service := &NoopWakapiService{err: testErr}
-	_, err := service.fetchData(model.WakapiIntervalToday)
-	if err != testErr {
-		t.Errorf("Expected error %v, got %v", testErr, err)
-	}
-}
