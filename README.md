@@ -158,4 +158,5 @@ just run
 - [Blog by Dominik Chrástecký](https://chrastecky.dev/programming/creating-a-simple-encrypted-matrix-bot-in-go): Tutorial for this project.
 - [`gorilla/websocket`](https://github.com/gorilla/websocket): A fast, well-tested and widely used WebSocket implementation for Go.
 - [`robfig/cron`](https://github.com/robfig/cron): A cron library for go
+- [`go-gorm/gorm`](https://github.com/go-gorm/gorm): The fantastic ORM library for Golang, aims to be developer friendly
 - [`mmcdole/gofeed`](https://github.com/mmcdole/gofeed): Parse RSS, Atom and JSON feeds in Go
