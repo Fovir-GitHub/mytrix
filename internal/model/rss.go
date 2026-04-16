@@ -28,9 +28,32 @@ type RSSItem struct {
 	DeletedAt gorm.DeletedAt `gorm:"index:idx_feed_guid_deleted,unique;index:idx_feed_link_deleted,unique"`
 }
 
+type RSSFeedView struct {
+	ID    uint
+	Title string
+	URL   string
+}
+
 type RSSItemView struct {
 	Title string
 	Link  string
+}
+
+func (r *RSSFeed) toView() *RSSFeedView {
+	return &RSSFeedView{
+		ID:    r.ID,
+		Title: r.Title,
+		URL:   r.URL,
+	}
+}
+
+func (r *RSSFeed) ToMarkdown() string {
+	var buf bytes.Buffer
+	view := r.toView()
+	if err := rssFeedTmpl.Execute(&buf, view); err != nil {
+		return fmt.Sprintf("ID: %d\nTitle: %s\nURL: %s", view.ID, view.Title, view.URL)
+	}
+	return buf.String()
 }
 
 func (r *RSSItem) toView() *RSSItemView {
