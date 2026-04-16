@@ -25,7 +25,6 @@ type RealUmamiService struct {
 	password string
 }
 
-// TODO: add login retry
 func NewUmamiService(c *myhttp.Client) UmamiService {
 	cfg := config.Config.Umami
 	slog.Info("umami initialized", "enabled", cfg.Enabled, "server", cfg.Server)
@@ -43,8 +42,8 @@ func NewUmamiService(c *myhttp.Client) UmamiService {
 	}
 	t, err := us.getToken()
 	if err != nil {
-		slog.Error("get token failed, umami is disabled", "err", err)
-		return noop
+		slog.Warn("get umami token failed, use empty token", "err", err)
+		t = ""
 	}
 	us.token = t
 	return us
