@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"strings"
 
 	"codeberg.org/Fovir/mytrix/internal/config"
 	"codeberg.org/Fovir/mytrix/internal/feed"
@@ -15,8 +16,8 @@ import (
 type RSSService interface {
 	AddFeed(u string) error
 	DeleteFeed(id int) error
-	Update() ([]model.RSSItem, error)
-	AllFeeds() ([]model.RSSFeed, error)
+	Update() (string, error)
+	ListFeeds() (string, error)
 }
 
 type RealRSSService struct {
@@ -42,6 +43,7 @@ func NewRSSService(db *gorm.DB) RSSService {
 	}
 }
 
+// TODO: update feeds after adding a feed
 func (r *RealRSSService) AddFeed(u string) error {
 	feed, _, err := r.parser.ParseURL(u)
 	if err != nil {
@@ -62,44 +64,44 @@ func (r *RealRSSService) DeleteFeed(id int) error {
 	return nil
 }
 
-func (r *RealRSSService) Update() ([]model.RSSItem, error) {
+func (r *RealRSSService) Update() (string, error) {
 	var (
 		errs []error
-		res  []model.RSSItem
+		res  strings.Builder
 	)
 
-	feeds, err := r.AllFeeds()
+	feeds, err := r.allFeeds()
 	if err != nil {
-		return nil, fmt.Errorf("update feeds failed: %w", err)
+		return "", fmt.Errorf("update feeds failed: %w", err)
 	}
 	slog.Debug("rss update start", "feeds_len", len(feeds))
 
 	for _, feed := range feeds {
-		items, err := r.updateFeed(&feed)
+		updated, err := r.updateFeed(&feed)
 		if err != nil {
 			errs = append(errs, err)
 			slog.Warn("feed update failed", "feed_id", feed.ID, "err", err)
 			continue
 		}
-		res = append(res, items...)
+		res.WriteString(updated)
 	}
 	if len(errs) > 0 {
-		return res, errors.Join(errs...)
+		return res.String(), errors.Join(errs...)
 	}
-	slog.Info("rss update finished", "feeds_len", len(feeds), "items_len", len(res))
+	slog.Info("rss update finished", "feeds_len", len(feeds))
 
-	return res, nil
+	return res.String(), nil
 }
 
-func (r *RealRSSService) updateFeed(feed *model.RSSFeed) ([]model.RSSItem, error) {
+func (r *RealRSSService) updateFeed(feed *model.RSSFeed) (string, error) {
 	var (
-		updated []model.RSSItem
+		updated strings.Builder
 		errs    []error
 	)
 
 	_, items, err := r.parser.ParseURL(feed.URL)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	for _, item := range items {
@@ -108,7 +110,8 @@ func (r *RealRSSService) updateFeed(feed *model.RSSFeed) ([]model.RSSItem, error
 			errs = append(errs, fmt.Errorf("insert item failed (feed_url=%s, guid=%s): %w", feed.URL, item.GUID, err))
 			continue
 		}
-		updated = append(updated, item)
+		updated.WriteString(item.ToMarkdown())
+		updated.WriteString("\n")
 	}
 	if len(errs) > 0 {
 		slog.Warn(
@@ -117,10 +120,10 @@ func (r *RealRSSService) updateFeed(feed *model.RSSFeed) ([]model.RSSItem, error
 			"failed", len(errs),
 			"total", len(items),
 		)
-		return updated, fmt.Errorf("update feed failed (url=%s): %w", feed.URL, errors.Join(errs...))
+		return updated.String(), fmt.Errorf("update feed failed (url=%s): %w", feed.URL, errors.Join(errs...))
 	}
 
-	return updated, nil
+	return updated.String(), nil
 }
 
 func (r *RealRSSService) addItem(item *model.RSSItem) error {
@@ -130,10 +133,28 @@ func (r *RealRSSService) addItem(item *model.RSSItem) error {
 	return nil
 }
 
-func (r *RealRSSService) AllFeeds() ([]model.RSSFeed, error) {
+func (r *RealRSSService) allFeeds() ([]model.RSSFeed, error) {
 	feeds, err := r.feedRepo.AllFeeds()
 	if err != nil {
 		return nil, fmt.Errorf("fetch all feeds failed: %w", err)
 	}
 	return feeds, nil
+}
+
+func (r *RealRSSService) ListFeeds() (string, error) {
+	var res strings.Builder
+	feeds, err := r.allFeeds()
+	if err != nil {
+		return "", fmt.Errorf("list feed failed: %w", err)
+	}
+	slog.Debug("list rss feeds", "feeds", len(feeds))
+	if len(feeds) <= 0 {
+		return "", nil
+	}
+
+	for _, feed := range feeds {
+		res.WriteString(feed.ToMarkdown())
+		res.WriteString("\n")
+	}
+	return res.String(), nil
 }

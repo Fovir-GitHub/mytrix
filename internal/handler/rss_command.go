@@ -3,7 +3,6 @@ package handler
 
 import (
 	"context"
-	"fmt"
 	"log/slog"
 	"strconv"
 	"strings"
@@ -65,22 +64,14 @@ func (h *Handler) handleRSSDelete(ctx context.Context, evt *event.Event, parts [
 
 func (h *Handler) handleRSSList(ctx context.Context, evt *event.Event) error {
 	reply := h.getReply(ctx, evt)
-	feeds, err := h.service.RSS.AllFeeds()
+	feeds, err := h.service.RSS.ListFeeds()
 	if err != nil {
 		slog.Error("list RSS feeds failed", "err", err)
 		return reply("failed to list RSS feeds")
 	}
-	slog.Debug("list rss feeds", "feeds", len(feeds))
-
-	if len(feeds) <= 0 {
-		return reply("empty list")
+	if feeds == "" {
+		return reply("Empty RSS list")
 	}
 
-	var msg strings.Builder
-
-	// TODO: format the feed information
-	for _, feed := range feeds {
-		fmt.Fprintf(&msg, "%d %s %s\n", feed.ID, feed.Title, feed.URL)
-	}
-	return reply(msg.String())
+	return reply(feeds)
 }

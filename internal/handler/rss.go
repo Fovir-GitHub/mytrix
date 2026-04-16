@@ -3,7 +3,6 @@ package handler
 import (
 	"context"
 	"log/slog"
-	"strings"
 
 	"codeberg.org/Fovir/mytrix/internal/config"
 	"codeberg.org/Fovir/mytrix/internal/scheduler"
@@ -23,12 +22,7 @@ func (h *Handler) handleRSSSchedule(ctx context.Context) {
 		return
 	}
 
-	var msg strings.Builder
-	for _, item := range updated {
-		msg.WriteString(item.ToMarkdown())
-		msg.WriteString("\n")
-	}
-	_ = h.service.Message.Reply(ctx, id.RoomID(roomID), msg.String())
+	_ = h.service.Message.Reply(ctx, id.RoomID(roomID), updated)
 }
 
 func (h *Handler) RSSScheduleList() []scheduler.ScheduledJob {
