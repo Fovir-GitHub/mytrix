@@ -10,27 +10,9 @@ import (
 	"codeberg.org/Fovir/mytrix/internal/model"
 )
 
-// TODO: simplify interface functions
-
 // UmamiService interface defines methods for Umami service implementations.
 // It provides methods for authentication, fetching website data, statistics, and generating reports.
 type UmamiService interface {
-	// getToken retrieves an authentication token from the Umami API.
-	getToken() (string, error)
-
-	// fetchWebsites retrieves all websites from the Umami API.
-	fetchWebsites() ([]*model.UmamiWebsite, error)
-
-	// fetchWebsiteStat retrieves statistics for a specific website and time interval.
-	fetchWebsiteStat(*model.UmamiWebsite, *model.UmamiInterval) (*model.UmamiWebsiteStat, error)
-
-	// fetchWebsiteData retrieves websites with their statistics for a given time interval.
-	fetchWebsiteData(*model.UmamiInterval) ([]*model.UmamiWebsite, error)
-
-	// generateReport creates a formatted report from a slice of websites.
-	generateReport([]*model.UmamiWebsite) string
-
-	// FetchReport generates a formatted Umami report for the given time interval.
 	FetchReport(*model.UmamiInterval) string
 }
 
@@ -123,7 +105,6 @@ func (ru *RealUmamiService) fetchWebsiteStat(website *model.UmamiWebsite, interv
 	return stat, nil
 }
 
-// TODO: refactor to `[]model.UmamiWebsite` instead of using pointers.
 func (ru *RealUmamiService) fetchWebsiteData(interval *model.UmamiInterval) ([]*model.UmamiWebsite, error) {
 	slog.Debug("fetch umami website data begin")
 
