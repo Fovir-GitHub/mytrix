@@ -2,7 +2,6 @@ package handler
 
 import (
 	"context"
-	"fmt"
 
 	"codeberg.org/Fovir/mytrix/internal/config"
 	"codeberg.org/Fovir/mytrix/internal/model"
@@ -12,7 +11,7 @@ import (
 func (h *Handler) handleGotify(ctx context.Context, event *model.WsEvent) error {
 	msg, err := h.service.Gotify.HandleEvent(event)
 	if err != nil {
-		return fmt.Errorf("handle gotify event failed: %w", err)
+		return err
 	}
 	return h.service.Message.Reply(ctx, id.RoomID(config.Config.RoomID), msg.ToMarkdown())
 }

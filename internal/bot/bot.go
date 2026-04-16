@@ -35,7 +35,7 @@ func New() (*Bot, error) {
 
 	client, err := newClient()
 	if err != nil {
-		return nil, fmt.Errorf("create client failed: %w", err)
+		return nil, fmt.Errorf("create bot failed: %w", err)
 	}
 
 	syncer, ready := setupSyncer()
@@ -43,13 +43,13 @@ func New() (*Bot, error) {
 
 	cryptoHelper, err := crypto.SetupCryptoHelper(client)
 	if err != nil {
-		return nil, fmt.Errorf("create cryptohelper failed: %w", err)
+		return nil, fmt.Errorf("create bot failed: %w", err)
 	}
 	client.Crypto = cryptoHelper
 
 	db, err := setupDB()
 	if err != nil {
-		return nil, fmt.Errorf("create database failed: %w", err)
+		return nil, fmt.Errorf("create bot failed: %w", err)
 	}
 
 	matrixClient := matrix.New(client)
@@ -126,7 +126,7 @@ func (b *Bot) Start(ctx context.Context) error {
 
 	err := b.Client.VerifyWithRecoveryKey()
 	if err != nil {
-		return fmt.Errorf("verify recovery key failed: %w", err)
+		return fmt.Errorf("start bot failed: %w", err)
 	}
 
 	<-ctx.Done()

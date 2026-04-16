@@ -36,7 +36,7 @@ func (ru *RealUmamiService) getToken() (string, error) {
 	}
 	bodyData, err := json.Marshal(payload)
 	if err != nil {
-		return "", fmt.Errorf("marshal payload failed: %w", err)
+		return "", fmt.Errorf("get umami token failed: %w", err)
 	}
 
 	u := ru.createURL("/api/auth/login")
@@ -47,10 +47,10 @@ func (ru *RealUmamiService) getToken() (string, error) {
 		map[string]string{"Content-Type": "application/json"},
 	)
 	if err != nil {
-		return "", fmt.Errorf("umami create get token request failed: %w", err)
+		return "", fmt.Errorf("get umami token failed: %w", err)
 	}
 	if err := ru.c.DoJSON(req, &data); err != nil {
-		return "", fmt.Errorf("get json failed: %w", err)
+		return "", fmt.Errorf("get umami token failed: %w", err)
 	}
 	slog.Debug("get umami token", "token", data.Token)
 	return data.Token, nil

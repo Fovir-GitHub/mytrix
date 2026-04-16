@@ -37,7 +37,7 @@ func newClient() (*mautrix.Client, error) {
 		}
 		resp, err := login(client)
 		if err != nil {
-			return nil, fmt.Errorf("login failed: %w", err)
+			return nil, fmt.Errorf("create mautrix client failed: %w", err)
 		}
 		client.UserID = resp.UserID
 		client.AccessToken = resp.AccessToken
@@ -65,7 +65,7 @@ func login(client *mautrix.Client) (*mautrix.RespLogin, error) {
 		StoreCredentials: true,
 	})
 	if err != nil {
-		return nil, fmt.Errorf("login failed: %w", err)
+		return nil, fmt.Errorf("bot login failed: %w", err)
 	}
 
 	return resp, nil

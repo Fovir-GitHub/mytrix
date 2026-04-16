@@ -55,7 +55,7 @@ func (c *Client) Do(req *http.Request) (*http.Response, error) {
 
 	if resp.StatusCode >= 400 {
 		body, _ := io.ReadAll(resp.Body)
-		err := resp.Body.Close()
+		_ = resp.Body.Close()
 		slog.Error(
 			"http request returned error",
 			"method", req.Method,
@@ -64,11 +64,13 @@ func (c *Client) Do(req *http.Request) (*http.Response, error) {
 			"body", string(body),
 			"duration", time.Since(start),
 		)
-		if err != nil {
-			return nil, fmt.Errorf("http response close failed: %w", err)
-		}
 
-		return nil, fmt.Errorf("http %d: %s", resp.StatusCode, string(body))
+		return nil, fmt.Errorf(
+			"http request failed (method=%s, url=%s, status=%d)",
+			req.Method,
+			req.URL.String(),
+			resp.StatusCode,
+		)
 	}
 
 	slog.Debug(
@@ -87,11 +89,11 @@ func (c *Client) Do(req *http.Request) (*http.Response, error) {
 func (c *Client) DoJSON(req *http.Request, v any) error {
 	resp, err := c.Do(req)
 	if err != nil {
-		return fmt.Errorf("receive response failed: %w", err)
+		return err
 	}
 	defer resp.Body.Close() // nolint
 	if err := json.NewDecoder(resp.Body).Decode(v); err != nil {
-		return fmt.Errorf("parse json failed: %w", err)
+		return fmt.Errorf("decode json failed (url=%s): %w", req.URL.String(), err)
 	}
 	return nil
 }

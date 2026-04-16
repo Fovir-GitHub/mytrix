@@ -17,14 +17,14 @@ func (h *Handler) handleWakapiCommand(ctx context.Context, evt *event.Event) err
 	reply := h.getReply(ctx, evt)
 	if err != nil {
 		slog.Error("get wakapi interval failed, reply errors", "err", err)
-		replyErr := reply(err.Error())
+		replyErr := reply("Invalid Wakapi interval")
 		return errors.Join(err, replyErr)
 	}
 
 	report, err := h.service.Wakapi.FetchReport(interval)
 	if err != nil {
 		slog.Error("fetch wakapi report failed", "err", err)
-		return err
+		return reply("Failed to fetch Wakapi report")
 	}
 	return reply(report)
 }

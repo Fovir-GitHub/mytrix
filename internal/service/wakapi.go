@@ -100,10 +100,10 @@ func (w *RealWakapiService) fetchData(interval model.WakapiInterval) (*model.Wak
 			"Authorization": auth,
 		})
 	if err != nil {
-		return nil, fmt.Errorf("wakapi create http request failed: %w", err)
+		return nil, fmt.Errorf("fetch wakapi data failed: %w", err)
 	}
 	if err := w.c.DoJSON(req, &data); err != nil {
-		return nil, fmt.Errorf("get json failed: %w", err)
+		return nil, fmt.Errorf("fetch wakapi data failed: %w", err)
 	}
 	slog.Debug("wakapi data fetched")
 
@@ -121,7 +121,7 @@ func (w *RealWakapiService) FetchReport(interval model.WakapiInterval) (string, 
 	slog.Debug("fetch wakapi report start", "interval", string(interval))
 	data, err := w.fetchData(interval)
 	if err != nil {
-		return "", fmt.Errorf("fetch wakapi data failed: %w", err)
+		return "", fmt.Errorf("fetch wakapi report failed (interval=%s): %w", string(interval), err)
 	}
 	return data.ToMarkdown(), nil
 }

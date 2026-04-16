@@ -1,6 +1,8 @@
 package repo
 
 import (
+	"fmt"
+
 	"codeberg.org/Fovir/mytrix/internal/model"
 	"gorm.io/gorm"
 )
@@ -20,5 +22,8 @@ func NewRSSItemRepo(db *gorm.DB) *RSSItemRepo {
 // Create persists the given RSSItem to the database.
 // It uses GORM's Create method and returns any error encountered.
 func (r *RSSItemRepo) Create(item *model.RSSItem) error {
-	return r.db.Create(item).Error
+	if err := r.db.Create(item).Error; err != nil {
+		return fmt.Errorf("create feed item failed (id=%d): %w", item.ID, err)
+	}
+	return nil
 }

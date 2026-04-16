@@ -14,7 +14,7 @@ func (h *Handler) handleRSSSchedule(ctx context.Context) {
 	roomID := config.Config.RoomID
 	updated, err := h.service.RSS.Update()
 	if err != nil {
-		slog.Debug("update rss error", "err", err)
+		slog.Error("update rss error", "err", err)
 	}
 	if len(updated) <= 0 {
 		return

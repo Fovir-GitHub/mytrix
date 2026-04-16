@@ -14,10 +14,10 @@ func setupDB() (*gorm.DB, error) {
 	dsn := path.Join(cfg.Datadir, cfg.DBPath)
 	db, err := database.New(dsn)
 	if err != nil {
-		return nil, fmt.Errorf("create database at %s failed: %w", dsn, err)
+		return nil, fmt.Errorf("setup database failed (dsn=%s): %w", dsn, err)
 	}
 	if err := database.Migrate(db); err != nil {
-		return nil, fmt.Errorf("database migration failed: %w", err)
+		return nil, fmt.Errorf("setup database failed: %w", err)
 	}
 	return db, nil
 }

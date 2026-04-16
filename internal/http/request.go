@@ -16,7 +16,7 @@ var (
 func NewRequest(method httpMethod, url string, body io.Reader, headers map[string]string) (*http.Request, error) {
 	req, err := http.NewRequest(method.v, url, body)
 	if err != nil {
-		return nil, fmt.Errorf("create http request failed: %w", err)
+		return nil, fmt.Errorf("new http request failed (method=%s, url=%s): %w", method.v, url, err)
 	}
 	for k, v := range headers {
 		req.Header.Set(k, v)

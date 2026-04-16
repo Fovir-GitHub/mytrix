@@ -4,6 +4,7 @@ package handler
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"strconv"
 	"strings"
 
@@ -37,7 +38,8 @@ func (h *Handler) handleRSSAdd(ctx context.Context, evt *event.Event, parts []st
 
 	u := parts[2]
 	if err := h.service.RSS.AddFeed(u); err != nil {
-		return reply(err.Error())
+		slog.Error("add rss failed", "url", u, "err", err)
+		return reply("failed to add RSS feed")
 	} else {
 		return reply("RSS feed added successfully")
 	}
@@ -55,18 +57,20 @@ func (h *Handler) handleRSSDelete(ctx context.Context, evt *event.Event, parts [
 		return reply("invalid id")
 	}
 	if err := h.service.RSS.DeleteFeed(id); err != nil {
-		return reply(err.Error())
-	} else {
-		return reply("feed deleted")
+		slog.Error("delete rss feed failed", "id", id, "err", err)
+		return reply("failed to delete RSS feed")
 	}
+	return reply("feed deleted")
 }
 
 func (h *Handler) handleRSSList(ctx context.Context, evt *event.Event) error {
-	feeds, err := h.service.RSS.AllFeeds()
 	reply := h.getReply(ctx, evt)
+	feeds, err := h.service.RSS.AllFeeds()
 	if err != nil {
-		return reply(err.Error())
+		slog.Error("list RSS feeds failed", "err", err)
+		return reply("failed to list RSS feeds")
 	}
+
 	if len(feeds) <= 0 {
 		return reply("empty list")
 	}

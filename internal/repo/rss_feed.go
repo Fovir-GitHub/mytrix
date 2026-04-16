@@ -1,6 +1,7 @@
 package repo
 
 import (
+	"fmt"
 	"log/slog"
 
 	"codeberg.org/Fovir/mytrix/internal/model"
@@ -22,17 +23,23 @@ func NewRSSFeedRepo(db *gorm.DB) *RSSFeedRepo {
 // Create persists the given RSSFeed to the database.
 // It uses GORM's Create method and returns any error encountered.
 func (r *RSSFeedRepo) Create(feed *model.RSSFeed) error {
-	return r.db.Create(feed).Error
+	if err := r.db.Create(feed).Error; err != nil {
+		return fmt.Errorf("create rss feed failed (url=%s): %w", feed.URL, err)
+	}
+	return nil
 }
 
 func (r *RSSFeedRepo) Delete(id int) error {
-	return r.db.Delete(&model.RSSFeed{}, id).Error
+	if err := r.db.Delete(&model.RSSFeed{}, id).Error; err != nil {
+		return fmt.Errorf("delete rss feed failed (id=%d): %w", id, err)
+	}
+	return nil
 }
 
 func (r *RSSFeedRepo) SelectFeedByID(id int) (*model.RSSFeed, error) {
 	var feed *model.RSSFeed
 	if err := r.db.First(&feed, id).Error; err != nil {
-		return nil, err
+		return nil, fmt.Errorf("select feed by id failed (id=%d): %w", id, err)
 	}
 	return feed, nil
 }
@@ -40,7 +47,7 @@ func (r *RSSFeedRepo) SelectFeedByID(id int) (*model.RSSFeed, error) {
 func (r *RSSFeedRepo) AllFeeds() ([]model.RSSFeed, error) {
 	var feeds []model.RSSFeed
 	if err := r.db.Find(&feeds).Error; err != nil {
-		return nil, err
+		return nil, fmt.Errorf("get all feeds failed: %w", err)
 	}
 	slog.Debug("fetch feeds", "len", len(feeds))
 	return feeds, nil

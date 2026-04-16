@@ -36,7 +36,7 @@ func LoadSession() (*Session, error) {
 		return nil, fmt.Errorf("load session failed: %w", err)
 	}
 	if err := json.Unmarshal(data, &s); err != nil {
-		return nil, fmt.Errorf("unmarshal session file faile: %w", err)
+		return nil, fmt.Errorf("unmarshal session file failed: %w", err)
 	}
 	return &s, nil
 }
