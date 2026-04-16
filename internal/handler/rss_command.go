@@ -39,9 +39,10 @@ func (h *Handler) handleRSSAdd(ctx context.Context, evt *event.Event, parts []st
 	if err := h.service.RSS.AddFeed(u); err != nil {
 		slog.Error("add rss failed", "url", u, "err", err)
 		return reply("failed to add RSS feed")
-	} else {
-		return reply("RSS feed added successfully")
 	}
+
+	h.handleRSSSchedule(ctx)
+	return reply("RSS feed added successfully")
 }
 
 func (h *Handler) handleRSSDelete(ctx context.Context, evt *event.Event, parts []string) error {

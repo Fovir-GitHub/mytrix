@@ -43,7 +43,6 @@ func NewRSSService(db *gorm.DB) RSSService {
 	}
 }
 
-// TODO: update feeds after adding a feed
 func (r *RealRSSService) AddFeed(u string) error {
 	feed, _, err := r.parser.ParseURL(u)
 	if err != nil {
