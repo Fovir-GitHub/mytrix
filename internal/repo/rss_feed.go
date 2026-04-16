@@ -1,6 +1,7 @@
 package repo
 
 import (
+	"errors"
 	"fmt"
 	"log/slog"
 
@@ -23,9 +24,25 @@ func NewRSSFeedRepo(db *gorm.DB) *RSSFeedRepo {
 // Create persists the given RSSFeed to the database.
 // It uses GORM's Create method and returns any error encountered.
 func (r *RSSFeedRepo) Create(feed *model.RSSFeed) error {
-	if err := r.db.Create(feed).Error; err != nil {
-		return fmt.Errorf("create rss feed failed (url=%s): %w", feed.URL, err)
+	var existing model.RSSFeed
+	err := r.db.Unscoped().Where("url = ?", feed.URL).First(&existing).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		if err := r.db.Create(feed).Error; err != nil {
+			return fmt.Errorf("create rss feed failed (url=%s): %w", feed.URL, err)
+		}
+		return nil
 	}
+	if err != nil {
+		return fmt.Errorf("query existing feed failed (url=%s): %w", feed.URL, err)
+	}
+
+	if existing.DeletedAt.Valid {
+		existing.DeletedAt = gorm.DeletedAt{}
+		if err := r.db.Unscoped().Save(&existing).Error; err != nil {
+			return fmt.Errorf("save rss feed failed (url=%s): %w", feed.URL, err)
+		}
+	}
+
 	return nil
 }
 

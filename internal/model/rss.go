@@ -12,20 +12,18 @@ import (
 // It stores the feed URL and title.
 type RSSFeed struct {
 	gorm.Model
-	URL       string `gorm:"index:idx_feed_url_deleted,unique;not null"`
-	Title     string
-	DeletedAt gorm.DeletedAt `gorm:"index:idx_feed_url_deleted,unique"`
+	URL   string `gorm:"uniqueIndex;not null"`
+	Title string
 }
 
 // RSSItem represents an item from an RSS feed.
 // It stores the item's GUID, link, title, and associated feed ID.
 type RSSItem struct {
 	gorm.Model
-	FeedID    uint   `gorm:"index"`
-	GUID      string `gorm:"index:idx_feed_guid_deleted,unique"`
-	Link      string `gorm:"index:idx_feed_link_deleted,unique"`
-	Title     string
-	DeletedAt gorm.DeletedAt `gorm:"index:idx_feed_guid_deleted,unique;index:idx_feed_link_deleted,unique"`
+	FeedID uint   `gorm:"uniqueIndex:idx_feed_guid"`
+	GUID   string `gorm:"uniqueIndex:idx_feed_guid"`
+	Link   string `gorm:"uniqueIndex"`
+	Title  string
 }
 
 type RSSFeedView struct {
