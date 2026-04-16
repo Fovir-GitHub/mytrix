@@ -6,13 +6,18 @@ import (
 	"net/http"
 )
 
+// httpMethod represents an HTTP request method type.
 type httpMethod struct{ v string }
 
 var (
-	MethodGet  = httpMethod{http.MethodGet}
+	// MethodGet represents an HTTP GET request.
+	MethodGet = httpMethod{http.MethodGet}
+	// MethodPost represents an HTTP POST request.
 	MethodPost = httpMethod{http.MethodPost}
 )
 
+// NewRequest creates a new HTTP request with the specified method, URL, body, and headers.
+// It returns an error if the request cannot be created.
 func NewRequest(method httpMethod, url string, body io.Reader, headers map[string]string) (*http.Request, error) {
 	req, err := http.NewRequest(method.v, url, body)
 	if err != nil {

@@ -10,6 +10,7 @@ import (
 	"maunium.net/go/mautrix/event"
 )
 
+// handleRSSCommand processes the !rss command with various subcommands (add, delete, list).
 func (h *Handler) handleRSSCommand(ctx context.Context, evt *event.Event) error {
 	msg := evt.Content.AsMessage().Body
 	parts := strings.Fields(msg)
@@ -29,6 +30,7 @@ func (h *Handler) handleRSSCommand(ctx context.Context, evt *event.Event) error 
 	}
 }
 
+// handleRSSAdd adds a new RSS feed to the subscription list.
 func (h *Handler) handleRSSAdd(ctx context.Context, evt *event.Event, parts []string) error {
 	reply := h.getReply(ctx, evt)
 	if len(parts) < 3 {
@@ -45,6 +47,7 @@ func (h *Handler) handleRSSAdd(ctx context.Context, evt *event.Event, parts []st
 	return reply("RSS feed added successfully")
 }
 
+// handleRSSDelete deletes a RSS feed.
 func (h *Handler) handleRSSDelete(ctx context.Context, evt *event.Event, parts []string) error {
 	reply := h.getReply(ctx, evt)
 
@@ -63,6 +66,7 @@ func (h *Handler) handleRSSDelete(ctx context.Context, evt *event.Event, parts [
 	return reply("feed deleted")
 }
 
+// handleRSSList lists all RSS feeds.
 func (h *Handler) handleRSSList(ctx context.Context, evt *event.Event) error {
 	reply := h.getReply(ctx, evt)
 	feeds, err := h.service.RSS.ListFeeds()

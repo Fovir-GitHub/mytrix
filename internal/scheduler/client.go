@@ -9,10 +9,12 @@ import (
 	"github.com/robfig/cron/v3"
 )
 
+// Scheduler manages the scheduling and execution of background jobs using cron expressions.
 type Scheduler struct {
 	c *cron.Cron
 }
 
+// NewScheduler creates a new Scheduler with local timezone configuration.
 func NewScheduler() *Scheduler {
 	slog.Info("created scheduler")
 
@@ -24,11 +26,14 @@ func NewScheduler() *Scheduler {
 	return s
 }
 
+// Start begins executing all registered scheduled jobs.
 func (s *Scheduler) Start() {
 	slog.Info("start the scheduler")
 	s.c.Start()
 }
 
+// Register schedules a job to run at the time specified by the cron expression.
+// The job function is called whenever the cron expression matches the current time.
 func (s *Scheduler) Register(t string, job func()) {
 	_, err := s.c.AddFunc(t, job)
 	if err != nil {

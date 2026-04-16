@@ -11,6 +11,8 @@ import (
 	"maunium.net/go/mautrix/event"
 )
 
+// Handler manages Matrix event handling and command execution.
+// It routes incoming messages to appropriate command handlers and WebSocket event handlers.
 type Handler struct {
 	service   *service.Service
 	commands  map[string]func(context.Context, *event.Event) error

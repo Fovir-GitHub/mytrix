@@ -2,6 +2,7 @@ package config
 
 import "fmt"
 
+// GotifyConfig holds the configuration for Gotify integration.
 type GotifyConfig struct {
 	// Enabled determines whether to enable Gotify feature.
 	Enabled bool `env:"GOTIFY_ENABLED" envDefault:"false"`
@@ -13,6 +14,7 @@ type GotifyConfig struct {
 	Format string `env:"GOTIFY_FORMAT" envDefault:"# {{.Title}}\n\n**{{.Message}}**\n\n- ID: {{.ID}}\n- Date: {{.Date}}"`
 }
 
+// validateGotify validates the Gotify configuration and ensures required fields are present when enabled.
 func (mc *MytrixConfig) validateGotify() error {
 	cfg := mc.Gotify
 	if cfg.Enabled && (cfg.Server == "" || cfg.Token == "") {

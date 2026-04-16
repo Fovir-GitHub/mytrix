@@ -25,6 +25,8 @@ func NewGotifyService() *GotifyService {
 	return nil
 }
 
+// HandleEvent processes a WebSocket event and extracts the Gotify message data.
+// It unmarshals the event data into a GotifyMessage struct.
 func (g *GotifyService) HandleEvent(event *model.WsEvent) (*model.GotifyMessage, error) {
 	var msg model.GotifyMessage
 	data := event.Data

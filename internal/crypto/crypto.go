@@ -29,7 +29,7 @@ func SetupCryptoHelper(client *mautrix.Client) (*cryptohelper.CryptoHelper, erro
 	return helper, nil
 }
 
-// verifyWithRecoveryKey verifies the recovery key and completes the encryption setup.
+// VerifyWithRecoveryKey verifies the recovery key and completes the encryption setup.
 // It fetches cross-signing keys from the SSSS service and signs the device and master key.
 func VerifyWithRecoveryKey(machine *crypto.OlmMachine) (err error) {
 	ctx := context.Background()

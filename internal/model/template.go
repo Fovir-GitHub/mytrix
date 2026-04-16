@@ -16,6 +16,8 @@ var (
 	rssItemTmpl    *template.Template
 )
 
+// InitTemplates initializes all message formatting templates from the configuration.
+// It must be called before any model types can be formatted to markdown.
 func InitTemplates() {
 	cfg := config.Config
 	gotifyTmpl = createTmpl("gotify", cfg.Gotify.Format)

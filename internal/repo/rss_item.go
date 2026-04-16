@@ -46,6 +46,7 @@ func (r *RSSItemRepo) Create(item *model.RSSItem) error {
 	return nil
 }
 
+// DeleteByFeedId removes all RSSItems associated with a specific feed ID from the database.
 func (r *RSSItemRepo) DeleteByFeedId(feedId int) error {
 	if err := r.db.Where("feed_id = ?", feedId).Delete(&model.RSSItem{}).Error; err != nil {
 		return fmt.Errorf("delete rss item failed (feed_id=%d), %w", feedId, err)

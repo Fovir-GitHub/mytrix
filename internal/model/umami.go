@@ -6,6 +6,8 @@ import (
 	"log/slog"
 )
 
+// UmamiWebsite represents an analytics website tracked by Umami.
+// It contains the website ID, name, domain, and associated statistics.
 type UmamiWebsite struct {
 	ID     string `json:"id"`
 	Name   string `json:"name"`
@@ -13,6 +15,8 @@ type UmamiWebsite struct {
 	Stat   *UmamiWebsiteStat
 }
 
+// UmamiWebsiteStat represents visitor statistics for an Umami website.
+// It contains the number of visitors, total visits, and bounce count.
 type UmamiWebsiteStat struct {
 	Visitors int `json:"visitors"`
 	Visits   int `json:"visits"`
@@ -44,6 +48,8 @@ func (u *UmamiWebsite) toView() *umamiWebsiteView {
 	}
 }
 
+// ToMarkdown returns the UmamiWebsite formatted as a markdown string using the configured template.
+// If template execution fails, it falls back to a simple formatted string representation.
 func (u *UmamiWebsite) ToMarkdown() string {
 	var buf bytes.Buffer
 	view := u.toView()

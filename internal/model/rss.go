@@ -26,25 +26,29 @@ type RSSItem struct {
 	Title  string
 }
 
-type RSSFeedView struct {
+// rssFeedView is a view model for displaying RSS feed information.
+type rssFeedView struct {
 	ID    uint
 	Title string
 	URL   string
 }
 
-type RSSItemView struct {
+// rssItemView is a view model for displaying RSS item information.
+type rssItemView struct {
 	Title string
 	Link  string
 }
 
-func (r *RSSFeed) toView() *RSSFeedView {
-	return &RSSFeedView{
+func (r *RSSFeed) toView() *rssFeedView {
+	return &rssFeedView{
 		ID:    r.ID,
 		Title: r.Title,
 		URL:   r.URL,
 	}
 }
 
+// ToMarkdown returns the RSSFeed formatted as a markdown string using the configured template.
+// If template execution fails, it falls back to a simple formatted string representation.
 func (r *RSSFeed) ToMarkdown() string {
 	var buf bytes.Buffer
 	view := r.toView()
@@ -54,13 +58,15 @@ func (r *RSSFeed) ToMarkdown() string {
 	return buf.String()
 }
 
-func (r *RSSItem) toView() *RSSItemView {
-	return &RSSItemView{
+func (r *RSSItem) toView() *rssItemView {
+	return &rssItemView{
 		Title: r.Title,
 		Link:  r.Link,
 	}
 }
 
+// ToMarkdown returns the RSSItem formatted as a markdown string using the configured template.
+// If template execution fails, it falls back to a simple formatted string representation.
 func (r *RSSItem) ToMarkdown() string {
 	var buf bytes.Buffer
 	view := r.toView()

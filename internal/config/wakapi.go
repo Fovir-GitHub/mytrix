@@ -6,6 +6,7 @@ import (
 	"slices"
 )
 
+// WakapiConfig holds the configuration for Wakapi integration.
 type WakapiConfig struct {
 	// Enabled determines whether to enable Wakapi feature.
 	Enabled bool `env:"WAKAPI_ENABLED" envDefault:"false"`
@@ -31,6 +32,7 @@ type WakapiConfig struct {
 	DataFormat string `env:"WAKAPI_DATA_FORMAT" envDefault:"{{.Interval}} Report\n\n{{.Lang}}\n\nTotal: {{.Total}}"`
 }
 
+// validateWakapi validates the Wakapi configuration and ensures required fields are present when enabled.
 func (mc *MytrixConfig) validateWakapi() error {
 	cfg := mc.Wakapi
 	if !cfg.Enabled {
@@ -56,6 +58,7 @@ func (mc *MytrixConfig) validateWakapi() error {
 	return errors.Join(errs...)
 }
 
+// validateWakapiInterval checks if the given interval string is a valid Wakapi interval.
 func validateWakapiInterval(interval string) bool {
 	valid := []string{
 		"today",

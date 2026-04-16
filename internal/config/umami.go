@@ -6,6 +6,7 @@ import (
 	"slices"
 )
 
+// UmamiConfig holds the configuration for Umami analytics integration.
 type UmamiConfig struct {
 	// Enabled determines whether to enable Umami integration.
 	Enabled bool `env:"UMAMI_ENABLED" envDefault:"false"`
@@ -29,6 +30,7 @@ type UmamiConfig struct {
 	YearlyReportCron string `env:"UMAMI_YEARLY_REPORT_CRON" envDefault:"0 9 1 1 *"`
 }
 
+// validateUmami validates the Umami configuration and ensures required fields are present when enabled.
 func (mc *MytrixConfig) validateUmami() error {
 	cfg := mc.Umami
 	if !cfg.Enabled {
@@ -53,6 +55,7 @@ func (mc *MytrixConfig) validateUmami() error {
 	return errors.Join(errs...)
 }
 
+// validUmamiInterval checks if the given interval string is a valid Umami interval.
 func validUmamiInterval(interval string) bool {
 	validIntervals := []string{"daily", "weekly", "monthly", "yearly"}
 	return slices.Contains(validIntervals, interval)

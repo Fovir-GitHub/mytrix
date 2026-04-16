@@ -7,6 +7,7 @@ import (
 	"maunium.net/go/mautrix/event"
 )
 
+// handlePing responds to a ping command with "pong".
 func (h *Handler) handlePing(ctx context.Context, evt *event.Event) error {
 	slog.Debug("handle ping command")
 	if err := h.service.Message.Ping(ctx, evt); err != nil {

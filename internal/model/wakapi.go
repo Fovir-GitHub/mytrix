@@ -6,6 +6,7 @@ import (
 	"strings"
 )
 
+// WakapiInterval represents a time interval for Wakapi data retrieval.
 type WakapiInterval string
 
 // Wakapi interval constants representing different time periods for data retrieval.

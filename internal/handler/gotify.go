@@ -9,6 +9,7 @@ import (
 	"maunium.net/go/mautrix/id"
 )
 
+// handleGotify processes incoming Gotify WebSocket events and sends the notification as a Matrix message.
 func (h *Handler) handleGotify(ctx context.Context, event *model.WsEvent) error {
 	msg, err := h.service.Gotify.HandleEvent(event)
 	if err != nil {

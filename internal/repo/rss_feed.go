@@ -46,6 +46,7 @@ func (r *RSSFeedRepo) Create(feed *model.RSSFeed) error {
 	return nil
 }
 
+// Delete removes an RSSFeed from the database by ID.
 func (r *RSSFeedRepo) Delete(id int) error {
 	if err := r.db.Delete(&model.RSSFeed{}, id).Error; err != nil {
 		return fmt.Errorf("delete rss feed failed (id=%d): %w", id, err)
@@ -53,6 +54,7 @@ func (r *RSSFeedRepo) Delete(id int) error {
 	return nil
 }
 
+// SelectFeedByID retrieves a specific RSSFeed from the database by its ID.
 func (r *RSSFeedRepo) SelectFeedByID(id int) (*model.RSSFeed, error) {
 	var feed *model.RSSFeed
 	if err := r.db.First(&feed, id).Error; err != nil {
@@ -61,6 +63,7 @@ func (r *RSSFeedRepo) SelectFeedByID(id int) (*model.RSSFeed, error) {
 	return feed, nil
 }
 
+// AllFeeds retrieves all RSSFeeds from the database.
 func (r *RSSFeedRepo) AllFeeds() ([]model.RSSFeed, error) {
 	var feeds []model.RSSFeed
 	if err := r.db.Find(&feeds).Error; err != nil {

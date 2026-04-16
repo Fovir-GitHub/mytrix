@@ -1,5 +1,6 @@
 package config
 
+// RSSConfig holds the configuration for RSS feed integration.
 type RSSConfig struct {
 	// Enabled determines whether to enable RSS integration.
 	Enabled bool `env:"RSS_ENABLED" envDefault:"false"`
@@ -11,6 +12,7 @@ type RSSConfig struct {
 	Cron string `env:"RSS_CRON" envDefault:"0 * * * *"`
 }
 
+// validateRSS validates the RSS configuration and ensures cron expressions are valid when enabled.
 func (mc *MytrixConfig) validateRSS() error {
 	cfg := mc.RSS
 	if !cfg.Enabled {

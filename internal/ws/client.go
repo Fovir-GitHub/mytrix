@@ -9,6 +9,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+// Client represents a WebSocket client connection that automatically reconnects on failure.
 type Client struct {
 	url  string
 	conn *websocket.Conn
@@ -17,6 +18,7 @@ type Client struct {
 	mu   sync.Mutex
 }
 
+// NewClient creates a new WebSocket client for the given URL.
 func NewClient(url string) *Client {
 	return &Client{
 		url:  url,
@@ -25,10 +27,12 @@ func NewClient(url string) *Client {
 	}
 }
 
+// Start begins the connection and message reading loop in a background goroutine.
 func (c *Client) Start() {
 	go c.connectLoop()
 }
 
+// Stop closes the client connection and stops the background loops.
 func (c *Client) Stop() {
 	close(c.done)
 	c.mu.Lock()
@@ -100,6 +104,7 @@ func (c *Client) readLoop(conn *websocket.Conn) bool {
 	}
 }
 
+// Receive returns a receive-only channel for WebSocket messages.
 func (c *Client) Receive() <-chan []byte {
 	return c.recv
 }
