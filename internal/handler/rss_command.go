@@ -14,7 +14,7 @@ import (
 func (h *Handler) handleRSSCommand(ctx context.Context, evt *event.Event) error {
 	msg := evt.Content.AsMessage().Body
 	parts := strings.Fields(msg)
-	if len(parts) <= 2 {
+	if len(parts) <= 1 {
 		return h.service.Message.Reply(ctx, evt.RoomID, "invalid argument")
 	}
 
