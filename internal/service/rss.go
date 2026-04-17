@@ -1,4 +1,3 @@
-// TODO: add fallback for GUID
 package service
 
 import (

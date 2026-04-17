@@ -4,8 +4,10 @@ package feed
 
 import (
 	"fmt"
+	"strings"
 
 	"codeberg.org/Fovir/mytrix/internal/model"
+	"codeberg.org/Fovir/mytrix/internal/utils"
 	"github.com/mmcdole/gofeed"
 )
 
@@ -34,7 +36,7 @@ func (p *Parser) ParseURL(u string) (*model.RSSFeed, []model.RSSItem, error) {
 	rssItems := make([]model.RSSItem, 0, len(feed.Items))
 	for _, item := range feed.Items {
 		rssItems = append(rssItems, model.RSSItem{
-			GUID:  item.GUID,
+			GUID:  itemGUID(item),
 			Link:  item.Link,
 			Title: item.Title,
 		})
@@ -44,4 +46,29 @@ func (p *Parser) ParseURL(u string) (*model.RSSFeed, []model.RSSItem, error) {
 		URL:   feed.FeedLink,
 		Title: feed.Title,
 	}, rssItems, nil
+}
+
+func itemGUID(item *gofeed.Item) string {
+	if item.GUID != "" {
+		return item.GUID
+	}
+	if item.Link != "" {
+		return item.Link
+	}
+
+	var parts strings.Builder
+	add := func(s string) {
+		if s == "" {
+			return
+		}
+		parts.WriteString(s)
+		parts.WriteString("|")
+	}
+
+	add(item.Title)
+	add(item.Published)
+	add(item.Description)
+	add(item.Content)
+
+	return utils.HashMD5(parts.String())
 }
