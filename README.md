@@ -131,6 +131,79 @@ All configuration is done via environment variables.
 | `MYTRIX_RSS_CRON`             | Interval of fetching RSS feeds           | `0 * * * *`                                            |
 | `MYTRIX_RSS_UPDATE_AFTER_ADD` | Whether to update feeds after adding one | `true`                                                 |
 
+## Command List
+
+### Message
+
+- Ping-pong
+
+  ```txt
+  !ping
+  ```
+
+### Umami
+
+```txt
+!umami <interval>
+```
+
+Available intervals:
+
+- `daily`
+- `weekly`
+- `monthly`
+- `yearly`
+
+> If the interval is not provided, it will fall back to the default interval defined in environment variables.
+
+### Wakapi
+
+```txt
+!wakapi <interval>
+```
+
+Available intervals:
+
+- `today`
+- `yesterday`
+- `weekly`
+- `monthly`
+- `yearly`
+- `7d`
+- `30d`
+- `6m`
+- `12m`
+- `1y`
+- `all`
+
+> If the interval is not provided, it will fall back to the default interval defined in environment variables.
+
+### RSS
+
+- Add an RSS feed:
+
+  ```txt
+  !rss add <url>
+  ```
+
+- List all RSS feeds:
+
+  ```txt
+  !rss list
+  ```
+
+- Delete an RSS feed:
+
+  ```txt
+  !rss delete <id>
+  ```
+
+- Export RSS feeds:
+
+  ```txt
+  !rss export
+  ```
+
 ## Development
 
 0. Clone and enter the repository:
