@@ -16,7 +16,7 @@ func (h *Handler) handleRSSCommand(ctx context.Context, evt *event.Event) error 
 	msg := evt.Content.AsMessage().Body
 	parts := strings.Fields(msg)
 	if len(parts) <= 1 {
-		return reply("invalid argument")
+		return reply("Invalid argument")
 	}
 
 	switch parts[1] {
@@ -29,7 +29,7 @@ func (h *Handler) handleRSSCommand(ctx context.Context, evt *event.Event) error 
 	case "export":
 		return h.handleRSSExport(ctx, evt)
 	default:
-		return reply("invalid argument")
+		return reply("Invalid argument")
 	}
 }
 
@@ -37,13 +37,13 @@ func (h *Handler) handleRSSCommand(ctx context.Context, evt *event.Event) error 
 func (h *Handler) handleRSSAdd(ctx context.Context, evt *event.Event, parts []string) error {
 	reply := h.getReply(ctx, evt)
 	if len(parts) < 3 {
-		return reply("invalid arguments")
+		return reply("Invalid arguments")
 	}
 
 	u := parts[2]
 	if err := h.service.RSS.AddFeed(u); err != nil {
 		slog.Error("add rss failed", "url", u, "err", err)
-		return reply("failed to add RSS feed")
+		return reply("Failed to add RSS feed")
 	}
 
 	h.handleRSSSchedule(ctx)
@@ -55,18 +55,18 @@ func (h *Handler) handleRSSDelete(ctx context.Context, evt *event.Event, parts [
 	reply := h.getReply(ctx, evt)
 
 	if len(parts) < 3 {
-		return reply("invalid arguments")
+		return reply("Invalid arguments")
 	}
 
 	id, err := strconv.Atoi(parts[2])
 	if err != nil {
-		return reply("invalid id")
+		return reply("Invalid id")
 	}
 	if err := h.service.RSS.DeleteFeed(id); err != nil {
 		slog.Error("delete rss feed failed", "id", id, "err", err)
-		return reply("failed to delete RSS feed")
+		return reply("Failed to delete RSS feed")
 	}
-	return reply("feed deleted")
+	return reply("Feed deleted")
 }
 
 // handleRSSList lists all RSS feeds.
@@ -75,7 +75,7 @@ func (h *Handler) handleRSSList(ctx context.Context, evt *event.Event) error {
 	feeds, err := h.service.RSS.ListFeeds()
 	if err != nil {
 		slog.Error("list RSS feeds failed", "err", err)
-		return reply("failed to list RSS feeds")
+		return reply("Failed to list RSS feeds")
 	}
 	if feeds == "" {
 		return reply("Empty RSS list")
