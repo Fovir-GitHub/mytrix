@@ -2,6 +2,32 @@
 
 A Matrix bot written in Go.
 
+## Table of Contents
+
+<!-- toc -->
+
+- [Features](#features)
+- [Installation](#installation)
+  - [Prerequisites](#prerequisites)
+  - [Using Docker Compose](#using-docker-compose)
+- [Configuration](#configuration)
+  - [General Settings](#general-settings)
+  - [Bot Configuration](#bot-configuration)
+  - [Message Configuration](#message-configuration)
+  - [Gotify Configuration](#gotify-configuration)
+  - [Wakapi Configuration](#wakapi-configuration)
+  - [Umami Configuration](#umami-configuration)
+  - [RSS Configuration](#rss-configuration)
+- [Command List](#command-list)
+  - [Message](#message)
+  - [Umami](#umami)
+  - [Wakapi](#wakapi)
+  - [RSS](#rss)
+- [Development](#development)
+- [Acknowledgement](#acknowledgement)
+
+<!-- tocstop -->
+
 ## Features
 
 - Matrix bot functionality

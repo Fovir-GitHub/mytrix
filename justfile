@@ -13,3 +13,8 @@ db path:
 test:
   # Run testings.
   go test ./... -v
+
+toc:
+  # Generate ToC in README.md
+  markdown-toc -i README.md
+  prettier --write README.md

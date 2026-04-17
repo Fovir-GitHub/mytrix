@@ -25,6 +25,7 @@
         govulncheck
         just
         litecli
+        markdown-toc
         olm
         pre-commit
         sqlite
