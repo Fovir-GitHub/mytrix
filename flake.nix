@@ -28,6 +28,7 @@
         markdown-toc
         olm
         pre-commit
+        prettier
         sqlite
       ];
 
