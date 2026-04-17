@@ -1,3 +1,4 @@
+// TODO: add fallback for GUID
 package service
 
 import (
@@ -18,6 +19,7 @@ type RSSService interface {
 	DeleteFeed(id int) error
 	Update() (string, error)
 	ListFeeds() (string, error)
+	ExportFeeds() (string, error)
 }
 
 type RealRSSService struct {
@@ -157,6 +159,19 @@ func (r *RealRSSService) ListFeeds() (string, error) {
 
 	for _, feed := range feeds {
 		res.WriteString(feed.ToMarkdown())
+		res.WriteString("\n")
+	}
+	return res.String(), nil
+}
+
+func (r *RealRSSService) ExportFeeds() (string, error) {
+	feeds, err := r.allFeeds()
+	if err != nil {
+		return "", fmt.Errorf("export feed failed: %w", err)
+	}
+	var res strings.Builder
+	for _, feed := range feeds {
+		res.WriteString(feed.URL)
 		res.WriteString("\n")
 	}
 	return res.String(), nil

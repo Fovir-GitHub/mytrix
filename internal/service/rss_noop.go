@@ -25,3 +25,7 @@ func (r *NoopRSSService) AllFeeds() ([]model.RSSFeed, error) {
 func (r *NoopRSSService) ListFeeds() (string, error) {
 	return "", r.err
 }
+
+func (r *NoopRSSService) ExportFeeds() (string, error) {
+	return "", r.err
+}

@@ -12,10 +12,11 @@ import (
 
 // handleRSSCommand processes the !rss command with various subcommands (add, delete, list).
 func (h *Handler) handleRSSCommand(ctx context.Context, evt *event.Event) error {
+	reply := h.getReply(ctx, evt)
 	msg := evt.Content.AsMessage().Body
 	parts := strings.Fields(msg)
 	if len(parts) <= 1 {
-		return h.service.Message.Reply(ctx, evt.RoomID, "invalid argument")
+		return reply("invalid argument")
 	}
 
 	switch parts[1] {
@@ -25,8 +26,10 @@ func (h *Handler) handleRSSCommand(ctx context.Context, evt *event.Event) error 
 		return h.handleRSSDelete(ctx, evt, parts)
 	case "list":
 		return h.handleRSSList(ctx, evt)
+	case "export":
+		return h.handleRSSExport(ctx, evt)
 	default:
-		return h.service.Message.Reply(ctx, evt.RoomID, "invalid argument")
+		return reply("invalid argument")
 	}
 }
 
@@ -78,5 +81,19 @@ func (h *Handler) handleRSSList(ctx context.Context, evt *event.Event) error {
 		return reply("Empty RSS list")
 	}
 
+	return reply(feeds)
+}
+
+// handleRSSExport exports all RSS feeds.
+func (h *Handler) handleRSSExport(ctx context.Context, evt *event.Event) error {
+	reply := h.getReply(ctx, evt)
+	feeds, err := h.service.RSS.ExportFeeds()
+	if err != nil {
+		slog.Error("export RSS feeds failed", "err", err)
+		return reply("Failed to export RSS feeds")
+	}
+	if feeds == "" {
+		return reply("Empty RSS list")
+	}
 	return reply(feeds)
 }
