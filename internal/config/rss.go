@@ -10,6 +10,8 @@ type RSSConfig struct {
 	ItemFormat string `env:"RSS_ITEM_FORMAT" envDefault:"{{.Title}} - {{.Link}}"`
 	// Cron sets the fetch interval of RSS feeds (hourly by default).
 	Cron string `env:"RSS_CRON" envDefault:"0 * * * *"`
+	// UpdateAfterAdd determines whether to run `Update` after adding a feed.
+	UpdateAfterAdd bool `env:"RSS_UPDATE_AFTER_ADD" envDefault:"true"`
 }
 
 // validateRSS validates the RSS configuration and ensures cron expressions are valid when enabled.

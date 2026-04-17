@@ -19,7 +19,7 @@ func main() {
 		log.Fatal(err)
 	}
 	logger.Init()
-	slog.Info("mytrix started", "version", "v0.2.1")
+	slog.Info("mytrix started", "version", "v0.2.2")
 	config.SetTimeZone()
 	model.InitTemplates()
 

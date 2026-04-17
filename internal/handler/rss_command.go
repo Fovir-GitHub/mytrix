@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"strings"
 
+	"codeberg.org/Fovir/mytrix/internal/config"
 	"maunium.net/go/mautrix/event"
 )
 
@@ -46,7 +47,9 @@ func (h *Handler) handleRSSAdd(ctx context.Context, evt *event.Event, parts []st
 		return reply("Failed to add RSS feed")
 	}
 
-	h.handleRSSSchedule(ctx)
+	if config.Config.RSS.UpdateAfterAdd {
+		h.handleRSSSchedule(ctx)
+	}
 	return reply("RSS feed added successfully")
 }
 
