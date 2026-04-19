@@ -84,7 +84,6 @@ func (r *RealRSSService) Update() (string, error) {
 		if err != nil {
 			errs = append(errs, err)
 			slog.Warn("feed update failed", "feed_id", feed.ID, "err", err)
-			continue
 		}
 		res.WriteString(updated)
 	}
