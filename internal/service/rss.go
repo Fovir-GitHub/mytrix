@@ -75,7 +75,7 @@ func (r *RealRSSService) Update() (string, error) {
 
 	feeds, err := r.allFeeds()
 	if err != nil {
-		return "", fmt.Errorf("update feeds failed: %w", err)
+		return "", fmt.Errorf("%w: %w", ErrRSSFetchFeeds, err)
 	}
 	slog.Debug("rss update start", "feeds_len", len(feeds))
 
@@ -87,9 +87,15 @@ func (r *RealRSSService) Update() (string, error) {
 		}
 		res.WriteString(updated)
 	}
-	if len(errs) > 0 {
-		return res.String(), errors.Join(errs...)
+
+	if res.String() == "" {
+		return "", ErrRSSNoUpdate
 	}
+
+	if len(errs) > 0 {
+		return res.String(), ErrRSSPartialUpdate
+	}
+
 	slog.Info("rss update finished", "feeds_len", len(feeds))
 
 	return res.String(), nil
