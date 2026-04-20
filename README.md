@@ -212,6 +212,12 @@ Available intervals:
   !rss add <url>
   ```
 
+- Update all RSS feeds manually:
+
+  ```txt
+  !rss update
+  ```
+
 - List all RSS feeds:
 
   ```txt
