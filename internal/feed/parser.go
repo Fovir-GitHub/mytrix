@@ -36,9 +36,10 @@ func (p *Parser) ParseURL(u string) (*model.RSSFeed, []model.RSSItem, error) {
 	rssItems := make([]model.RSSItem, 0, len(feed.Items))
 	for _, item := range feed.Items {
 		rssItems = append(rssItems, model.RSSItem{
-			GUID:  itemGUID(item),
-			Link:  item.Link,
-			Title: item.Title,
+			GUID:        itemGUID(item),
+			Link:        item.Link,
+			Title:       item.Title,
+			Description: item.Description,
 		})
 	}
 

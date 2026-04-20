@@ -7,7 +7,7 @@ type RSSConfig struct {
 	// FeedFormat sets the output format of RSS feeds.
 	FeedFormat string `env:"RSS_FEED_FORMAT" envDefault:"- {{.ID}} {{.Title}}: {{.URL}}"`
 	// ItemFormat sets the output format of RSS items.
-	ItemFormat string `env:"RSS_ITEM_FORMAT" envDefault:"{{.Title}} - {{.Link}}"`
+	ItemFormat string `env:"RSS_ITEM_FORMAT" envDefault:"[{{.Title}}]({{.Link}}) - {{.Description}}"`
 	// Cron sets the fetch interval of RSS feeds (hourly by default).
 	Cron string `env:"RSS_CRON" envDefault:"0 * * * *"`
 	// UpdateAfterAdd determines whether to run `Update` after adding a feed.

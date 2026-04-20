@@ -20,10 +20,11 @@ type RSSFeed struct {
 // It stores the item's GUID, link, title, and associated feed ID.
 type RSSItem struct {
 	gorm.Model
-	FeedID uint   `gorm:"uniqueIndex:idx_feed_guid"`
-	GUID   string `gorm:"uniqueIndex:idx_feed_guid"`
-	Link   string `gorm:"uniqueIndex"`
-	Title  string
+	FeedID      uint   `gorm:"uniqueIndex:idx_feed_guid"`
+	GUID        string `gorm:"uniqueIndex:idx_feed_guid"`
+	Link        string `gorm:"uniqueIndex"`
+	Title       string
+	Description string
 }
 
 // ToMarkdown returns the RSSFeed formatted as a markdown string using the configured template.
