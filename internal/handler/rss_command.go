@@ -3,11 +3,13 @@ package handler
 
 import (
 	"context"
+	"errors"
 	"log/slog"
 	"strconv"
 	"strings"
 
 	"codeberg.org/Fovir/mytrix/internal/config"
+	"codeberg.org/Fovir/mytrix/internal/service"
 	"maunium.net/go/mautrix/event"
 )
 
@@ -29,6 +31,8 @@ func (h *Handler) handleRSSCommand(ctx context.Context, evt *event.Event) error 
 		return h.handleRSSList(ctx, evt)
 	case "export":
 		return h.handleRSSExport(ctx, evt)
+	case "update":
+		return h.handleRSSUpdate(ctx, evt)
 	default:
 		return reply("Invalid argument")
 	}
@@ -99,4 +103,19 @@ func (h *Handler) handleRSSExport(ctx context.Context, evt *event.Event) error {
 		return reply("Empty RSS list")
 	}
 	return reply(feeds)
+}
+
+func (h *Handler) handleRSSUpdate(ctx context.Context, evt *event.Event) error {
+	reply := h.getReply(ctx, evt)
+	updated, err := h.service.RSS.Update()
+	if err != nil {
+		if errors.Is(err, service.ErrRSSFetchFeeds) {
+			slog.Error("update rss error", "err", err)
+			return reply("Failed to update RSS feeds")
+		}
+		if errors.Is(err, service.ErrRSSNoUpdate) {
+			return reply("Everything up to date")
+		}
+	}
+	return reply(updated)
 }
