@@ -1,4 +1,3 @@
-// TODO: Compose the help information
 package handler
 
 import (
@@ -13,13 +12,12 @@ import (
 	"maunium.net/go/mautrix/event"
 )
 
-// handleRSSCommand processes the !rss command with various subcommands (add, delete, list, export, update).
+// handleRSSCommand processes the !rss command with various subcommands (add, delete, list, export, update, help).
 func (h *Handler) handleRSSCommand(ctx context.Context, evt *event.Event) error {
-	reply := h.getReply(ctx, evt)
 	msg := evt.Content.AsMessage().Body
 	parts := strings.Fields(msg)
 	if len(parts) <= 1 {
-		return reply("Invalid argument")
+		return h.handleRSSHelp(ctx, evt)
 	}
 
 	switch parts[1] {
@@ -33,8 +31,10 @@ func (h *Handler) handleRSSCommand(ctx context.Context, evt *event.Event) error 
 		return h.handleRSSExport(ctx, evt)
 	case "update":
 		return h.handleRSSUpdate(ctx, evt)
+	case "help":
+		return h.handleRSSHelp(ctx, evt)
 	default:
-		return reply("Invalid argument")
+		return h.handleRSSHelp(ctx, evt)
 	}
 }
 
@@ -42,7 +42,7 @@ func (h *Handler) handleRSSCommand(ctx context.Context, evt *event.Event) error 
 func (h *Handler) handleRSSAdd(ctx context.Context, evt *event.Event, parts []string) error {
 	reply := h.getReply(ctx, evt)
 	if len(parts) < 3 {
-		return reply("Invalid arguments")
+		return h.handleRSSHelp(ctx, evt)
 	}
 
 	u := parts[2]
@@ -62,12 +62,12 @@ func (h *Handler) handleRSSDelete(ctx context.Context, evt *event.Event, parts [
 	reply := h.getReply(ctx, evt)
 
 	if len(parts) < 3 {
-		return reply("Invalid arguments")
+		return h.handleRSSHelp(ctx, evt)
 	}
 
 	id, err := strconv.Atoi(parts[2])
 	if err != nil {
-		return reply("Invalid id")
+		return reply("Invalid ID")
 	}
 	if err := h.service.RSS.DeleteFeed(id); err != nil {
 		slog.Error("delete rss feed failed", "id", id, "err", err)
@@ -118,4 +118,17 @@ func (h *Handler) handleRSSUpdate(ctx context.Context, evt *event.Event) error {
 		}
 	}
 	return reply(updated)
+}
+
+func (h *Handler) handleRSSHelp(ctx context.Context, evt *event.Event) error {
+	const rssCommandUsage = "Usage:\n" +
+		"```" + `
+!rss add <url>      Add a feed
+!rss delete <id>    Delete a feed
+!rss list           List feeds
+!rss export         Export feeds
+!rss update         Update all feeds
+` + "```"
+	reply := h.getReply(ctx, evt)
+	return reply(rssCommandUsage)
 }

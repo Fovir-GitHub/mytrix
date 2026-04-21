@@ -236,6 +236,12 @@ Available intervals:
   !rss export
   ```
 
+- Show help information:
+
+  ```txt
+  !rss help
+  ```
+
 ## Development
 
 0. Clone and enter the repository:
