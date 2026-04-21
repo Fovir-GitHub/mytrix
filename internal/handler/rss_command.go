@@ -13,7 +13,7 @@ import (
 	"maunium.net/go/mautrix/event"
 )
 
-// handleRSSCommand processes the !rss command with various subcommands (add, delete, list).
+// handleRSSCommand processes the !rss command with various subcommands (add, delete, list, export, update).
 func (h *Handler) handleRSSCommand(ctx context.Context, evt *event.Event) error {
 	reply := h.getReply(ctx, evt)
 	msg := evt.Content.AsMessage().Body
