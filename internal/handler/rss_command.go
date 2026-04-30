@@ -105,6 +105,7 @@ func (h *Handler) handleRSSExport(ctx context.Context, evt *event.Event) error {
 	return reply(feeds)
 }
 
+// handleRSSUpdate updates RSS feeds manually.
 func (h *Handler) handleRSSUpdate(ctx context.Context, evt *event.Event) error {
 	reply := h.getReply(ctx, evt)
 	updated, err := h.service.RSS.Update()
@@ -120,6 +121,7 @@ func (h *Handler) handleRSSUpdate(ctx context.Context, evt *event.Event) error {
 	return reply(updated)
 }
 
+// handleRSSHelp shows command help information of RSS.
 func (h *Handler) handleRSSHelp(ctx context.Context, evt *event.Event) error {
 	const rssCommandUsage = "Usage:\n" +
 		"```" + `
