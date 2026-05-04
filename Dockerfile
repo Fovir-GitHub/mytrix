@@ -9,8 +9,11 @@ RUN go mod download
 
 COPY . .
 
+ARG VERSION=dev
+
 RUN CGO_ENABLED=1 GOOS=linux GOARCH=amd64 \
-    go build -o bot ./cmd/bot
+    go build -ldflags "-X codeberg.org/Fovir/mytrix/internal/version.Version=${VERSION}"  \
+    -o bot ./cmd/bot
 
 FROM alpine:3.19
 
