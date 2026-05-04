@@ -10,6 +10,7 @@ import (
 	"codeberg.org/Fovir/mytrix/internal/config"
 	"codeberg.org/Fovir/mytrix/internal/logger"
 	"codeberg.org/Fovir/mytrix/internal/model"
+	"codeberg.org/Fovir/mytrix/internal/version"
 	_ "maunium.net/go/mautrix/crypto/goolm"
 )
 
@@ -19,7 +20,7 @@ func main() {
 		log.Fatal(err)
 	}
 	logger.Init()
-	slog.Info("mytrix started", "version", "v0.2.7")
+	slog.Info("mytrix started", "version", version.Version)
 	config.SetTimeZone()
 	model.InitTemplates()
 
