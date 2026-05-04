@@ -167,6 +167,12 @@ All configuration is done via environment variables.
   !ping
   ```
 
+- Current version
+
+  ```txt
+  !version
+  ```
+
 ### Umami
 
 ```txt
