@@ -119,7 +119,7 @@ func (r *RealRSSService) updateFeed(feed *model.RSSFeed) (string, error) {
 			errs = append(errs, fmt.Errorf("insert item failed (feed_url=%s, guid=%s): %w", feed.URL, item.GUID, err))
 			continue
 		}
-		updated.WriteString(item.ToMarkdown())
+		updated.WriteString(item.ToMarkdown(feed))
 		updated.WriteString("\n")
 	}
 	if len(errs) > 0 {

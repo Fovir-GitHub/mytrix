@@ -4,6 +4,7 @@ package model
 import (
 	"bytes"
 	"fmt"
+	"strconv"
 
 	"gorm.io/gorm"
 )
@@ -39,8 +40,21 @@ func (r *RSSFeed) ToMarkdown() string {
 
 // ToMarkdown returns the RSSItem formatted as a markdown string using the configured template.
 // If template execution fails, it falls back to a simple formatted string representation.
-func (r *RSSItem) ToMarkdown() string {
+func (r RSSItem) ToMarkdown(feed *RSSFeed) string {
 	var buf bytes.Buffer
+	titles := []string{
+		r.Title,
+		feed.Title,
+		feed.URL,
+		r.Link,
+		strconv.Itoa(int(feed.ID)),
+	}
+	for _, title := range titles {
+		if title != "" {
+			r.Title = title
+			break
+		}
+	}
 	if err := rssItemTmpl.Execute(&buf, r); err != nil {
 		return fmt.Sprintf("Title: %s\nURL: %s", r.Title, r.Link)
 	}
