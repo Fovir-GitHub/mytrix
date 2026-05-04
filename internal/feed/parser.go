@@ -44,7 +44,7 @@ func (p *Parser) ParseURL(u string) (*model.RSSFeed, []model.RSSItem, error) {
 	}
 
 	return &model.RSSFeed{
-		URL:   feed.FeedLink,
+		URL:   u,
 		Title: feed.Title,
 	}, rssItems, nil
 }
