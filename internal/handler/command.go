@@ -14,6 +14,7 @@ func (h *Handler) registerCommands() {
 	h.commands["!umami"] = h.handleUmamiCommand
 	h.commands["!wakapi"] = h.handleWakapiCommand
 	h.commands["!rss"] = h.handleRSSCommand
+	h.commands["!version"] = h.handleVersion
 	slog.Info("bot command initialized",
 		"count", len(h.commands))
 }

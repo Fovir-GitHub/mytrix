@@ -5,6 +5,7 @@ import (
 	"log/slog"
 
 	"codeberg.org/Fovir/mytrix/internal/matrix"
+	"codeberg.org/Fovir/mytrix/internal/version"
 	"maunium.net/go/mautrix/event"
 	"maunium.net/go/mautrix/id"
 )
@@ -38,4 +39,9 @@ func (s *MessageService) Ping(ctx context.Context, evt *event.Event) error {
 // UserID returns the user ID of the Matrix client.
 func (s *MessageService) UserID() id.UserID {
 	return s.client.UserID()
+}
+
+// Version sends current version of mytrix.
+func (s *MessageService) Version(ctx context.Context, evt *event.Event) error {
+	return s.Reply(ctx, evt.RoomID, version.Version)
 }
