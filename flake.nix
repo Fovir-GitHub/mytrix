@@ -24,12 +24,14 @@
         gotools
         govulncheck
         just
+        kubescape
         litecli
         markdown-toc
         olm
         pre-commit
         prettier
         sqlite
+        trivy
       ];
 
       # Shell hooks.
