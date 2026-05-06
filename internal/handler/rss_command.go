@@ -38,23 +38,29 @@ func (h *Handler) handleRSSCommand(ctx context.Context, evt *event.Event) error 
 	}
 }
 
-// handleRSSAdd adds a new RSS feed to the subscription list.
+// handleRSSAdd adds new RSS feeds to the subscription list.
 func (h *Handler) handleRSSAdd(ctx context.Context, evt *event.Event, parts []string) error {
 	reply := h.getReply(ctx, evt)
 	if len(parts) < 3 {
 		return h.handleRSSHelp(ctx, evt)
 	}
 
-	u := parts[2]
-	if err := h.service.RSS.AddFeed(u); err != nil {
-		slog.Error("add rss failed", "url", u, "err", err)
-		return reply("Failed to add RSS feed")
+	feeds := parts[2:]
+	var replyMsg string
+	errFeeds, err := h.service.RSS.AddFeeds(feeds)
+
+	if err != nil {
+		slog.Error("add rss failed", "err", err)
+		replyMsg = "Failed to add RSS feeds:\n" + errFeeds
+	} else {
+		replyMsg = "RSS feeds added successfully"
 	}
 
 	if config.Config.RSS.UpdateAfterAdd {
 		h.handleRSSSchedule(ctx)
 	}
-	return reply("RSS feed added successfully")
+
+	return reply(replyMsg)
 }
 
 // handleRSSDelete deletes a RSS feed.
@@ -125,11 +131,11 @@ func (h *Handler) handleRSSUpdate(ctx context.Context, evt *event.Event) error {
 func (h *Handler) handleRSSHelp(ctx context.Context, evt *event.Event) error {
 	const rssCommandUsage = "Usage:\n" +
 		"```" + `
-!rss add <url>      Add a feed
-!rss delete <id>    Delete a feed
-!rss list           List feeds
-!rss export         Export feeds
-!rss update         Update all feeds
+!rss add <url1> <url2> ...  Add one or more feeds
+!rss delete <id>            Delete a feed
+!rss list                   List feeds
+!rss export                 Export feeds
+!rss update                 Update all feeds
 ` + "```"
 	reply := h.getReply(ctx, evt)
 	return reply(rssCommandUsage)

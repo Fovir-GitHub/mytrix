@@ -14,8 +14,9 @@ import (
 )
 
 type RSSService interface {
-	AddFeed(u string) error
-	DeleteFeed(id int) error
+	// AddFeed(string) error
+	AddFeeds([]string) (string, error)
+	DeleteFeed(int) error
 	Update() (string, error)
 	ListFeeds() (string, error)
 	ExportFeeds() (string, error)
@@ -44,7 +45,25 @@ func NewRSSService(db *gorm.DB) RSSService {
 	}
 }
 
-func (r *RealRSSService) AddFeed(u string) error {
+func (r *RealRSSService) AddFeeds(feeds []string) (string, error) {
+	var errFeeds strings.Builder
+	var errs []error
+
+	for _, f := range feeds {
+		if err := r.addFeed(f); err != nil {
+			errFeeds.WriteString(f)
+			errFeeds.WriteString("\n")
+			errs = append(errs, err)
+		}
+	}
+
+	if len(errs) > 0 {
+		return errFeeds.String(), errors.Join(errs...)
+	}
+	return "", nil
+}
+
+func (r *RealRSSService) addFeed(u string) error {
 	feed, _, err := r.parser.ParseURL(u)
 	if err != nil {
 		return fmt.Errorf("parse rss url failed (url=%s): %w", u, err)

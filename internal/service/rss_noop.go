@@ -6,11 +6,11 @@ type NoopRSSService struct {
 	err error
 }
 
-func (r *NoopRSSService) AddFeed(u string) error {
-	return r.err
+func (r *NoopRSSService) AddFeeds([]string) (string, error) {
+	return "", r.err
 }
 
-func (r *NoopRSSService) DeleteFeed(id int) error {
+func (r *NoopRSSService) DeleteFeed(int) error {
 	return r.err
 }
 
