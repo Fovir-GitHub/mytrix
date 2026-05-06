@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"strconv"
 	"strings"
 
 	"codeberg.org/Fovir/mytrix/internal/config"
@@ -16,7 +17,7 @@ import (
 type RSSService interface {
 	// AddFeed(string) error
 	AddFeeds([]string) (string, error)
-	DeleteFeed(int) error
+	DeleteFeeds([]string) (string, error)
 	Update() (string, error)
 	ListFeeds() (string, error)
 	ExportFeeds() (string, error)
@@ -75,7 +76,34 @@ func (r *RealRSSService) addFeed(u string) error {
 	return nil
 }
 
-func (r *RealRSSService) DeleteFeed(id int) error {
+func (r *RealRSSService) DeleteFeeds(ids []string) (string, error) {
+	var errs []error
+	var errIds strings.Builder
+	handleErr := func(idStr string, err error) {
+		errIds.WriteString(idStr)
+		errIds.WriteString("\n")
+		errs = append(errs, err)
+	}
+
+	for _, idStr := range ids {
+		id, err := strconv.Atoi(idStr)
+		if err != nil {
+			handleErr(idStr, err)
+			continue
+		}
+
+		if err := r.deleteFeed(id); err != nil {
+			handleErr(idStr, err)
+		}
+	}
+
+	if len(errs) > 0 {
+		return errIds.String(), errors.Join(errs...)
+	}
+	return "", nil
+}
+
+func (r *RealRSSService) deleteFeed(id int) error {
 	if err := r.feedRepo.Delete(id); err != nil {
 		return fmt.Errorf("delete feed failed (id=%d): %w", id, err)
 	}

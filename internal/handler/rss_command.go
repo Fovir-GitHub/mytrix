@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"log/slog"
-	"strconv"
 	"strings"
 
 	"codeberg.org/Fovir/mytrix/internal/config"
@@ -63,7 +62,7 @@ func (h *Handler) handleRSSAdd(ctx context.Context, evt *event.Event, parts []st
 	return reply(replyMsg)
 }
 
-// handleRSSDelete deletes a RSS feed.
+// handleRSSDelete deletes one or more RSS feeds.
 func (h *Handler) handleRSSDelete(ctx context.Context, evt *event.Event, parts []string) error {
 	reply := h.getReply(ctx, evt)
 
@@ -71,15 +70,12 @@ func (h *Handler) handleRSSDelete(ctx context.Context, evt *event.Event, parts [
 		return h.handleRSSHelp(ctx, evt)
 	}
 
-	id, err := strconv.Atoi(parts[2])
-	if err != nil {
-		return reply("Invalid ID")
+	ids := parts[2:]
+	if errIds, err := h.service.RSS.DeleteFeeds(ids); err != nil {
+		slog.Error("delete rss feed failed", "err", err)
+		return reply("Failed to delete RSS feeds:\n" + errIds)
 	}
-	if err := h.service.RSS.DeleteFeed(id); err != nil {
-		slog.Error("delete rss feed failed", "id", id, "err", err)
-		return reply("Failed to delete RSS feed")
-	}
-	return reply("Feed deleted")
+	return reply("Feeds deleted")
 }
 
 // handleRSSList lists all RSS feeds.
@@ -132,7 +128,7 @@ func (h *Handler) handleRSSHelp(ctx context.Context, evt *event.Event) error {
 	const rssCommandUsage = "Usage:\n" +
 		"```" + `
 !rss add <url1> <url2> ...  Add one or more feeds
-!rss delete <id>            Delete a feed
+!rss delete <id1> <id2> ... Delete a feed
 !rss list                   List feeds
 !rss export                 Export feeds
 !rss update                 Update all feeds

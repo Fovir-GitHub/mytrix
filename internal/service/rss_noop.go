@@ -10,8 +10,8 @@ func (r *NoopRSSService) AddFeeds([]string) (string, error) {
 	return "", r.err
 }
 
-func (r *NoopRSSService) DeleteFeed(int) error {
-	return r.err
+func (r *NoopRSSService) DeleteFeeds([]string) (string, error) {
+	return "", r.err
 }
 
 func (r *NoopRSSService) Update() (string, error) {
