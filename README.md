@@ -215,7 +215,7 @@ Available intervals:
 - Add an RSS feed:
 
   ```txt
-  !rss add <url>
+  !rss add <url1> <url2>
   ```
 
 - Update all RSS feeds manually:
@@ -233,7 +233,7 @@ Available intervals:
 - Delete an RSS feed:
 
   ```txt
-  !rss delete <id>
+  !rss delete !rss delete <id1> <id2>
   ```
 
 - Export RSS feeds:
