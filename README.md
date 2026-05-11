@@ -233,7 +233,7 @@ Available intervals:
 - Delete an RSS feed:
 
   ```txt
-  !rss delete !rss delete <id1> <id2>
+  !rss delete <id1> <id2>
   ```
 
 - Export RSS feeds:
