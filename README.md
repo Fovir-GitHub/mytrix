@@ -201,12 +201,12 @@ Available intervals:
 - `weekly`
 - `monthly`
 - `yearly`
-- `7d`
-- `30d`
-- `6m`
-- `12m`
-- `1y`
-- `all`
+- `7d` (Last 7 days)
+- `30d`(Last 30 days)
+- `6m` (Last 6 months)
+- `12m` (Last 12 months)
+- `1y` (Last 1 year)
+- `all` (All time)
 
 > If the interval is not provided, it will fall back to the default interval defined in environment variables.
 
