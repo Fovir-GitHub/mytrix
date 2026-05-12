@@ -44,7 +44,7 @@ func (r *RSSItemRepo) Create(item *model.RSSItem) error {
 		}
 		return nil
 	}
-	return fmt.Errorf("rss item already exists (guid=%s)", item.GUID)
+	return gorm.ErrDuplicatedKey
 }
 
 // DeleteByFeedId removes all RSSItems associated with a specific feed ID from the database.
