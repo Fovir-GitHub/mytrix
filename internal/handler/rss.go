@@ -22,7 +22,7 @@ func (h *Handler) handleRSSSchedule(ctx context.Context) {
 		}
 
 		if errors.Is(err, service.ErrRSSNoUpdate) {
-			slog.Info("rss everything up to date")
+			slog.Debug("rss everything up to date")
 			return
 		}
 	}
