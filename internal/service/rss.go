@@ -162,9 +162,11 @@ func (r *RealRSSService) updateFeed(feed *model.RSSFeed) (string, error) {
 	for _, item := range items {
 		item.FeedID = feed.ID
 		if err := r.addItem(&item); err != nil {
-			if !errors.Is(err, gorm.ErrDuplicatedKey) {
-				slog.Debug("item insert failed", "feed_url", feed.URL, "guid", item.GUID)
+			if !errors.Is(err, ErrRSSItemExists) {
+				slog.Error("item insert failed", "feed_url", feed.URL, "guid", item.GUID, "err", err)
 				errs = append(errs, fmt.Errorf("insert item failed (feed_url=%s, guid=%s): %w", feed.URL, item.GUID, err))
+			} else {
+				slog.Debug("item insert failed", "feed_url", feed.URL, "guid", item.GUID, "err", err)
 			}
 			continue
 		}
@@ -185,11 +187,13 @@ func (r *RealRSSService) updateFeed(feed *model.RSSFeed) (string, error) {
 }
 
 func (r *RealRSSService) addItem(item *model.RSSItem) error {
-	err := r.itemRepo.Create(item)
-	if err != nil && !errors.Is(err, gorm.ErrDuplicatedKey) {
+	if err := r.itemRepo.Create(item); err != nil {
+		if errors.Is(err, gorm.ErrDuplicatedKey) {
+			return fmt.Errorf("%w (feed_id=%d, guid=%s)", ErrRSSItemExists, item.FeedID, item.GUID)
+		}
 		return fmt.Errorf("add item failed (feed_id=%d, guid=%s): %w", item.FeedID, item.GUID, err)
 	}
-	return err
+	return nil
 }
 
 func (r *RealRSSService) allFeeds() ([]model.RSSFeed, error) {
