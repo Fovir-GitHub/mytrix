@@ -15,7 +15,6 @@ import (
 )
 
 type RSSService interface {
-	// AddFeed(string) error
 	AddFeeds([]string) (string, error)
 	DeleteFeeds([]string) (string, error)
 	Update() (string, error)
