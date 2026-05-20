@@ -34,6 +34,9 @@ func (h *Handler) handleRSSSchedule(ctx context.Context) {
 
 func (h *Handler) RSSScheduleList() []scheduler.ScheduledJob {
 	cfg := config.Config.RSS
+	if !cfg.Enabled {
+		return nil
+	}
 	return []scheduler.ScheduledJob{
 		{
 			Cron: cfg.Cron,

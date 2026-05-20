@@ -30,6 +30,9 @@ func (h *Handler) handleWakapiSchedule(ctx context.Context, interval model.Wakap
 // Each scheduled job invokes handleWakapiSchedule with its respective interval.
 func (h *Handler) WakapiScheduleList() []scheduler.ScheduledJob {
 	cfg := config.Config.Wakapi
+	if !cfg.Enabled {
+		return nil
+	}
 	m := map[string]model.WakapiInterval{
 		cfg.DailyReportCron:   model.WakapiIntervalYesterday,
 		cfg.WeeklyReportCron:  model.WakapiIntervalLast7Days,

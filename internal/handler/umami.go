@@ -64,6 +64,9 @@ func (h *Handler) handleUmamiSchedule(ctx context.Context, interval *model.Umami
 // creating scheduled jobs for daily, weekly, monthly, and yearly reports.
 func (h *Handler) UmamiScheduleList() []scheduler.ScheduledJob {
 	cfg := config.Config.Umami
+	if !cfg.Enabled {
+		return nil
+	}
 	m := map[string]func() *model.UmamiInterval{
 		cfg.DailyReportCron:   model.UmamiIntervalYesterday,
 		cfg.WeeklyReportCron:  model.UmamiIntervalLastWeek,
