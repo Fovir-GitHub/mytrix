@@ -3,6 +3,7 @@
 package scheduler
 
 import (
+	"fmt"
 	"log/slog"
 	"time"
 
@@ -34,11 +35,11 @@ func (s *Scheduler) Start() {
 
 // Register schedules a job to run at the time specified by the cron expression.
 // The job function is called whenever the cron expression matches the current time.
-func (s *Scheduler) Register(t string, job func()) {
-	_, err := s.c.AddFunc(t, job)
+func (s *Scheduler) Register(cron string, job func()) error {
+	_, err := s.c.AddFunc(cron, job)
 	if err != nil {
-		slog.Error("register schedule failed", "time", t, "err", err)
-		return
+		return fmt.Errorf("register schedule failed (cron=%v): %w", cron, err)
 	}
-	slog.Debug("registered scheduler", "time", t)
+	slog.Debug("registered scheduler", "cron", cron)
+	return nil
 }

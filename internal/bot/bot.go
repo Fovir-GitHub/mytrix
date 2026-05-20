@@ -82,7 +82,10 @@ func New() (*Bot, error) {
 
 	bot.registerHandler()
 	bot.registerWs()
-	bot.registerScheduler()
+
+	if err := bot.registerScheduler(); err != nil {
+		return nil, fmt.Errorf("bot registers schedules failed: %w", err)
+	}
 
 	return bot, nil
 }
@@ -107,7 +110,8 @@ func (b *Bot) Start(ctx context.Context) error {
 		for event := range b.WsManager.Events() {
 			slog.Debug(
 				"receive websocket event",
-				"source", event.Source)
+				"source", event.Source,
+			)
 			err := b.Handler.HandleWSEvent(ctx, event)
 			if err != nil {
 				slog.Error(
