@@ -51,3 +51,13 @@ func (m *Client) VerifyWithRecoveryKey() error {
 func (m *Client) UserID() id.UserID {
 	return m.c.UserID
 }
+
+func (m *Client) JoinRoomByID(ctx context.Context, roomID id.RoomID) error {
+	_, err := m.c.JoinRoomByID(ctx, roomID)
+	return err
+}
+
+func (m *Client) LeaveRoom(ctx context.Context, roomID id.RoomID) error {
+	_, err := m.c.LeaveRoom(ctx, roomID)
+	return err
+}
