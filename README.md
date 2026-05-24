@@ -61,6 +61,7 @@ services:
       - MYTRIX_LOG_LEVEL=INFO
       - MYTRIX_HOMESERVER=https://matrix.example.com
       - MYTRIX_ROOM_ID=!roomid:matrix.example.com
+      - MYTRIX_ADMIN_ID=@admin:matrix.example.com
       - MYTRIX_BOT_USERNAME=bot@example.com
       - MYTRIX_BOT_PASSWORD=your-bot-password
       - MYTRIX_BOT_RECOVERY_KEY=your-recovery-key
@@ -87,6 +88,7 @@ All configuration is done via environment variables.
 | `MYTRIX_DATA_DIR`   | Data directory for storing sessions      | `data`       |
 | `MYTRIX_TIMEOUT`    | HTTP request timeout in seconds          | `10`         |
 | `MYTRIX_TZ`         | Timezone                                 | `time.Local` |
+| `MYTRIX_ADMIN_ID`   | Determine who can invite the bot         | `""`         |
 
 ### Bot Configuration
 
