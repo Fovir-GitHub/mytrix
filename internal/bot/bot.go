@@ -59,13 +59,15 @@ func New() (*Bot, error) {
 	umamiSrv := service.NewUmamiService(http)
 	wakapiSrv := service.NewWakapiService(http, scheduler)
 	rssSrv := service.NewRSSService(db)
+	invitationSrv := service.NewInvitationService(matrixClient)
 
 	service := &service.Service{
-		Gotify:  gotifySrv,
-		Message: msgSrv,
-		Umami:   umamiSrv,
-		Wakapi:  wakapiSrv,
-		RSS:     rssSrv,
+		Gotify:     gotifySrv,
+		Invitation: invitationSrv,
+		Message:    msgSrv,
+		RSS:        rssSrv,
+		Umami:      umamiSrv,
+		Wakapi:     wakapiSrv,
 	}
 
 	handler := handler.NewHandler(service)
@@ -138,4 +140,5 @@ func (b *Bot) Start(ctx context.Context) error {
 // the syncer to call HandleCommand when a message event is received.
 func (b *Bot) registerHandler() {
 	b.Syncer.OnEventType(event.EventMessage, b.Handler.HandleCommand)
+	b.Syncer.OnEventType(event.StateMember, b.Handler.HandleInvitation)
 }
