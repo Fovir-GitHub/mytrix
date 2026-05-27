@@ -47,9 +47,3 @@ jobs:
 
             git push --mirror "$target"
           done
-
-          # while read -r target; do
-          #   [ -z "$target" ] && continue
-          #   echo "==> Mirroring to $target"
-          #   git push --mirror "$target"
-          # done < .mirror-targets
