@@ -59,15 +59,15 @@ func New() (*Bot, error) {
 	umamiSrv := service.NewUmamiService(http)
 	wakapiSrv := service.NewWakapiService(http, scheduler)
 	rssSrv := service.NewRSSService(db)
-	invitationSrv := service.NewInvitationService(matrixClient)
+	roomSrv := service.NewRoomService(matrixClient)
 
 	service := &service.Service{
-		Gotify:     gotifySrv,
-		Invitation: invitationSrv,
-		Message:    msgSrv,
-		RSS:        rssSrv,
-		Umami:      umamiSrv,
-		Wakapi:     wakapiSrv,
+		Gotify:  gotifySrv,
+		Message: msgSrv,
+		RSS:     rssSrv,
+		Room:    roomSrv,
+		Umami:   umamiSrv,
+		Wakapi:  wakapiSrv,
 	}
 
 	handler := handler.NewHandler(service)
