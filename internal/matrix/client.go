@@ -3,6 +3,7 @@ package matrix
 import (
 	"context"
 	"fmt"
+	"log/slog"
 
 	"codeberg.org/Fovir/mytrix/internal/config"
 	"codeberg.org/Fovir/mytrix/internal/crypto"
@@ -27,6 +28,10 @@ func New(c *mautrix.Client) *Client {
 // It converts Markdown and HTML according to the message configuration.
 func (m *Client) SendTextMessage(ctx context.Context, roomID id.RoomID, text string) error {
 	cfg := config.Config.Msg
+	maxLen := m.MaxMessageLength(ctx, roomID)
+	if len(text) > maxLen {
+		text = text[:maxLen]
+	}
 	content := format.RenderMarkdown(text, cfg.AllowMarkdown, cfg.AllowHTML)
 	_, err := m.c.SendMessageEvent(ctx, roomID, event.EventMessage, content)
 	return err
@@ -62,11 +67,17 @@ func (m *Client) LeaveRoom(ctx context.Context, roomID id.RoomID) error {
 	return err
 }
 
-func (m *Client) MaxMessageLength(ctx context.Context, roomID id.RoomID) (int, error) {
+func (m *Client) MaxMessageLength(ctx context.Context, roomID id.RoomID) int {
 	var features event.RoomFeatures
+	defaultMaxLen := config.Config.Msg.DefaultMaxLength
+
 	err := m.c.StateEvent(ctx, roomID, event.StateBeeperRoomFeatures, "", &features)
 	if err != nil {
-		return 0, err
+		slog.Warn("get max message length failed, use default max length",
+			"room_id", roomID,
+			"default_max_length", defaultMaxLen,
+			"err", err)
+		return defaultMaxLen
 	}
-	return features.MaxTextLength, nil
+	return features.MaxTextLength
 }

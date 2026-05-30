@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strconv"
 
+	"codeberg.org/Fovir/mytrix/internal/config"
 	"gorm.io/gorm"
 )
 
@@ -42,6 +43,7 @@ func (r *RSSFeed) ToMarkdown() string {
 // If template execution fails, it falls back to a simple formatted string representation.
 func (r RSSItem) ToMarkdown(feed *RSSFeed) string {
 	var buf bytes.Buffer
+	descMaxLen := config.Config.RSS.DescriptionMaxLength
 	titles := []string{
 		r.Title,
 		feed.Title,
@@ -54,6 +56,9 @@ func (r RSSItem) ToMarkdown(feed *RSSFeed) string {
 			r.Title = title
 			break
 		}
+	}
+	if len(r.Description) > descMaxLen {
+		r.Description = r.Description[:descMaxLen]
 	}
 	if err := rssItemTmpl.Execute(&buf, r); err != nil {
 		return fmt.Sprintf("Title: %s\nURL: %s", r.Title, r.Link)
