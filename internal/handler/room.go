@@ -8,7 +8,7 @@ import (
 )
 
 func (h *Handler) HandleInvitation(ctx context.Context, evt *event.Event) {
-	if err := h.service.Invitation.Process(ctx, evt); err != nil {
+	if err := h.service.Room.ProcessInvitation(ctx, evt); err != nil {
 		slog.Error("handle invitation failed", "err", err)
 		return
 	}
