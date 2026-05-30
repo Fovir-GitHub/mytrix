@@ -61,3 +61,12 @@ func (m *Client) LeaveRoom(ctx context.Context, roomID id.RoomID) error {
 	_, err := m.c.LeaveRoom(ctx, roomID)
 	return err
 }
+
+func (m *Client) MaxMessageLength(ctx context.Context, roomID id.RoomID) (int, error) {
+	var features event.RoomFeatures
+	err := m.c.StateEvent(ctx, roomID, event.StateBeeperRoomFeatures, "", &features)
+	if err != nil {
+		return 0, err
+	}
+	return features.MaxTextLength, nil
+}
