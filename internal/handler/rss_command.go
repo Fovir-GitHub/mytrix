@@ -110,6 +110,7 @@ func (h *Handler) handleRSSExport(ctx context.Context, evt *event.Event) error {
 // handleRSSUpdate updates RSS feeds manually.
 func (h *Handler) handleRSSUpdate(ctx context.Context, evt *event.Event) error {
 	reply := h.getReply(ctx, evt)
+	var errs []error
 	updated, err := h.service.RSS.Update()
 	if err != nil {
 		if errors.Is(err, service.ErrRSSFetchFeeds) {
@@ -120,7 +121,14 @@ func (h *Handler) handleRSSUpdate(ctx context.Context, evt *event.Event) error {
 			return reply("Everything up to date")
 		}
 	}
-	return reply(updated)
+
+	for _, item := range updated {
+		if err := reply(item); err != nil {
+			errs = append(errs, err)
+		}
+	}
+
+	return errors.Join(errs...)
 }
 
 // handleRSSHelp shows command help information of RSS.

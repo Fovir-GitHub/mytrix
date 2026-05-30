@@ -14,8 +14,8 @@ func (r *NoopRSSService) DeleteFeeds([]string) (string, error) {
 	return "", r.err
 }
 
-func (r *NoopRSSService) Update() (string, error) {
-	return "", r.err
+func (r *NoopRSSService) Update() ([]string, error) {
+	return nil, r.err
 }
 
 func (r *NoopRSSService) AllFeeds() ([]model.RSSFeed, error) {

@@ -17,7 +17,7 @@ import (
 type RSSService interface {
 	AddFeeds([]string) (string, error)
 	DeleteFeeds([]string) (string, error)
-	Update() (string, error)
+	Update() ([]string, error)
 	ListFeeds() (string, error)
 	ExportFeeds() (string, error)
 }
@@ -113,15 +113,15 @@ func (r *RealRSSService) deleteFeed(id int) error {
 	return nil
 }
 
-func (r *RealRSSService) Update() (string, error) {
+func (r *RealRSSService) Update() ([]string, error) {
 	var (
 		errs []error
-		res  strings.Builder
+		res  []string
 	)
 
 	feeds, err := r.allFeeds()
 	if err != nil {
-		return "", fmt.Errorf("%w: %w", ErrRSSFetchFeeds, err)
+		return nil, fmt.Errorf("%w: %w", ErrRSSFetchFeeds, err)
 	}
 	slog.Debug("rss update start", "feeds_len", len(feeds))
 
@@ -131,20 +131,20 @@ func (r *RealRSSService) Update() (string, error) {
 			errs = append(errs, err)
 			slog.Warn("feed update failed", "feed_id", feed.ID, "err", err)
 		}
-		res.WriteString(updated)
+		res = append(res, updated)
 	}
 
-	if res.String() == "" {
-		return "", ErrRSSNoUpdate
+	if len(res) <= 0 {
+		return nil, ErrRSSNoUpdate
 	}
 
 	if len(errs) > 0 {
-		return res.String(), ErrRSSPartialUpdate
+		return res, ErrRSSPartialUpdate
 	}
 
 	slog.Info("rss update finished", "feeds_len", len(feeds))
 
-	return res.String(), nil
+	return res, nil
 }
 
 func (r *RealRSSService) updateFeed(feed *model.RSSFeed) (string, error) {
