@@ -101,10 +101,11 @@ All configuration is done via environment variables.
 
 ### Message Configuration
 
-| Variable                    | Description                        | Default |
-| --------------------------- | ---------------------------------- | ------- |
-| `MYTRIX_MSG_ALLOW_MARKDOWN` | Allow Markdown in message contents | `true`  |
-| `MYTRIX_MSG_ALLOW_HTML`     | Allow HTML in message contents     | `false` |
+| Variable                        | Description                        | Default |
+| ------------------------------- | ---------------------------------- | ------- |
+| `MYTRIX_MSG_ALLOW_MARKDOWN`     | Allow Markdown in message contents | `true`  |
+| `MYTRIX_MSG_ALLOW_HTML`         | Allow HTML in message contents     | `false` |
+| `MYTRIX_MSG_DEFAULT_MAX_LENGTH` | Default message max length         | `4096`  |
 
 ### Gotify Configuration
 
@@ -151,13 +152,14 @@ All configuration is done via environment variables.
 
 ### RSS Configuration
 
-| Variable                      | Description                              | Default                                                |
-| ----------------------------- | ---------------------------------------- | ------------------------------------------------------ |
-| `MYTRIX_RSS_ENABLED`          | Enable RSS integration                   | `false`                                                |
-| `MYTRIX_RSS_FEED_FORMAT`      | Template of RSS feeds                    | see [internal/config/rss.go](./internal/config/rss.go) |
-| `MYTRIX_RSS_ITEM_FORMAT`      | Template of RSS items                    | see [internal/config/rss.go](./internal/config/rss.go) |
-| `MYTRIX_RSS_CRON`             | Interval of fetching RSS feeds           | `0 * * * *`                                            |
-| `MYTRIX_RSS_UPDATE_AFTER_ADD` | Whether to update feeds after adding one | `true`                                                 |
+| Variable                            | Description                              | Default                                                |
+| ----------------------------------- | ---------------------------------------- | ------------------------------------------------------ |
+| `MYTRIX_RSS_ENABLED`                | Enable RSS integration                   | `false`                                                |
+| `MYTRIX_RSS_FEED_FORMAT`            | Template of RSS feeds                    | see [internal/config/rss.go](./internal/config/rss.go) |
+| `MYTRIX_RSS_ITEM_FORMAT`            | Template of RSS items                    | see [internal/config/rss.go](./internal/config/rss.go) |
+| `MYTRIX_RSS_CRON`                   | Interval of fetching RSS feeds           | `0 * * * *`                                            |
+| `MYTRIX_RSS_UPDATE_AFTER_ADD`       | Whether to update feeds after adding one | `true`                                                 |
+| `MYTRIX_RSS_DESCRIPTION_MAX_LENGTH` | Max length of RSS description            | `32`                                                   |
 
 ## Command List
 
