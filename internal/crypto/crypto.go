@@ -27,15 +27,18 @@ func SetupCryptoHelper(client *mautrix.Client) (*cryptohelper.CryptoHelper, erro
 
 	db, err := dbutil.NewWithDB(sqlDB, "sqlite3")
 	if err != nil {
+		_ = sqlDB.Close()
 		return nil, fmt.Errorf("create dbutil failed: %w", err)
 	}
 
 	helper, err := cryptohelper.NewCryptoHelper(client, []byte(config.Config.Bot.PickleKey), db)
 	if err != nil {
+		_ = sqlDB.Close()
 		return nil, fmt.Errorf("create cryptohelper failed: %w", err)
 	}
 	err = helper.Init(context.Background())
 	if err != nil {
+		_ = helper.Close()
 		return nil, fmt.Errorf("init cryptohelper failed: %w", err)
 	}
 	return helper, nil
