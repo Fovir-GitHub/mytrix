@@ -18,10 +18,12 @@ func (h *Handler) handleRSSSchedule(ctx context.Context) {
 		if errors.Is(err, service.ErrRSSFetchFeeds) {
 			slog.Error("update rss error",
 				"room_id", roomID, "err", err)
+			return
 		}
 
 		if errors.Is(err, service.ErrRSSNoUpdate) {
 			slog.Debug("rss everything up to date")
+			return
 		}
 	}
 
