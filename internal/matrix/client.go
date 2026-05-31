@@ -26,12 +26,17 @@ func New(c *mautrix.Client) *Client {
 
 // SendTextMessage sends a formatted text message to the specified room.
 // It converts Markdown and HTML according to the message configuration.
+// TODO:
+//   - Capture the error code and retry sending messages.
 func (m *Client) SendTextMessage(ctx context.Context, roomID id.RoomID, text string) error {
 	cfg := config.Config.Msg
 	maxLen := m.MaxMessageLength(ctx, roomID)
-	if len(text) > maxLen {
-		text = text[:maxLen]
+
+	runes := []rune(text)
+	if len(runes) > maxLen {
+		text = string(runes[:maxLen])
 	}
+
 	content := format.RenderMarkdown(text, cfg.AllowMarkdown, cfg.AllowHTML)
 	_, err := m.c.SendMessageEvent(ctx, roomID, event.EventMessage, content)
 	return err
@@ -69,7 +74,7 @@ func (m *Client) LeaveRoom(ctx context.Context, roomID id.RoomID) error {
 
 func (m *Client) MaxMessageLength(ctx context.Context, roomID id.RoomID) int {
 	var features event.RoomFeatures
-	defaultMaxLen := config.Config.Msg.DefaultMaxLength
+	defaultMaxLen := config.Config.Msg.DefaultMaxPDUSize
 
 	err := m.c.StateEvent(ctx, roomID, event.StateBeeperRoomFeatures, "", &features)
 	if err != nil || features.MaxTextLength <= 0 {
@@ -79,5 +84,5 @@ func (m *Client) MaxMessageLength(ctx context.Context, roomID id.RoomID) int {
 			"err", err)
 		return defaultMaxLen
 	}
-	return features.MaxTextLength
+	return features.MaxTextLength - 1000
 }
