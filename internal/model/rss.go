@@ -51,15 +51,18 @@ func (r RSSItem) ToMarkdown(feed *RSSFeed) string {
 		r.Link,
 		strconv.Itoa(int(feed.ID)),
 	}
+
 	for _, title := range titles {
 		if title != "" {
 			r.Title = title
 			break
 		}
 	}
+
 	if len(r.Description) > descMaxLen {
-		r.Description = r.Description[:descMaxLen]
+		r.Description = ""
 	}
+
 	if err := rssItemTmpl.Execute(&buf, r); err != nil {
 		return fmt.Sprintf("Title: %s\nURL: %s", r.Title, r.Link)
 	}
