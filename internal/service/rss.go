@@ -118,7 +118,6 @@ func (r *RealRSSService) Update() ([]string, error) {
 		errs []error
 		res  []string
 	)
-	noUpdate := true
 
 	feeds, err := r.allFeeds()
 	if err != nil {
@@ -133,14 +132,14 @@ func (r *RealRSSService) Update() ([]string, error) {
 			slog.Warn("feed update failed", "feed_id", feed.ID, "err", err)
 		}
 
-		if len(updated) >= 0 {
-			noUpdate = false
+		if len(updated) <= 0 {
+			continue
 		}
 
 		res = append(res, updated)
 	}
 
-	if noUpdate {
+	if len(res) <= 0 {
 		return nil, ErrRSSNoUpdate
 	}
 
