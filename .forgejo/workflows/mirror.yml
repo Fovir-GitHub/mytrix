@@ -45,5 +45,5 @@ jobs:
           for target in $targets; do
             echo "==> Push to $target"
 
-            git push --mirror "$target"
+            git push --mirror --force "$target"
           done
