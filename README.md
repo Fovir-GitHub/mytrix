@@ -101,11 +101,11 @@ All configuration is done via environment variables.
 
 ### Message Configuration
 
-| Variable                        | Description                        | Default |
-| ------------------------------- | ---------------------------------- | ------- |
-| `MYTRIX_MSG_ALLOW_MARKDOWN`     | Allow Markdown in message contents | `true`  |
-| `MYTRIX_MSG_ALLOW_HTML`         | Allow HTML in message contents     | `false` |
-| `MYTRIX_MSG_DEFAULT_MAX_LENGTH` | Default message max length         | `4096`  |
+| Variable                          | Description                        | Default |
+| --------------------------------- | ---------------------------------- | ------- |
+| `MYTRIX_MSG_ALLOW_MARKDOWN`       | Allow Markdown in message contents | `true`  |
+| `MYTRIX_MSG_ALLOW_HTML`           | Allow HTML in message contents     | `false` |
+| `MYTRIX_MSG_DEFAULT_MAX_PDU_SIZE` | Default max PDU size               | `65535` |
 
 ### Gotify Configuration
 
