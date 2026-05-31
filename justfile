@@ -1,6 +1,7 @@
 run:
   # Run the bot.
-  go run -tags goolm cmd/bot/main.go
+  mkdir -p $MYTRIX_DATA_DIR
+  CGO_ENABLED=0 go run -tags goolm cmd/bot/main.go
 
 lint:
   # Run lint.
