@@ -11,6 +11,7 @@ import (
 	"codeberg.org/Fovir/mytrix/internal/logger"
 	"codeberg.org/Fovir/mytrix/internal/model"
 	"codeberg.org/Fovir/mytrix/internal/version"
+	_ "go.mau.fi/util/dbutil/litestream"
 	_ "maunium.net/go/mautrix/crypto/goolm"
 )
 
