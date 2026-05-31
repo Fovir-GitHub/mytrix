@@ -159,7 +159,7 @@ All configuration is done via environment variables.
 | `MYTRIX_RSS_ITEM_FORMAT`            | Template of RSS items                    | see [internal/config/rss.go](./internal/config/rss.go) |
 | `MYTRIX_RSS_CRON`                   | Interval of fetching RSS feeds           | `0 * * * *`                                            |
 | `MYTRIX_RSS_UPDATE_AFTER_ADD`       | Whether to update feeds after adding one | `true`                                                 |
-| `MYTRIX_RSS_DESCRIPTION_MAX_LENGTH` | Max length of RSS description            | `32`                                                   |
+| `MYTRIX_RSS_DESCRIPTION_MAX_LENGTH` | Max length of RSS description            | `128`                                                  |
 
 ## Command List
 

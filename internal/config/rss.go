@@ -13,7 +13,7 @@ type RSSConfig struct {
 	// UpdateAfterAdd determines whether to run `Update` after adding a feed.
 	UpdateAfterAdd bool `env:"RSS_UPDATE_AFTER_ADD" envDefault:"true"`
 	// DescriptionMaxLength limits the max length of description of an RSS item.
-	DescriptionMaxLength int `env:"RSS_DESCRIPTION_MAX_LENGTH" envDefault:"32"`
+	DescriptionMaxLength int `env:"RSS_DESCRIPTION_MAX_LENGTH" envDefault:"128"`
 }
 
 // validateRSS validates the RSS configuration and ensures cron expressions are valid when enabled.
