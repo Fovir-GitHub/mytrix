@@ -37,7 +37,7 @@ jobs:
           fi
 
           docker buildx build \
-            --platform linux/amd64 \
+            --platform linux/amd64,linux/arm64 \
             --build-arg VERSION="$VERSION" \
             --push \
             $TAGS \

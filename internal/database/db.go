@@ -4,7 +4,7 @@ package database
 
 import (
 	"codeberg.org/Fovir/mytrix/internal/model"
-	"gorm.io/driver/sqlite"
+	"github.com/glebarez/sqlite"
 	"gorm.io/gorm"
 )
 

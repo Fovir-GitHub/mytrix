@@ -10,9 +10,6 @@
     system = "x86_64-linux";
     pkgs = import nixpkgs {
       inherit system;
-      config.permittedInsecurePackages = [
-        "olm-3.2.16"
-      ];
     };
   in {
     devShells.${system}.default = pkgs.mkShell {
@@ -27,7 +24,6 @@
         kubescape
         litecli
         markdown-toc
-        olm
         pre-commit
         prettier
         sqlite
