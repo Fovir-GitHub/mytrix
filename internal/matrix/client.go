@@ -72,7 +72,7 @@ func (m *Client) MaxMessageLength(ctx context.Context, roomID id.RoomID) int {
 	defaultMaxLen := config.Config.Msg.DefaultMaxLength
 
 	err := m.c.StateEvent(ctx, roomID, event.StateBeeperRoomFeatures, "", &features)
-	if err != nil {
+	if err != nil || features.MaxTextLength <= 0 {
 		slog.Warn("get max message length failed, use default max length",
 			"room_id", roomID,
 			"default_max_length", defaultMaxLen,
