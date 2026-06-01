@@ -8,15 +8,14 @@ permissions:
 
 jobs:
   test:
-    name: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-go@v6
         with:
           go-version: v1.26.1
-      - name: Install libolm
-        run: sudo apt update && sudo apt install -y libolm-dev
+      - name: Install just
+        run: sudo apt update && sudo apt install -y just
       - name: Run Tests
         run: |
-          go test ./... -v
+          just test
