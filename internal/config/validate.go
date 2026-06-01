@@ -3,8 +3,11 @@ package config
 
 import (
 	"errors"
+	"fmt"
+	"log/slog"
 
 	"github.com/robfig/cron/v3"
+	"maunium.net/go/mautrix/id"
 )
 
 // validate validates the configuration by running all validators.
@@ -16,6 +19,7 @@ func (mc *MytrixConfig) validate() error {
 		mc.validateWakapi,
 		mc.validateUmami,
 		mc.validateRSS,
+		mc.validateAdminID,
 	}
 	for _, validator := range validators {
 		if err := validator(); err != nil {
@@ -35,4 +39,19 @@ func (mc MytrixConfig) validateCrons(crons []string) error {
 		}
 	}
 	return errors.Join(errs...)
+}
+
+func (mc *MytrixConfig) validateAdminID() error {
+	idStr := mc.AdminID
+	if len(idStr) <= 0 {
+		slog.Warn("MYTRIX_ADMIN_ID is empty, all invitation will be ignored")
+		return nil
+	}
+
+	userID := id.UserID(idStr)
+	if _, _, err := userID.ParseAndValidateRelaxed(); err != nil {
+		return fmt.Errorf("invalid admin ID (admin_id=%v): %w", idStr, err)
+	}
+
+	return nil
 }
