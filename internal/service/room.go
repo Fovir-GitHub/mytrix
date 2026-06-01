@@ -23,13 +23,17 @@ func NewRoomService(c *matrix.Client) *RoomService {
 }
 
 func (r *RoomService) ProcessInvitation(ctx context.Context, evt *event.Event) error {
+	admin := config.Config.AdminID
+	if len(admin) <= 0 {
+		slog.Warn("invitation ignored (admin is not configured)", "sender", evt.Sender)
+		return nil
+	}
+
 	// Check whether the invitation is from the bot self.
 	if evt.Sender == r.client.UserID() {
 		slog.Debug("invitation skipped (own invitation)")
 		return nil
 	}
-
-	admin := config.Config.AdminID
 
 	// Check invitation target (ignore errors).
 	if evt.GetStateKey() != r.client.UserID().String() && evt.Content.AsMember().Membership != event.MembershipInvite {
