@@ -14,8 +14,5 @@ jobs:
       - uses: actions/setup-go@v6
         with:
           go-version: v1.26.1
-      - name: Install just
-        run: sudo apt update && sudo apt install -y just
       - name: Run Tests
-        run: |
-          just test
+        run: CGO_ENABLED=0 go test -tags goolm ./... -v
