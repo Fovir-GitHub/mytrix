@@ -13,7 +13,7 @@ db path:
 
 test:
   # Run testings.
-  go test ./... -v
+  CGO_ENABLED=0 go test -tags goolm ./... -v
 
 toc:
   # Generate ToC in README.md
