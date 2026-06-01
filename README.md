@@ -90,6 +90,8 @@ All configuration is done via environment variables.
 | `MYTRIX_TZ`         | Timezone                                 | `time.Local` |
 | `MYTRIX_ADMIN_ID`   | Determine who can invite the bot         | `""`         |
 
+> Tips: It is strongly recommended to set `MYTRIX_ADMIN_ID` so that the admin user can invite the bot. Otherwise, the bot will ignore all invitation.
+
 ### Bot Configuration
 
 | Variable                  | Description                        | Example                 |
