@@ -9,6 +9,7 @@ import (
 	"codeberg.org/Fovir/mytrix/internal/config"
 	"codeberg.org/Fovir/mytrix/internal/http"
 	"codeberg.org/Fovir/mytrix/internal/model"
+	"codeberg.org/Fovir/mytrix/internal/render"
 	"codeberg.org/Fovir/mytrix/internal/scheduler"
 	"codeberg.org/Fovir/mytrix/internal/utils"
 )
@@ -88,7 +89,8 @@ func (w *RealWakapiService) fetchData(interval model.WakapiInterval) (*model.Wak
 		nil,
 		map[string]string{
 			"Authorization": auth,
-		})
+		},
+	)
 	if err != nil {
 		return nil, fmt.Errorf("fetch wakapi data failed: %w", err)
 	}
@@ -114,5 +116,5 @@ func (w *RealWakapiService) FetchReport(interval model.WakapiInterval) (string, 
 	if err != nil {
 		return "", fmt.Errorf("fetch wakapi report failed (interval=%s): %w", string(interval), err)
 	}
-	return data.ToMarkdown(), nil
+	return render.WakapiDataMarkdown(data), nil
 }

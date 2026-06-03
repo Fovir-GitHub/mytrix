@@ -6,6 +6,20 @@ import (
 	"strings"
 )
 
+// WakapiData represents Wakapi API response data.
+// It contains the total time, readable interval, and language statistics.
+type WakapiData struct {
+	TotalTime        string           `json:"human_readable_total"`
+	ReadableInterval string           `json:"human_readable_range"`
+	Langs            []WakapiLanguage `json:"languages"`
+}
+
+type WakapiLanguage struct {
+	Name    string  `json:"name"`
+	Text    string  `json:"text"`
+	Percent float32 `json:"percent"`
+}
+
 // WakapiInterval represents a time interval for Wakapi data retrieval.
 type WakapiInterval string
 

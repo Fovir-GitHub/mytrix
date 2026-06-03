@@ -6,6 +6,7 @@ import (
 
 	"codeberg.org/Fovir/mytrix/internal/config"
 	"codeberg.org/Fovir/mytrix/internal/model"
+	"codeberg.org/Fovir/mytrix/internal/render"
 	"maunium.net/go/mautrix/id"
 )
 
@@ -17,5 +18,6 @@ func (h *Handler) handleGotify(ctx context.Context, event *model.WsEvent) error 
 			"err", err)
 		return err
 	}
-	return h.service.Message.Reply(ctx, id.RoomID(config.Config.RoomID), msg.ToMarkdown())
+
+	return h.service.Message.Reply(ctx, id.RoomID(config.Config.RoomID), render.GotifyMarkdown(msg))
 }

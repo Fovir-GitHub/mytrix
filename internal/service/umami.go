@@ -9,6 +9,7 @@ import (
 	"codeberg.org/Fovir/mytrix/internal/config"
 	myhttp "codeberg.org/Fovir/mytrix/internal/http"
 	"codeberg.org/Fovir/mytrix/internal/model"
+	"codeberg.org/Fovir/mytrix/internal/render"
 )
 
 // UmamiService interface defines methods for Umami service implementations.
@@ -150,7 +151,7 @@ func (ru *RealUmamiService) FetchReport(interval *model.UmamiInterval) string {
 func (ru RealUmamiService) generateReport(websites []*model.UmamiWebsite) string {
 	var report strings.Builder
 	for _, w := range websites {
-		report.WriteString(w.ToMarkdown())
+		report.WriteString(render.UmamiWebsiteMarkdown(w))
 		report.WriteString("\n")
 	}
 	return report.String()

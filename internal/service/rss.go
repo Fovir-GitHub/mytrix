@@ -12,6 +12,7 @@ import (
 	"codeberg.org/Fovir/mytrix/internal/model"
 	"codeberg.org/Fovir/mytrix/internal/repo"
 	"gorm.io/gorm"
+	"codeberg.org/Fovir/mytrix/internal/render"
 )
 
 type RSSService interface {
@@ -220,7 +221,7 @@ func (r *RealRSSService) ListFeeds() (string, error) {
 	}
 
 	for _, feed := range feeds {
-		res.WriteString(feed.ToMarkdown())
+		res.WriteString(render.RssFeedMarkdown(&feed))
 		res.WriteString("\n")
 	}
 	return res.String(), nil

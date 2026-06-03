@@ -9,10 +9,11 @@ import (
 	"codeberg.org/Fovir/mytrix/internal/bot"
 	"codeberg.org/Fovir/mytrix/internal/config"
 	"codeberg.org/Fovir/mytrix/internal/logger"
-	"codeberg.org/Fovir/mytrix/internal/model"
+	"codeberg.org/Fovir/mytrix/internal/render"
 	"codeberg.org/Fovir/mytrix/internal/version"
 	_ "go.mau.fi/util/dbutil/litestream"
 	_ "maunium.net/go/mautrix/crypto/goolm"
+	_ "modernc.org/sqlite"
 )
 
 func main() {
@@ -23,7 +24,7 @@ func main() {
 	logger.Init()
 	slog.Info("mytrix started", "version", version.Version)
 	config.SetTimeZone()
-	model.InitTemplates()
+	render.InitTemplates()
 
 	b, err := bot.New()
 	if err != nil {
