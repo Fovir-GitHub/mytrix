@@ -11,16 +11,8 @@ import (
 
 const createRSSItem = `-- name: CreateRSSItem :exec
 INSERT
-OR IGNORE INTO rss_item(feed_id,
-guid,
-link,
-title,
-description)
-VALUES(?,
-?,
-?,
-?,
-?)
+    OR IGNORE INTO rss_item (feed_id, guid, link, title, description)
+        VALUES (?, ?, ?, ?, ?)
 `
 
 type CreateRSSItemParams struct {
@@ -44,8 +36,7 @@ func (q *Queries) CreateRSSItem(ctx context.Context, arg *CreateRSSItemParams) e
 
 const deleteRSSItemByFeedID = `-- name: DeleteRSSItemByFeedID :exec
 DELETE FROM rss_item
-WHERE
-  feed_id = ?
+WHERE feed_id = ?
 `
 
 func (q *Queries) DeleteRSSItemByFeedID(ctx context.Context, feedID int64) error {

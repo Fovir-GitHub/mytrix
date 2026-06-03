@@ -1,28 +1,24 @@
 -- name: SelectFeedByID :one
 SELECT
-  *
+    *
 FROM
-  rss_feed
+    rss_feed
 WHERE
-  id = ?
+    id = ?
 LIMIT 1;
+
 -- name: AllFeds :many
 SELECT
-  *
+    *
 FROM
-  rss_feed
+    rss_feed
 ORDER BY
-  id;
+    id;
+
 -- name: CreateRSSFeed :exec
-INSERT INTO rss_feed(
-  url,
-  title
-)
-VALUES(
-  ?,
-  ?
-);
+INSERT INTO rss_feed (url, title)
+    VALUES (?, ?);
+
 -- name: DeleteRSSFeed :exec
 DELETE FROM rss_feed
-WHERE
-  id = ?;
+WHERE id = ?;

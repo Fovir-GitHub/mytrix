@@ -11,11 +11,11 @@ import (
 
 const allFeds = `-- name: AllFeds :many
 SELECT
-  id, url, title
+    id, url, title
 FROM
-  rss_feed
+    rss_feed
 ORDER BY
-  id
+    id
 `
 
 func (q *Queries) AllFeds(ctx context.Context) ([]RssFeed, error) {
@@ -42,14 +42,8 @@ func (q *Queries) AllFeds(ctx context.Context) ([]RssFeed, error) {
 }
 
 const createRSSFeed = `-- name: CreateRSSFeed :exec
-INSERT INTO rss_feed(
-  url,
-  title
-)
-VALUES(
-  ?,
-  ?
-)
+INSERT INTO rss_feed (url, title)
+    VALUES (?, ?)
 `
 
 type CreateRSSFeedParams struct {
@@ -64,8 +58,7 @@ func (q *Queries) CreateRSSFeed(ctx context.Context, arg *CreateRSSFeedParams) e
 
 const deleteRSSFeed = `-- name: DeleteRSSFeed :exec
 DELETE FROM rss_feed
-WHERE
-  id = ?
+WHERE id = ?
 `
 
 func (q *Queries) DeleteRSSFeed(ctx context.Context, id int64) error {
@@ -75,11 +68,11 @@ func (q *Queries) DeleteRSSFeed(ctx context.Context, id int64) error {
 
 const selectFeedByID = `-- name: SelectFeedByID :one
 SELECT
-  id, url, title
+    id, url, title
 FROM
-  rss_feed
+    rss_feed
 WHERE
-  id = ?
+    id = ?
 LIMIT 1
 `
 
