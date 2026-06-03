@@ -26,6 +26,7 @@
         markdown-toc
         pre-commit
         prettier
+        sqlc
         sqlite
         trivy
       ];
