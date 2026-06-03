@@ -19,3 +19,7 @@ toc:
   # Generate ToC in README.md
   markdown-toc -i README.md
   prettier --write README.md
+
+gen:
+  # Generate database operation using `sqlc`
+  sqlc generate
