@@ -13,7 +13,7 @@ import (
 
 func (h *Handler) handleRSSSchedule(ctx context.Context) {
 	roomID := config.Config.RoomID
-	updated, err := h.service.RSS.Update()
+	updated, err := h.service.RSS.Update(ctx)
 	if err != nil {
 		if errors.Is(err, service.ErrRSSFetchFeeds) {
 			slog.Error("update rss error",

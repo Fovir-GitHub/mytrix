@@ -5,7 +5,7 @@ type RSSConfig struct {
 	// Enabled determines whether to enable RSS integration.
 	Enabled bool `env:"RSS_ENABLED" envDefault:"false"`
 	// FeedFormat sets the output format of RSS feeds.
-	FeedFormat string `env:"RSS_FEED_FORMAT" envDefault:"- {{.ID}} {{.Title}}: {{.URL}}"`
+	FeedFormat string `env:"RSS_FEED_FORMAT" envDefault:"- {{.ID}} {{.Title}}: {{.Url}}"`
 	// ItemFormat sets the output format of RSS items.
 	ItemFormat string `env:"RSS_ITEM_FORMAT" envDefault:"{{if .Description}}[{{.Title}}]({{.Link}}) - {{.Description}}{{else}}[{{.Title}}]({{.Link}}){{end}}"`
 	// Cron sets the fetch interval of RSS feeds (hourly by default).

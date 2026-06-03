@@ -1,31 +1,35 @@
 package service
 
-import "codeberg.org/Fovir/mytrix/internal/model"
+import (
+	"context"
+
+	"codeberg.org/Fovir/mytrix/internal/db"
+)
 
 type NoopRSSService struct {
 	err error
 }
 
-func (r *NoopRSSService) AddFeeds([]string) (string, error) {
+func (r *NoopRSSService) AddFeeds(context.Context, []string) (string, error) {
 	return "", r.err
 }
 
-func (r *NoopRSSService) DeleteFeeds([]string) (string, error) {
+func (r *NoopRSSService) DeleteFeeds(context.Context, []string) (string, error) {
 	return "", r.err
 }
 
-func (r *NoopRSSService) Update() ([]string, error) {
+func (r *NoopRSSService) Update(context.Context) ([]string, error) {
 	return nil, r.err
 }
 
-func (r *NoopRSSService) AllFeeds() ([]model.RSSFeed, error) {
+func (r *NoopRSSService) AllFeeds(context.Context) ([]db.RssFeed, error) {
 	return nil, r.err
 }
 
-func (r *NoopRSSService) ListFeeds() (string, error) {
+func (r *NoopRSSService) ListFeeds(context.Context) (string, error) {
 	return "", r.err
 }
 
-func (r *NoopRSSService) ExportFeeds() (string, error) {
+func (r *NoopRSSService) ExportFeeds(context.Context) (string, error) {
 	return "", r.err
 }

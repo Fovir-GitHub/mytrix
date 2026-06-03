@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strings"
 
-	"codeberg.org/Fovir/mytrix/internal/model"
+	"codeberg.org/Fovir/mytrix/internal/db"
 	"codeberg.org/Fovir/mytrix/internal/utils"
 	"github.com/mmcdole/gofeed"
 )
@@ -27,24 +27,24 @@ func New() *Parser {
 // ParseURL fetches and parses an RSS feed from the given URL.
 // It returns the feed metadata, a list of RSS items, and any error encountered.
 // If the URL is unreachable or the feed content is invalid, it returns an error.
-func (p *Parser) ParseURL(u string) (*model.RSSFeed, []model.RSSItem, error) {
+func (p *Parser) ParseURL(u string) (*db.RssFeed, []db.RssItem, error) {
 	feed, err := p.p.ParseURL(u)
 	if err != nil {
 		return nil, nil, fmt.Errorf("parse url failed (url=%s): %w", u, err)
 	}
 
-	rssItems := make([]model.RSSItem, 0, len(feed.Items))
+	rssItems := make([]db.RssItem, 0, len(feed.Items))
 	for _, item := range feed.Items {
-		rssItems = append(rssItems, model.RSSItem{
-			GUID:        itemGUID(item),
+		rssItems = append(rssItems, db.RssItem{
+			Guid:        itemGUID(item),
 			Link:        item.Link,
 			Title:       item.Title,
 			Description: item.Description,
 		})
 	}
 
-	return &model.RSSFeed{
-		URL:   u,
+	return &db.RssFeed{
+		Url:   u,
 		Title: feed.Title,
 	}, rssItems, nil
 }

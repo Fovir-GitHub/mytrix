@@ -46,7 +46,7 @@ func (h *Handler) handleRSSAdd(ctx context.Context, evt *event.Event, parts []st
 
 	feeds := parts[2:]
 	var replyMsg string
-	errFeeds, err := h.service.RSS.AddFeeds(feeds)
+	errFeeds, err := h.service.RSS.AddFeeds(ctx, feeds)
 
 	if err != nil {
 		slog.Error("add rss failed", "err", err)
@@ -71,7 +71,7 @@ func (h *Handler) handleRSSDelete(ctx context.Context, evt *event.Event, parts [
 	}
 
 	ids := parts[2:]
-	if errIds, err := h.service.RSS.DeleteFeeds(ids); err != nil {
+	if errIds, err := h.service.RSS.DeleteFeeds(ctx, ids); err != nil {
 		slog.Error("delete rss feed failed", "err", err)
 		return reply("Failed to delete RSS feeds:\n" + errIds)
 	}
@@ -81,7 +81,7 @@ func (h *Handler) handleRSSDelete(ctx context.Context, evt *event.Event, parts [
 // handleRSSList lists all RSS feeds.
 func (h *Handler) handleRSSList(ctx context.Context, evt *event.Event) error {
 	reply := h.getReply(ctx, evt)
-	feeds, err := h.service.RSS.ListFeeds()
+	feeds, err := h.service.RSS.ListFeeds(ctx)
 	if err != nil {
 		slog.Error("list RSS feeds failed", "err", err)
 		return reply("Failed to list RSS feeds")
@@ -96,7 +96,7 @@ func (h *Handler) handleRSSList(ctx context.Context, evt *event.Event) error {
 // handleRSSExport exports all RSS feeds.
 func (h *Handler) handleRSSExport(ctx context.Context, evt *event.Event) error {
 	reply := h.getReply(ctx, evt)
-	feeds, err := h.service.RSS.ExportFeeds()
+	feeds, err := h.service.RSS.ExportFeeds(ctx)
 	if err != nil {
 		slog.Error("export RSS feeds failed", "err", err)
 		return reply("Failed to export RSS feeds")
@@ -111,7 +111,7 @@ func (h *Handler) handleRSSExport(ctx context.Context, evt *event.Event) error {
 func (h *Handler) handleRSSUpdate(ctx context.Context, evt *event.Event) error {
 	reply := h.getReply(ctx, evt)
 	var errs []error
-	updated, err := h.service.RSS.Update()
+	updated, err := h.service.RSS.Update(ctx)
 	if err != nil {
 		if errors.Is(err, service.ErrRSSFetchFeeds) {
 			slog.Error("update rss error", "err", err)

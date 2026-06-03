@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"log/slog"
@@ -8,50 +9,42 @@ import (
 	"strings"
 
 	"codeberg.org/Fovir/mytrix/internal/config"
+	"codeberg.org/Fovir/mytrix/internal/db"
 	"codeberg.org/Fovir/mytrix/internal/feed"
-	"codeberg.org/Fovir/mytrix/internal/model"
-	"codeberg.org/Fovir/mytrix/internal/repo"
-	"gorm.io/gorm"
 	"codeberg.org/Fovir/mytrix/internal/render"
 )
 
 type RSSService interface {
-	AddFeeds([]string) (string, error)
-	DeleteFeeds([]string) (string, error)
-	Update() ([]string, error)
-	ListFeeds() (string, error)
-	ExportFeeds() (string, error)
+	AddFeeds(context.Context, []string) (string, error)
+	DeleteFeeds(context.Context, []string) (string, error)
+	Update(context.Context) ([]string, error)
+	ListFeeds(context.Context) (string, error)
+	ExportFeeds(context.Context) (string, error)
 }
 
 type RealRSSService struct {
-	feedRepo *repo.RSSFeedRepo
-	itemRepo *repo.RSSItemRepo
-	parser   *feed.Parser
+	q      *db.Queries
+	parser *feed.Parser
 }
 
-func NewRSSService(db *gorm.DB) RSSService {
+func NewRSSService(query *db.Queries) RSSService {
 	cfg := config.Config.RSS
 	slog.Info("rss service initialized", "enabled", cfg.Enabled)
 	if !cfg.Enabled {
-		return &NoopRSSService{
-			err: fmt.Errorf("RSS is not enabled"),
-		}
+		return &NoopRSSService{err: fmt.Errorf("RSS is not enabled")}
 	}
-	feedRepo := repo.NewRSSFeedRepo(db)
-	itemRepo := repo.NewRSSItemRepo(db)
 	return &RealRSSService{
-		feedRepo: feedRepo,
-		itemRepo: itemRepo,
-		parser:   feed.New(),
+		q:      query,
+		parser: feed.New(),
 	}
 }
 
-func (r *RealRSSService) AddFeeds(feeds []string) (string, error) {
+func (r *RealRSSService) AddFeeds(ctx context.Context, feeds []string) (string, error) {
 	var errFeeds strings.Builder
 	var errs []error
 
 	for _, f := range feeds {
-		if err := r.addFeed(f); err != nil {
+		if err := r.addFeed(ctx, f); err != nil {
 			errFeeds.WriteString(f)
 			errFeeds.WriteString("\n")
 			errs = append(errs, err)
@@ -64,19 +57,21 @@ func (r *RealRSSService) AddFeeds(feeds []string) (string, error) {
 	return "", nil
 }
 
-func (r *RealRSSService) addFeed(u string) error {
+func (r *RealRSSService) addFeed(ctx context.Context, u string) error {
 	feed, _, err := r.parser.ParseURL(u)
 	if err != nil {
 		return fmt.Errorf("parse rss url failed (url=%s): %w", u, err)
 	}
-	if err := r.feedRepo.Create(feed); err != nil {
+
+	err = r.q.CreateRSSFeed(ctx, &db.CreateRSSFeedParams{Url: feed.Url, Title: feed.Title})
+	if err != nil {
 		return fmt.Errorf("create rss feed failed (url=%s): %w", u, err)
 	}
 	slog.Info("rss feed added", "url", u)
 	return nil
 }
 
-func (r *RealRSSService) DeleteFeeds(ids []string) (string, error) {
+func (r *RealRSSService) DeleteFeeds(ctx context.Context, ids []string) (string, error) {
 	var errs []error
 	var errIds strings.Builder
 	handleErr := func(idStr string, err error) {
@@ -92,7 +87,7 @@ func (r *RealRSSService) DeleteFeeds(ids []string) (string, error) {
 			continue
 		}
 
-		if err := r.deleteFeed(id); err != nil {
+		if err := r.deleteFeed(ctx, id); err != nil {
 			handleErr(idStr, err)
 		}
 	}
@@ -103,31 +98,31 @@ func (r *RealRSSService) DeleteFeeds(ids []string) (string, error) {
 	return "", nil
 }
 
-func (r *RealRSSService) deleteFeed(id int) error {
-	if err := r.feedRepo.Delete(id); err != nil {
+func (r *RealRSSService) deleteFeed(ctx context.Context, id int) error {
+	if err := r.q.DeleteRSSFeed(ctx, int64(id)); err != nil {
 		return fmt.Errorf("delete feed failed (id=%d): %w", id, err)
 	}
-	if err := r.itemRepo.DeleteByFeedId(id); err != nil {
+	if err := r.q.DeleteRSSItemByFeedID(ctx, int64(id)); err != nil {
 		return fmt.Errorf("delete feed items failed (feed_id=%d): %w", id, err)
 	}
 	slog.Info("rss feed deleted", "id", id)
 	return nil
 }
 
-func (r *RealRSSService) Update() ([]string, error) {
+func (r *RealRSSService) Update(ctx context.Context) ([]string, error) {
 	var (
 		errs []error
 		res  []string
 	)
 
-	feeds, err := r.allFeeds()
+	feeds, err := r.allFeeds(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %w", ErrRSSFetchFeeds, err)
 	}
 	slog.Debug("rss update start", "feeds_len", len(feeds))
 
 	for _, feed := range feeds {
-		updated, err := r.updateFeed(&feed)
+		updated, err := r.updateFeed(ctx, &feed)
 		if err != nil {
 			errs = append(errs, err)
 			slog.Warn("feed update failed", "feed_id", feed.ID, "err", err)
@@ -153,65 +148,69 @@ func (r *RealRSSService) Update() ([]string, error) {
 	return res, nil
 }
 
-func (r *RealRSSService) updateFeed(feed *model.RSSFeed) (string, error) {
+func (r *RealRSSService) updateFeed(ctx context.Context, feed *db.RssFeed) (string, error) {
 	var (
 		updated strings.Builder
 		errs    []error
 	)
 
-	_, items, err := r.parser.ParseURL(feed.URL)
+	_, items, err := r.parser.ParseURL(feed.Url)
 	if err != nil {
 		return "", err
 	}
 
 	for _, item := range items {
 		item.FeedID = feed.ID
-		if err := r.addItem(&item); err != nil {
+		if err := r.addItem(ctx, &item); err != nil {
 			if !errors.Is(err, ErrRSSItemExists) {
-				slog.Error("item insert failed", "feed_url", feed.URL, "guid", item.GUID, "err", err)
-				errs = append(errs, fmt.Errorf("insert item failed (feed_url=%s, guid=%s): %w", feed.URL, item.GUID, err))
+				slog.Error("item insert failed", "feed_url", feed.Url, "guid", item.Guid, "err", err)
+				errs = append(errs, fmt.Errorf("insert item failed (feed_url=%s, guid=%s): %w", feed.Url, item.Guid, err))
 			} else {
-				slog.Debug("item insert failed", "feed_url", feed.URL, "guid", item.GUID, "err", err)
+				slog.Debug("item insert failed", "feed_url", feed.Url, "guid", item.Guid, "err", err)
 			}
 			continue
 		}
-		updated.WriteString(item.ToMarkdown(feed))
+		updated.WriteString(render.RssItemMarkdown(feed, &item))
 		updated.WriteString("\n")
 	}
 	if len(errs) > 0 {
 		slog.Warn(
 			"some items failed",
-			"feed_url", feed.URL,
+			"feed_url", feed.Url,
 			"failed", len(errs),
 			"total", len(items),
 		)
-		return updated.String(), fmt.Errorf("update feed failed (url=%s): %w", feed.URL, errors.Join(errs...))
+		return updated.String(), fmt.Errorf("update feed failed (url=%s): %w", feed.Url, errors.Join(errs...))
 	}
 
 	return updated.String(), nil
 }
 
-func (r *RealRSSService) addItem(item *model.RSSItem) error {
-	if err := r.itemRepo.Create(item); err != nil {
-		if errors.Is(err, gorm.ErrDuplicatedKey) {
-			return fmt.Errorf("%w (feed_id=%d, guid=%s)", ErrRSSItemExists, item.FeedID, item.GUID)
-		}
-		return fmt.Errorf("add item failed (feed_id=%d, guid=%s): %w", item.FeedID, item.GUID, err)
+func (r *RealRSSService) addItem(ctx context.Context, item *db.RssItem) error {
+	err := r.q.CreateRSSItem(ctx, &db.CreateRSSItemParams{
+		FeedID:      item.FeedID,
+		Guid:        item.Guid,
+		Link:        item.Link,
+		Title:       item.Title,
+		Description: item.Description,
+	})
+	if err != nil {
+		return fmt.Errorf("add item failed (feed_id=%d, guid=%s): %w", item.FeedID, item.Guid, err)
 	}
 	return nil
 }
 
-func (r *RealRSSService) allFeeds() ([]model.RSSFeed, error) {
-	feeds, err := r.feedRepo.AllFeeds()
+func (r *RealRSSService) allFeeds(ctx context.Context) ([]db.RssFeed, error) {
+	feeds, err := r.q.AllFeds(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("fetch all feeds failed: %w", err)
 	}
 	return feeds, nil
 }
 
-func (r *RealRSSService) ListFeeds() (string, error) {
+func (r *RealRSSService) ListFeeds(ctx context.Context) (string, error) {
 	var res strings.Builder
-	feeds, err := r.allFeeds()
+	feeds, err := r.allFeeds(ctx)
 	if err != nil {
 		return "", fmt.Errorf("list feed failed: %w", err)
 	}
@@ -227,14 +226,14 @@ func (r *RealRSSService) ListFeeds() (string, error) {
 	return res.String(), nil
 }
 
-func (r *RealRSSService) ExportFeeds() (string, error) {
-	feeds, err := r.allFeeds()
+func (r *RealRSSService) ExportFeeds(ctx context.Context) (string, error) {
+	feeds, err := r.allFeeds(ctx)
 	if err != nil {
 		return "", fmt.Errorf("export feed failed: %w", err)
 	}
 	var res strings.Builder
 	for _, feed := range feeds {
-		res.WriteString(feed.URL)
+		res.WriteString(feed.Url)
 		res.WriteString("\n")
 	}
 	return res.String(), nil
