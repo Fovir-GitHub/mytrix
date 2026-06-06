@@ -201,7 +201,7 @@ func (r *RealRSSService) addItem(ctx context.Context, item *db.RssItem) error {
 }
 
 func (r *RealRSSService) allFeeds(ctx context.Context) ([]db.RssFeed, error) {
-	feeds, err := r.q.AllFeds(ctx)
+	feeds, err := r.q.AllFeeds(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("fetch all feeds failed: %w", err)
 	}

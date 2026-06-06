@@ -9,7 +9,7 @@ import (
 	"context"
 )
 
-const allFeds = `-- name: AllFeds :many
+const allFeeds = `-- name: AllFeeds :many
 SELECT
     id, url, title
 FROM
@@ -18,8 +18,8 @@ ORDER BY
     id
 `
 
-func (q *Queries) AllFeds(ctx context.Context) ([]RssFeed, error) {
-	rows, err := q.db.QueryContext(ctx, allFeds)
+func (q *Queries) AllFeeds(ctx context.Context) ([]RssFeed, error) {
+	rows, err := q.db.QueryContext(ctx, allFeeds)
 	if err != nil {
 		return nil, err
 	}

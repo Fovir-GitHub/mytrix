@@ -7,7 +7,7 @@ WHERE
     id = ?
 LIMIT 1;
 
--- name: AllFeds :many
+-- name: AllFeeds :many
 SELECT
     *
 FROM
