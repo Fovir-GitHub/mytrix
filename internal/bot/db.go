@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"log/slog"
 	"path"
 
 	_ "embed"
@@ -18,6 +19,7 @@ import (
 func setupDB() (*db.Queries, error) {
 	cfg := config.Config
 	dsn := path.Join(cfg.Datadir, cfg.DBPath)
+
 	conn, err := sql.Open("sqlite", dsn)
 	if err != nil {
 		_ = conn.Close()
@@ -28,12 +30,18 @@ func setupDB() (*db.Queries, error) {
 	if err != nil {
 		return nil, fmt.Errorf("read schema dir failed (path=%s): %w", assets.SchemaPath, err)
 	}
+
 	for _, entry := range entries {
 		content, _ := assets.SchemaFS.ReadFile(path.Join(assets.SchemaPath, entry.Name()))
 		if _, err := conn.ExecContext(context.Background(), string(content)); err != nil {
 			return nil, err
 		}
 	}
+
+	if err := runMigrations(conn); err != nil {
+		return nil, err
+	}
+	slog.Info("database migration finished")
 
 	q := db.New(conn)
 	return q, nil

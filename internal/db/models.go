@@ -4,6 +4,15 @@
 
 package db
 
+import (
+	"database/sql"
+)
+
+type Migration struct {
+	Name      string       `db:"name"`
+	AppliedAt sql.NullTime `db:"applied_at"`
+}
+
 type RssFeed struct {
 	ID    int64  `db:"id"`
 	Url   string `db:"url"`
