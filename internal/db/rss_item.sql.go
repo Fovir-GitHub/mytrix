@@ -10,9 +10,8 @@ import (
 )
 
 const createRSSItem = `-- name: CreateRSSItem :exec
-INSERT
-    OR IGNORE INTO rss_item (feed_id, guid, link, title, description)
-        VALUES (?, ?, ?, ?, ?)
+INSERT INTO rss_item (feed_id, guid, link, title, description)
+    VALUES (?, ?, ?, ?, ?)
 `
 
 type CreateRSSItemParams struct {

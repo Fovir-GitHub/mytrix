@@ -11,7 +11,9 @@ import (
 	"codeberg.org/Fovir/mytrix/internal/config"
 	"codeberg.org/Fovir/mytrix/internal/db"
 	"codeberg.org/Fovir/mytrix/internal/feed"
+	"codeberg.org/Fovir/mytrix/internal/model"
 	"codeberg.org/Fovir/mytrix/internal/render"
+	"modernc.org/sqlite"
 )
 
 type RSSService interface {
@@ -126,6 +128,7 @@ func (r *RealRSSService) Update(ctx context.Context) ([]string, error) {
 		if err != nil {
 			errs = append(errs, err)
 			slog.Warn("feed update failed", "feed_id", feed.ID, "err", err)
+			continue
 		}
 
 		if len(updated) <= 0 {
@@ -195,8 +198,14 @@ func (r *RealRSSService) addItem(ctx context.Context, item *db.RssItem) error {
 		Description: item.Description,
 	})
 	if err != nil {
+		var sqliteErr *sqlite.Error
+		if errors.As(err, &sqliteErr) && sqliteErr.Code() == model.ErrSQLiteConstraintUnique {
+			return fmt.Errorf("%w: %w", ErrRSSItemExists, err)
+		}
+
 		return fmt.Errorf("add item failed (feed_id=%d, guid=%s): %w", item.FeedID, item.Guid, err)
 	}
+
 	return nil
 }
 
