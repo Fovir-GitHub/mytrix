@@ -5,6 +5,7 @@ import (
 	"sync"
 
 	"codeberg.org/Fovir/mytrix/internal/model"
+	"codeberg.org/Fovir/mytrix/internal/utils"
 )
 
 // Manager manages multiple WebSocket client connections and aggregates their events into a single channel.
@@ -30,7 +31,7 @@ func (m *Manager) Add(name, url string) {
 	slog.Info(
 		"websocket added",
 		"name", name,
-		"url", url,
+		"url", utils.ParseURLHost(url),
 	)
 }
 

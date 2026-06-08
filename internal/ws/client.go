@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"codeberg.org/Fovir/mytrix/internal/config"
+	"codeberg.org/Fovir/mytrix/internal/utils"
 	"github.com/gorilla/websocket"
 )
 
@@ -64,7 +65,7 @@ func (c *Client) connectLoop() {
 		}
 		slog.Info(
 			"websocket connected",
-			"url", c.url,
+			"url", utils.ParseURLHost(c.url),
 		)
 
 		c.mu.Lock()
