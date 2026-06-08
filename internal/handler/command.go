@@ -5,7 +5,9 @@ import (
 	"log/slog"
 	"strings"
 
+	"codeberg.org/Fovir/mytrix/internal/config"
 	"maunium.net/go/mautrix/event"
+	"maunium.net/go/mautrix/id"
 )
 
 // registerCommands initializes the command handlers map mapping command prefixes to their respective handler functions.
@@ -37,6 +39,10 @@ func (h *Handler) HandleCommand(ctx context.Context, evt *event.Event) {
 	if evt.Sender == h.service.Message.UserID() {
 		slog.Debug("message skipped (own message)")
 		return
+	}
+
+	if evt.Sender != id.UserID(config.Config.AdminID) {
+		slog.Warn("receive command from other users, skpped", "sender", evt.Sender)
 	}
 
 	body := strings.TrimSpace(content.Body)
