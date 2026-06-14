@@ -13,6 +13,11 @@ type Migration struct {
 	AppliedAt sql.NullTime `db:"applied_at"`
 }
 
+type Room struct {
+	ID    string `db:"id"`
+	State string `db:"state"`
+}
+
 type RssFeed struct {
 	ID    int64  `db:"id"`
 	Url   string `db:"url"`
@@ -26,4 +31,9 @@ type RssItem struct {
 	Link        string `db:"link"`
 	Title       string `db:"title"`
 	Description string `db:"description"`
+}
+
+type User struct {
+	ID   string `db:"id"`
+	Role string `db:"role"`
 }
