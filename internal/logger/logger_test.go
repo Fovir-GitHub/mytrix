@@ -1,10 +1,10 @@
 package logger
 
 import (
+	"log/slog"
 	"testing"
 
 	"codeberg.org/Fovir/mytrix/internal/config"
-	"log/slog"
 )
 
 func init() {

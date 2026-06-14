@@ -4,7 +4,6 @@ go 1.26.3
 
 require (
 	github.com/caarlos0/env/v11 v11.4.1
-	github.com/lmittmann/tint v1.1.3
 	maunium.net/go/mautrix v0.28.0
 	modernc.org/sqlite v1.52.0
 )

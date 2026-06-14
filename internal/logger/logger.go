@@ -5,7 +5,6 @@ import (
 	"os"
 
 	"codeberg.org/Fovir/mytrix/internal/config"
-	"github.com/lmittmann/tint"
 )
 
 // Init initializes the global logger with the configured log level and output formatting.
@@ -16,10 +15,8 @@ func Init() {
 		level = slog.LevelInfo
 	}
 
-	handler := tint.NewHandler(os.Stdout, &tint.Options{
-		Level:      level,
-		TimeFormat: "15:04:05",
+	handler := slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
+		Level: level,
 	})
-
 	slog.SetDefault(slog.New(handler))
 }
