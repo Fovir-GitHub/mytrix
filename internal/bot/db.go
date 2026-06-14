@@ -46,3 +46,24 @@ func setupDB() (*db.Queries, error) {
 	q := db.New(conn)
 	return q, nil
 }
+
+func syncConfig(ctx context.Context, q *db.Queries) error {
+	cfg := config.Config
+
+	// Add admin information into the database.
+	if err := q.CreateUser(ctx, &db.CreateUserParams{
+		ID:   cfg.AdminID,
+		Role: "admin",
+	}); err != nil {
+		return err
+	}
+
+	if err := q.CreateRoom(ctx, &db.CreateRoomParams{
+		ID:    cfg.RoomID,
+		State: "joined",
+	}); err != nil {
+		return err
+	}
+
+	return nil
+}

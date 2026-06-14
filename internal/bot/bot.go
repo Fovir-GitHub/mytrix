@@ -50,6 +50,11 @@ func New() (*Bot, error) {
 		return nil, fmt.Errorf("create bot failed: %w", err)
 	}
 
+	if err := syncConfig(context.Background(), db); err != nil {
+		return nil, fmt.Errorf("sync config failed: %w", err)
+	}
+	slog.Info("sync config finished")
+
 	matrixClient := matrix.New(client)
 	http := myhttp.New()
 	scheduler := scheduler.NewScheduler()
