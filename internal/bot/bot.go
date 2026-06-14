@@ -64,7 +64,7 @@ func New() (*Bot, error) {
 	umamiSrv := service.NewUmamiService(http)
 	wakapiSrv := service.NewWakapiService(http, scheduler)
 	rssSrv := service.NewRSSService(db)
-	roomSrv := service.NewRoomService(matrixClient)
+	roomSrv := service.NewRoomService(matrixClient, db)
 
 	service := &service.Service{
 		Gotify:  gotifySrv,
