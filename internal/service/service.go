@@ -8,5 +8,6 @@ type Service struct {
 	RSS     RSSService
 	Room    *RoomService
 	Umami   UmamiService
+	User    *UserService
 	Wakapi  WakapiService
 }
