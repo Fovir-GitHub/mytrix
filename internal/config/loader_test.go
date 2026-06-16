@@ -14,6 +14,7 @@ func TestLoad_Success(t *testing.T) {
 	originalBotPassword := os.Getenv("MYTRIX_BOT_PASSWORD")
 	originalBotRecoveryKey := os.Getenv("MYTRIX_BOT_RECOVERY_KEY")
 	originalBotPickleKey := os.Getenv("MYTRIX_BOT_PICKLE_KEY")
+	originalUserAdminID := os.Getenv("MYTRIX_USER_ADMIN_ID")
 
 	//nolint
 	defer func() {
@@ -23,6 +24,7 @@ func TestLoad_Success(t *testing.T) {
 		os.Setenv("MYTRIX_BOT_PASSWORD", originalBotPassword)
 		os.Setenv("MYTRIX_BOT_RECOVERY_KEY", originalBotRecoveryKey)
 		os.Setenv("MYTRIX_BOT_PICKLE_KEY", originalBotPickleKey)
+		os.Setenv("MYTRIX_USER_ADMIN_ID", originalUserAdminID)
 	}()
 
 	// Set required env vars
@@ -34,6 +36,7 @@ func TestLoad_Success(t *testing.T) {
 		os.Setenv("MYTRIX_BOT_PASSWORD", "botpass")
 		os.Setenv("MYTRIX_BOT_RECOVERY_KEY", "test-recovery-key")
 		os.Setenv("MYTRIX_BOT_PICKLE_KEY", "test-pickle-key")
+		os.Setenv("MYTRIX_USER_ADMIN_ID", "@example:example.com")
 	}
 
 	err := Load()
