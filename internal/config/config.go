@@ -20,8 +20,6 @@ type MytrixConfig struct {
 	Homeserver string `env:"HOMESERVER,required"`
 	// RoomID is the chat room with bot.
 	RoomID string `env:"ROOM_ID,required"`
-	// AdminID determines who can invite the bot.
-	AdminID string `env:"ADMIN_ID" envDefault:""`
 	// Datadir sets the data directory.
 	Datadir string `env:"DATA_DIR" envDefault:"/data"`
 	// DBPath sets the database path.
@@ -42,6 +40,8 @@ type MytrixConfig struct {
 	Wakapi WakapiConfig
 	// Umami contains Umami-specific configuration.
 	Umami UmamiConfig
+	// User contains user-specific configuration.
+	User UserConfig
 	// RSS contains RSS-specific configuration.
 	RSS RSSConfig
 }

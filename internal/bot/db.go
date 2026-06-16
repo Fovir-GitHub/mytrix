@@ -52,7 +52,7 @@ func syncConfig(ctx context.Context, q *db.Queries) error {
 
 	// Add admin information into the database.
 	if err := q.CreateUser(ctx, &db.CreateUserParams{
-		ID:   cfg.AdminID,
+		ID:   cfg.User.AdminID,
 		Role: "admin",
 	}); err != nil {
 		return err
