@@ -17,6 +17,7 @@ func (h *Handler) registerCommands() {
 	h.commands["!wakapi"] = h.handleWakapiCommand
 	h.commands["!rss"] = h.handleRSSCommand
 	h.commands["!version"] = h.handleVersion
+	h.commands["!user"] = h.handleUserCommand
 	slog.Info("bot command initialized",
 		"count", len(h.commands))
 }
@@ -41,7 +42,8 @@ func (h *Handler) HandleCommand(ctx context.Context, evt *event.Event) {
 		return
 	}
 
-	if evt.Sender != id.UserID(config.Config.AdminID) {
+	// TODO: Check allowed users from database.
+	if evt.Sender != id.UserID(config.Config.User.AdminID) {
 		slog.Warn("receive command from other users, skpped", "sender", evt.Sender)
 	}
 
