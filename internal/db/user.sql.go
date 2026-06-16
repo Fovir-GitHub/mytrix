@@ -9,6 +9,36 @@ import (
 	"context"
 )
 
+const allUsers = `-- name: AllUsers :many
+SELECT
+    id, role
+FROM
+    user
+`
+
+func (q *Queries) AllUsers(ctx context.Context) ([]User, error) {
+	rows, err := q.db.QueryContext(ctx, allUsers)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []User
+	for rows.Next() {
+		var i User
+		if err := rows.Scan(&i.ID, &i.Role); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const createUser = `-- name: CreateUser :exec
 INSERT
     OR IGNORE INTO user (id, role)

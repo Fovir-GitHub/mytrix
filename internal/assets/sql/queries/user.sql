@@ -30,3 +30,9 @@ SET
     role = ?
 WHERE
     id = ?;
+
+-- name: AllUsers :many
+SELECT
+    *
+FROM
+    user;
