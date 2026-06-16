@@ -14,6 +14,7 @@ var (
 	umamiDataTmpl  *template.Template
 	rssFeedTmpl    *template.Template
 	rssItemTmpl    *template.Template
+	userTmpl       *template.Template
 )
 
 // InitTemplates initializes all message formatting templates from the configuration.
@@ -26,6 +27,7 @@ func InitTemplates() {
 	umamiDataTmpl = createTmpl("umami_stat", cfg.Umami.Format)
 	rssFeedTmpl = createTmpl("rss_feed", cfg.RSS.FeedFormat)
 	rssItemTmpl = createTmpl("rss_item", cfg.RSS.ItemFormat)
+	userTmpl = createTmpl("user", cfg.User.Format)
 
 	slog.Info("templates initiailized")
 }
