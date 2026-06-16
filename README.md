@@ -12,6 +12,7 @@ A Matrix bot written in Go.
   - [Using Docker Compose](#using-docker-compose)
 - [Configuration](#configuration)
   - [General Settings](#general-settings)
+  - [User Configuration](#user-configuration)
   - [Bot Configuration](#bot-configuration)
   - [Message Configuration](#message-configuration)
   - [Gotify Configuration](#gotify-configuration)
@@ -61,7 +62,7 @@ services:
       - MYTRIX_LOG_LEVEL=INFO
       - MYTRIX_HOMESERVER=https://matrix.example.com
       - MYTRIX_ROOM_ID=!roomid:matrix.example.com
-      - MYTRIX_ADMIN_ID=@admin:matrix.example.com
+      - MYTRIX_USER_ADMIN_ID=@admin:matrix.example.com
       - MYTRIX_BOT_USERNAME=bot@example.com
       - MYTRIX_BOT_PASSWORD=your-bot-password
       - MYTRIX_BOT_RECOVERY_KEY=your-recovery-key
@@ -88,9 +89,13 @@ All configuration is done via environment variables.
 | `MYTRIX_DATA_DIR`   | Data directory for storing sessions      | `data`       |
 | `MYTRIX_TIMEOUT`    | HTTP request timeout in seconds          | `10`         |
 | `MYTRIX_TZ`         | Timezone                                 | `time.Local` |
-| `MYTRIX_ADMIN_ID`   | Determine who can invite the bot         | `""`         |
 
-> Tips: It is strongly recommended to set `MYTRIX_ADMIN_ID` so that the admin user can invite the bot. Otherwise, the bot will ignore all invitation.
+### User Configuration
+
+| Variable               | Description                      | Default                                                  |
+| ---------------------- | -------------------------------- | -------------------------------------------------------- |
+| `MYTRIX_USER_ADMIN_ID` | Determine who can invite the bot | (required)                                               |
+| `MYTRIX_USER_FORMAT`   | The template of listing users    | see [internal/config/user.go](./internal/config/user.go) |
 
 ### Bot Configuration
 
