@@ -44,7 +44,8 @@ func (h *Handler) HandleCommand(ctx context.Context, evt *event.Event) {
 
 	// TODO: Check allowed users from database.
 	if evt.Sender != id.UserID(config.Config.User.AdminID) {
-		slog.Warn("receive command from other users, skpped", "sender", evt.Sender)
+		slog.Warn("receive command from other users, skipped", "sender", evt.Sender)
+		return
 	}
 
 	body := strings.TrimSpace(content.Body)
