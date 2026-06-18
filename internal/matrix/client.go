@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
+	"unicode/utf8"
 
 	"codeberg.org/Fovir/mytrix/internal/config"
 	"codeberg.org/Fovir/mytrix/internal/crypto"
@@ -32,11 +33,7 @@ func (m *Client) SendTextMessage(ctx context.Context, roomID id.RoomID, text str
 	cfg := config.Config.Msg
 	maxLen := m.MaxMessageLength(ctx, roomID)
 
-	runes := []rune(text)
-	if len(runes) > maxLen {
-		text = string(runes[:maxLen])
-	}
-
+	text = truncateByBytes(text, maxLen)
 	content := format.RenderMarkdown(text, cfg.AllowMarkdown, cfg.AllowHTML)
 	_, err := m.c.SendMessageEvent(ctx, roomID, event.EventMessage, content)
 	return err
@@ -85,4 +82,16 @@ func (m *Client) MaxMessageLength(ctx context.Context, roomID id.RoomID) int {
 		return defaultMaxLen
 	}
 	return features.MaxTextLength - 1000
+}
+
+func truncateByBytes(s string, maxBytes int) string {
+	if len(s) <= maxBytes {
+		return s
+	}
+
+	for maxBytes > 0 && !utf8.RuneStart(s[maxBytes]) {
+		maxBytes--
+	}
+
+	return s[:maxBytes]
 }
