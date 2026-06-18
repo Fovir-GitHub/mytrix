@@ -5,9 +5,7 @@ import (
 	"log/slog"
 	"strings"
 
-	"codeberg.org/Fovir/mytrix/internal/config"
 	"maunium.net/go/mautrix/event"
-	"maunium.net/go/mautrix/id"
 )
 
 // registerCommands initializes the command handlers map mapping command prefixes to their respective handler functions.
@@ -42,8 +40,12 @@ func (h *Handler) HandleCommand(ctx context.Context, evt *event.Event) {
 		return
 	}
 
-	// TODO: Check allowed users from database.
-	if evt.Sender != id.UserID(config.Config.User.AdminID) {
+	isAdmin, err := h.service.User.IsUserAdmin(ctx, evt.Sender.String())
+	if err != nil {
+		slog.Error("query admin user failed (user_id=%v): %w", evt.Sender.String(), err)
+		return
+	}
+	if !isAdmin {
 		slog.Warn("receive command from other users, skipped", "sender", evt.Sender)
 		return
 	}
