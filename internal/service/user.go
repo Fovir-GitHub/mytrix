@@ -30,3 +30,7 @@ func (u *UserService) ListUsers(ctx context.Context) (string, error) {
 	}
 	return res.String(), nil
 }
+
+func (u *UserService) IsUserAdmin(ctx context.Context, id string) (bool, error) {
+	return u.q.IsUserAdmin(ctx, id)
+}
