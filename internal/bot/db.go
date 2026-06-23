@@ -2,7 +2,6 @@ package bot
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 	"log/slog"
 	"path"
@@ -12,6 +11,7 @@ import (
 	"codeberg.org/Fovir/mytrix/internal/assets"
 	"codeberg.org/Fovir/mytrix/internal/config"
 	"codeberg.org/Fovir/mytrix/internal/db"
+	"codeberg.org/Fovir/mytrix/internal/sqlite"
 )
 
 // setupDB initializes the database connection and runs migrations.
@@ -20,7 +20,7 @@ func setupDB() (*db.Queries, error) {
 	cfg := config.Config
 	dsn := path.Join(cfg.Datadir, cfg.DBPath)
 
-	conn, err := sql.Open("sqlite", dsn)
+	conn, err := sqlite.Open(dsn)
 	if err != nil {
 		_ = conn.Close()
 		return nil, fmt.Errorf("open database failed (dsn=%s): %w", dsn, err)
