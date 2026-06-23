@@ -4,11 +4,11 @@ package crypto
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 	"path/filepath"
 
 	"codeberg.org/Fovir/mytrix/internal/config"
+	"codeberg.org/Fovir/mytrix/internal/sqlite"
 	"go.mau.fi/util/dbutil"
 	"maunium.net/go/mautrix"
 	"maunium.net/go/mautrix/crypto"
@@ -20,7 +20,7 @@ import (
 // in the bot's data directory. The caller is responsible for managing the helper's lifecycle.
 func SetupCryptoHelper(client *mautrix.Client) (*cryptohelper.CryptoHelper, error) {
 	dbPath := filepath.Join(config.Config.Datadir, "crypto.db")
-	sqlDB, err := sql.Open("sqlite", dbPath)
+	sqlDB, err := sqlite.Open(dbPath)
 	if err != nil {
 		return nil, fmt.Errorf("open sqlite failed (path=%v): %w", dbPath, err)
 	}
