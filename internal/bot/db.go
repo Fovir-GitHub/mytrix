@@ -18,7 +18,7 @@ import (
 // It constructs the DSN from the configured data directory and database path.
 func setupDB() (*db.Queries, error) {
 	cfg := config.Config
-	dsn := path.Join(cfg.Datadir, cfg.DBPath)
+	dsn := path.Join(cfg.Datadir, cfg.DB.Path)
 
 	conn, err := sqlite.Open(dsn)
 	if err != nil {

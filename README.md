@@ -97,6 +97,13 @@ All configuration is done via environment variables.
 | `MYTRIX_USER_ADMIN_ID` | Determine who can invite the bot | (required)                                               |
 | `MYTRIX_USER_FORMAT`   | The template of listing users    | see [internal/config/user.go](./internal/config/user.go) |
 
+### Database Configuration
+
+| Variable                 | Description                     | Default     |
+| ------------------------ | ------------------------------- | ----------- |
+| `MYTRIX_DB_PATH`         | Path to SQLite database.        | `sqlite.db` |
+| `MYTRIX_DB_BUSY_TIMEOUT` | Timeout when db is busy (in ms) | `5000`      |
+
 ### Bot Configuration
 
 | Variable                  | Description                        | Example                 |

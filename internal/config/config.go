@@ -22,14 +22,14 @@ type MytrixConfig struct {
 	RoomID string `env:"ROOM_ID,required"`
 	// Datadir sets the data directory.
 	Datadir string `env:"DATA_DIR" envDefault:"/data"`
-	// DBPath sets the database path.
-	DBPath string `env:"DATABASE_PATH" envDefault:"sqlite.db"`
 	// Timeout defines the timeout of http request.
 	Timeout int `env:"TIMEOUT" envDefault:"10"`
 	// TZ sets the timezone.
 	TZ string `env:"TZ" envDefault:""`
 	// Bot contains bot-specific configuration.
 	Bot BotConfig
+	// DB contains database related configuration.
+	DB DBConfig
 	// Gotify contains Gotify-specific configuration.
 	Gotify GotifyConfig
 	// WS specifics the websocket configuration.
