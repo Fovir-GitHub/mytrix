@@ -14,6 +14,7 @@ import (
 	"codeberg.org/Fovir/mytrix/internal/service"
 	"codeberg.org/Fovir/mytrix/internal/ws"
 	"maunium.net/go/mautrix"
+	"maunium.net/go/mautrix/crypto/cryptohelper"
 	"maunium.net/go/mautrix/event"
 )
 
@@ -43,6 +44,18 @@ func New() (*Bot, error) {
 	if err != nil {
 		return nil, fmt.Errorf("create bot failed: %w", err)
 	}
+
+	if ch, ok := client.Crypto.(*cryptohelper.CryptoHelper); ok {
+		ch.DecryptErrorCallback = func(evt *event.Event, err error) {
+			slog.Error(
+				"crypto failed to decrypt event",
+				"room_id", evt.RoomID,
+				"sender", evt.Sender,
+				"err", err,
+			)
+		}
+	}
+
 	client.Crypto = cryptoHelper
 
 	db, err := setupDB()
@@ -106,13 +119,12 @@ func (b *Bot) Start(ctx context.Context) error {
 	b.Scheduler.Start()
 
 	go func() {
+		slog.Info("matrix sync started")
 		if err := b.Client.Sync(); err != nil {
-			slog.Error(
-				"runtime error",
-				"err", err,
-			)
+			slog.Error("runtime error", "err", err)
 			return
 		}
+		slog.Warn("matrix sync stopped unexpectedly")
 	}()
 
 	go func() {

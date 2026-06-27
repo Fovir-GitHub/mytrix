@@ -51,8 +51,8 @@ func (h *Handler) HandleCommand(ctx context.Context, evt *event.Event) {
 	}
 
 	body := strings.TrimSpace(content.Body)
-	slog.Debug(
-		"received text message",
+	slog.Info(
+		"command received",
 		"room", evt.RoomID,
 		"sender", evt.Sender,
 		"len", len(body),
