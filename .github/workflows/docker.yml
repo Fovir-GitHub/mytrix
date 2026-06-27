@@ -14,6 +14,10 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
     steps:
       - uses: actions/checkout@v4
         with:
@@ -24,20 +28,27 @@ jobs:
           docker buildx create --use --name mybuilder --driver docker-container
           docker buildx inspect --bootstrap
 
-      - name: Login
+      - name: Login to Docker Hub
         run: |
           echo "${{ secrets.DOCKER_PASSWORD }}" | \
           docker login docker.io -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
+      - name: Login to GitHub Container Registry
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | \
+          docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+
       - name: Build and Push
         run: |
-          IMAGE="docker.io/fovir/mytrix"
+          OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          IMAGE_DOCKER="docker.io/fovir/mytrix"
+          IMAGE_GHCR="ghcr.io/$OWNER/mytrix"
           TAG="${{ github.ref_type == 'tag' && github.ref_name || 'main' }}"
           VERSION="${{ github.ref_type == 'tag' && github.ref_name || 'dev' }}"
 
-          TAGS="-t $IMAGE:$TAG"
+          TAGS="-t $IMAGE_DOCKER:$TAG -t $IMAGE_GHCR:$TAG"
           if [[ "${{ github.ref_type }}" == "tag" ]]; then
-            TAGS="$TAGS -t $IMAGE:latest"
+            TAGS="$TAGS -t $IMAGE_DOCKER:latest -t $IMAGE_GHCR:latest"
           fi
 
           docker buildx build \
