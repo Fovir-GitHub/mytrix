@@ -124,16 +124,18 @@ func (r *RealRSSService) Update(ctx context.Context) ([]string, error) {
 	slog.Debug("rss update start", "feeds_len", len(feeds))
 
 	for _, feed := range feeds {
-		updated, err := r.updateFeed(ctx, &feed)
+		body, err := r.updateFeed(ctx, &feed)
 		if err != nil {
 			errs = append(errs, err)
 			slog.Warn("feed update failed", "feed_id", feed.ID, "err", err)
 			continue
 		}
 
-		if len(updated) <= 0 {
+		if len(body) <= 0 {
 			continue
 		}
+
+		updated := fmt.Sprintf("# %s\n%s", feed.Title, body)
 
 		res = append(res, updated)
 	}
