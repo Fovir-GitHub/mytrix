@@ -10,7 +10,7 @@ import (
 	"codeberg.org/Fovir/mytrix/internal/db"
 )
 
-func RssFeedMarkdown(feed *db.RssFeed) string {
+func RssFeedMarkdown(feed *db.RSSFeed) string {
 	var buf bytes.Buffer
 	if err := rssFeedTmpl.Execute(&buf, feed); err != nil {
 		slog.Debug("rss feed markdown failed", "err", err)
@@ -19,7 +19,7 @@ func RssFeedMarkdown(feed *db.RssFeed) string {
 	return buf.String()
 }
 
-func RssItemMarkdown(feed *db.RssFeed, item *db.RssItem) string {
+func RssItemMarkdown(feed *db.RSSFeed, item *db.RSSItem) string {
 	var buf bytes.Buffer
 	descMaxLen := config.Config.RSS.DescriptionMaxLength
 	titles := []string{

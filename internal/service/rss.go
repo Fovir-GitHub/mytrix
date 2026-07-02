@@ -153,7 +153,7 @@ func (r *RealRSSService) Update(ctx context.Context) ([]string, error) {
 	return res, nil
 }
 
-func (r *RealRSSService) updateFeed(ctx context.Context, feed *db.RssFeed) (string, error) {
+func (r *RealRSSService) updateFeed(ctx context.Context, feed *db.RSSFeed) (string, error) {
 	var (
 		updated strings.Builder
 		errs    []error
@@ -191,7 +191,7 @@ func (r *RealRSSService) updateFeed(ctx context.Context, feed *db.RssFeed) (stri
 	return updated.String(), nil
 }
 
-func (r *RealRSSService) addItem(ctx context.Context, item *db.RssItem) error {
+func (r *RealRSSService) addItem(ctx context.Context, item *db.RSSItem) error {
 	err := r.q.CreateRSSItem(ctx, &db.CreateRSSItemParams{
 		FeedID:      item.FeedID,
 		Guid:        item.Guid,
@@ -211,7 +211,7 @@ func (r *RealRSSService) addItem(ctx context.Context, item *db.RssItem) error {
 	return nil
 }
 
-func (r *RealRSSService) allFeeds(ctx context.Context) ([]db.RssFeed, error) {
+func (r *RealRSSService) allFeeds(ctx context.Context) ([]db.RSSFeed, error) {
 	feeds, err := r.q.AllFeeds(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("fetch all feeds failed: %w", err)

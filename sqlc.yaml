@@ -15,3 +15,6 @@ sql:
         emit_interface: false
         emit_exact_table_names: false
         emit_params_struct_pointers: true
+        rename:
+          rss_feed: "RSSFeed"
+          rss_item: "RSSItem"

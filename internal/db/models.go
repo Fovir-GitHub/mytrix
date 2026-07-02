@@ -13,24 +13,24 @@ type Migration struct {
 	AppliedAt sql.NullTime `db:"applied_at"`
 }
 
-type Room struct {
-	ID    string `db:"id"`
-	State string `db:"state"`
-}
-
-type RssFeed struct {
+type RSSFeed struct {
 	ID    int64  `db:"id"`
 	Url   string `db:"url"`
 	Title string `db:"title"`
 }
 
-type RssItem struct {
+type RSSItem struct {
 	ID          int64  `db:"id"`
 	FeedID      int64  `db:"feed_id"`
 	Guid        string `db:"guid"`
 	Link        string `db:"link"`
 	Title       string `db:"title"`
 	Description string `db:"description"`
+}
+
+type Room struct {
+	ID    string `db:"id"`
+	State string `db:"state"`
 }
 
 type User struct {

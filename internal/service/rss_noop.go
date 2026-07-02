@@ -22,7 +22,7 @@ func (r *NoopRSSService) Update(context.Context) ([]string, error) {
 	return nil, r.err
 }
 
-func (r *NoopRSSService) AllFeeds(context.Context) ([]db.RssFeed, error) {
+func (r *NoopRSSService) AllFeeds(context.Context) ([]db.RSSFeed, error) {
 	return nil, r.err
 }
 

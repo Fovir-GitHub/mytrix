@@ -18,15 +18,15 @@ ORDER BY
     id
 `
 
-func (q *Queries) AllFeeds(ctx context.Context) ([]RssFeed, error) {
+func (q *Queries) AllFeeds(ctx context.Context) ([]RSSFeed, error) {
 	rows, err := q.db.QueryContext(ctx, allFeeds)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []RssFeed
+	var items []RSSFeed
 	for rows.Next() {
-		var i RssFeed
+		var i RSSFeed
 		if err := rows.Scan(&i.ID, &i.Url, &i.Title); err != nil {
 			return nil, err
 		}
@@ -76,9 +76,9 @@ WHERE
 LIMIT 1
 `
 
-func (q *Queries) SelectFeedByID(ctx context.Context, id int64) (RssFeed, error) {
+func (q *Queries) SelectFeedByID(ctx context.Context, id int64) (RSSFeed, error) {
 	row := q.db.QueryRowContext(ctx, selectFeedByID, id)
-	var i RssFeed
+	var i RSSFeed
 	err := row.Scan(&i.ID, &i.Url, &i.Title)
 	return i, err
 }
