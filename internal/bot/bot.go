@@ -3,8 +3,10 @@ package bot
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log/slog"
+	"time"
 
 	"codeberg.org/Fovir/mytrix/internal/crypto"
 	"codeberg.org/Fovir/mytrix/internal/handler"
@@ -119,12 +121,22 @@ func (b *Bot) Start(ctx context.Context) error {
 	b.Scheduler.Start()
 
 	go func() {
-		slog.Info("matrix sync started")
-		if err := b.Client.Sync(); err != nil {
-			slog.Error("runtime error", "err", err)
-			return
+		for {
+			slog.Info("matrix sync started")
+
+			err := b.Client.Sync()
+			if err == nil {
+				return
+			}
+
+			if errors.Is(err, mautrix.MUnknownToken) {
+				slog.Error("token expired, stop retrying", "err", err)
+				return
+			}
+
+			slog.Error("sync error, retry in 10s", "err", err)
+			time.Sleep(10 * time.Second)
 		}
-		slog.Warn("matrix sync stopped unexpectedly")
 	}()
 
 	go func() {
