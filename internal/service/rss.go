@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"fmt"
 	"log/slog"
@@ -25,17 +26,19 @@ type RSSService interface {
 }
 
 type RealRSSService struct {
+	db     *sql.DB
 	q      *db.Queries
 	parser *feed.Parser
 }
 
-func NewRSSService(query *db.Queries) RSSService {
+func NewRSSService(sqlDB *sql.DB, query *db.Queries) RSSService {
 	cfg := config.Config.RSS
 	slog.Info("rss service initialized", "enabled", cfg.Enabled)
 	if !cfg.Enabled {
 		return &NoopRSSService{err: fmt.Errorf("RSS is not enabled")}
 	}
 	return &RealRSSService{
+		db:     sqlDB,
 		q:      query,
 		parser: feed.New(),
 	}

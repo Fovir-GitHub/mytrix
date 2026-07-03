@@ -60,12 +60,12 @@ func New() (*Bot, error) {
 
 	client.Crypto = cryptoHelper
 
-	db, err := setupDB()
+	db, query, err := setupDB()
 	if err != nil {
 		return nil, fmt.Errorf("create bot failed: %w", err)
 	}
 
-	if err := syncConfig(context.Background(), db); err != nil {
+	if err := syncConfig(context.Background(), query); err != nil {
 		return nil, fmt.Errorf("sync config failed: %w", err)
 	}
 	slog.Info("sync config finished")
@@ -78,9 +78,9 @@ func New() (*Bot, error) {
 	msgSrv := service.NewMessageService(matrixClient)
 	umamiSrv := service.NewUmamiService(http)
 	wakapiSrv := service.NewWakapiService(http, scheduler)
-	rssSrv := service.NewRSSService(db)
-	roomSrv := service.NewRoomService(matrixClient, db)
-	userSrv := service.NewUserService(db)
+	rssSrv := service.NewRSSService(db, query)
+	roomSrv := service.NewRoomService(matrixClient, query)
+	userSrv := service.NewUserService(query)
 
 	service := &service.Service{
 		Gotify:  gotifySrv,
