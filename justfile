@@ -11,9 +11,13 @@ db path:
   # Exec into database.
   litecli {{path}}
 
-test:
+v-test:
   # Run testings.
   CGO_ENABLED=0 go test -tags goolm ./... -v
+
+test:
+  # Run testings.
+  CGO_ENABLED=0 go test -tags goolm ./...
 
 toc:
   # Generate ToC in README.md
