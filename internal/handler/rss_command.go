@@ -120,6 +120,9 @@ func (h *Handler) handleRSSUpdate(ctx context.Context, evt *event.Event) error {
 		if errors.Is(err, service.ErrRSSNoUpdate) {
 			return reply("Everything up to date")
 		}
+		if errors.Is(err, service.ErrRSSPartialUpdate) {
+			slog.Warn("rss feed partially updated", "err", err)
+		}
 	}
 
 	for _, item := range updated {

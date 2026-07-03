@@ -25,6 +25,10 @@ func (h *Handler) handleRSSSchedule(ctx context.Context) {
 			slog.Debug("rss everything up to date")
 			return
 		}
+
+		if errors.Is(err, service.ErrRSSPartialUpdate) {
+			slog.Warn("rss feed partially updated", "err", err)
+		}
 	}
 
 	slog.Info("rss schedule update done", "items", len(updated))
