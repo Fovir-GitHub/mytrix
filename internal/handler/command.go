@@ -55,7 +55,7 @@ func (h *Handler) HandleCommand(ctx context.Context, evt *event.Event) {
 		"command received",
 		"room", evt.RoomID,
 		"sender", evt.Sender,
-		"len", len(body),
+		"body", body,
 	)
 
 	for prefix, handler := range h.commands {
