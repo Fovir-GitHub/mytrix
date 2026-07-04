@@ -155,61 +155,41 @@ func (r *RealRSSService) Update(ctx context.Context) ([]string, error) {
 }
 
 func (r *RealRSSService) updateFeed(ctx context.Context, feed *db.RSSFeed) (string, error) {
-	var (
-		updated strings.Builder
-		errs    []error
-	)
+	var updated strings.Builder
 
 	_, items, err := r.parser.ParseURL(feed.Url)
 	if err != nil {
 		return "", err
 	}
 
+	// Create a transaction.
+	tx, err := r.db.BeginTx(ctx, nil)
+	if err != nil {
+		return "", fmt.Errorf("create tx failed: %w", err)
+	}
+
+	qtx := r.q.WithTx(tx)
 	for _, item := range items {
 		item.FeedID = feed.ID
-		if err := r.addItem(ctx, &item); err != nil {
-			if !errors.Is(err, ErrRSSItemExists) {
-				slog.Error("item insert failed", "feed_url", feed.Url, "guid", item.Guid, "err", err)
-				errs = append(errs, fmt.Errorf("insert item failed (feed_url=%s, guid=%s): %w", feed.Url, item.Guid, err))
-			} else {
-				slog.Debug("item insert failed", "feed_url", feed.Url, "guid", item.Guid, "err", err)
+		if err := qtx.CreateRSSItem(ctx, &db.CreateRSSItemParams{
+			FeedID:      item.FeedID,
+			Guid:        item.Guid,
+			Link:        item.Link,
+			Title:       item.Title,
+			Description: item.Description,
+		}); err != nil {
+			// Rollback when error occurs.
+			if txErr := tx.Rollback(); txErr != nil {
+				return "", fmt.Errorf("tx rollback failed: %w", err)
 			}
-			continue
+			return "", fmt.Errorf("insert rss item failed (feed_url=%v, guid=%v): %w", feed.Url, item.Guid, err)
 		}
+
 		updated.WriteString(render.RssItemMarkdown(feed, &item))
 		updated.WriteString("\n")
 	}
-	if len(errs) > 0 {
-		slog.Warn(
-			"some items failed",
-			"feed_url", feed.Url,
-			"failed", len(errs),
-			"total", len(items),
-		)
-		return updated.String(), fmt.Errorf("update feed failed (url=%s): %w", feed.Url, errors.Join(errs...))
-	}
 
-	return updated.String(), nil
-}
-
-func (r *RealRSSService) addItem(ctx context.Context, item *db.RSSItem) error {
-	err := r.q.CreateRSSItem(ctx, &db.CreateRSSItemParams{
-		FeedID:      item.FeedID,
-		Guid:        item.Guid,
-		Link:        item.Link,
-		Title:       item.Title,
-		Description: item.Description,
-	})
-	if err != nil {
-		var sqliteErr *sqlite.Error
-		if errors.As(err, &sqliteErr) && sqliteErr.Code() == model.ErrSQLiteConstraintUnique {
-			return fmt.Errorf("%w: %w", ErrRSSItemExists, err)
-		}
-
-		return fmt.Errorf("add item failed (feed_id=%d, guid=%s): %w", item.FeedID, item.Guid, err)
-	}
-
-	return nil
+	return updated.String(), tx.Commit()
 }
 
 func (r *RealRSSService) allFeeds(ctx context.Context) ([]db.RSSFeed, error) {
