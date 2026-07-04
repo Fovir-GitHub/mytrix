@@ -119,12 +119,14 @@ func (r *RealRSSService) Update(ctx context.Context) ([]model.RSSUpdateResult, e
 		res  []model.RSSUpdateResult
 	)
 
+	// Query all feeds.
 	feeds, err := r.allFeeds(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %w", ErrRSSFetchFeeds, err)
 	}
 	slog.Debug("rss update start", "feeds_len", len(feeds))
 
+	// Update feed by feed.
 	for _, feed := range feeds {
 		rssUpdateResult, err := r.updateFeed(ctx, &feed)
 		if err != nil {
@@ -133,10 +135,12 @@ func (r *RealRSSService) Update(ctx context.Context) ([]model.RSSUpdateResult, e
 			continue
 		}
 
-		if len(rssUpdateResult.Rendered) <= 0 {
+		// Feed is up to date.
+		if len(rssUpdateResult.ItemIDs) <= 0 {
 			continue
 		}
 
+		// Prepend feed title to rendered markdown content.
 		rssUpdateResult.Rendered = fmt.Sprintf("# %s\n%s", feed.Title, rssUpdateResult.Rendered)
 
 		res = append(res, *rssUpdateResult)
@@ -181,6 +185,7 @@ func (r *RealRSSService) updateFeed(ctx context.Context, feed *db.RSSFeed) (*mod
 			Description: item.Description,
 		})
 		if err != nil {
+			// Item exists.
 			if errors.Is(err, sql.ErrNoRows) {
 				continue
 			}
