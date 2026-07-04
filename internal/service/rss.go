@@ -12,9 +12,7 @@ import (
 	"codeberg.org/Fovir/mytrix/internal/config"
 	"codeberg.org/Fovir/mytrix/internal/db"
 	"codeberg.org/Fovir/mytrix/internal/feed"
-	"codeberg.org/Fovir/mytrix/internal/model"
 	"codeberg.org/Fovir/mytrix/internal/render"
-	"modernc.org/sqlite"
 )
 
 type RSSService interface {
@@ -143,12 +141,12 @@ func (r *RealRSSService) Update(ctx context.Context) ([]string, error) {
 		res = append(res, updated)
 	}
 
-	if len(res) <= 0 {
-		return nil, ErrRSSNoUpdate
+	if len(errs) > 0 {
+		return res, fmt.Errorf("%w: %w", ErrRSSPartialUpdate, errors.Join(errs...))
 	}
 
-	if len(errs) > 0 {
-		return res, ErrRSSPartialUpdate
+	if len(res) <= 0 {
+		return nil, ErrRSSNoUpdate
 	}
 
 	slog.Info("rss update finished", "feeds_len", len(feeds))
