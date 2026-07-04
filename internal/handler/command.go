@@ -26,6 +26,7 @@ func (h *Handler) registerCommands() {
 func (h *Handler) HandleCommand(ctx context.Context, evt *event.Event) {
 	content := evt.Content.AsMessage()
 	if content.MsgType != event.MsgText {
+		slog.Warn("messaage type is not text")
 		return
 	}
 
