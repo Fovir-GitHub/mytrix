@@ -1,5 +1,3 @@
-// TODO: add `pushed` scheme into RSS item, and filter items that have been pushed.
-
 package handler
 
 import (
