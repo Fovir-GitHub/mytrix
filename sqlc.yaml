@@ -2,7 +2,9 @@ version: "2"
 
 sql:
   - engine: "sqlite"
-    schema: "internal/assets/sql/schema/"
+    schema:
+      - "internal/assets/sql/schema/"
+      - "internal/assets/sql/migrations/"
     queries: "internal/assets/sql/queries/"
     strict_function_checks: true
     gen:
