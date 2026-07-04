@@ -34,7 +34,7 @@ func (h *Handler) handleRSSSchedule(ctx context.Context) {
 	slog.Info("rss schedule update done", "items", len(updated))
 
 	for _, item := range updated {
-		_ = h.service.Message.Reply(ctx, id.RoomID(roomID), item)
+		_ = h.service.Message.Reply(ctx, id.RoomID(roomID), item.Rendered)
 	}
 }
 

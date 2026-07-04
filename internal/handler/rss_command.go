@@ -126,7 +126,7 @@ func (h *Handler) handleRSSUpdate(ctx context.Context, evt *event.Event) error {
 	}
 
 	for _, item := range updated {
-		if err := reply(item); err != nil {
+		if err := reply(item.Rendered); err != nil {
 			errs = append(errs, err)
 		}
 	}

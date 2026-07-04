@@ -12,13 +12,14 @@ import (
 	"codeberg.org/Fovir/mytrix/internal/config"
 	"codeberg.org/Fovir/mytrix/internal/db"
 	"codeberg.org/Fovir/mytrix/internal/feed"
+	"codeberg.org/Fovir/mytrix/internal/model"
 	"codeberg.org/Fovir/mytrix/internal/render"
 )
 
 type RSSService interface {
 	AddFeeds(context.Context, []string) (string, error)
 	DeleteFeeds(context.Context, []string) (string, error)
-	Update(context.Context) ([]string, error)
+	Update(context.Context) ([]model.RSSUpdateResult, error)
 	ListFeeds(context.Context) (string, error)
 	ExportFeeds(context.Context) (string, error)
 }
@@ -112,10 +113,10 @@ func (r *RealRSSService) deleteFeed(ctx context.Context, id int) error {
 	return nil
 }
 
-func (r *RealRSSService) Update(ctx context.Context) ([]string, error) {
+func (r *RealRSSService) Update(ctx context.Context) ([]model.RSSUpdateResult, error) {
 	var (
 		errs []error
-		res  []string
+		res  []model.RSSUpdateResult
 	)
 
 	feeds, err := r.allFeeds(ctx)
@@ -125,20 +126,20 @@ func (r *RealRSSService) Update(ctx context.Context) ([]string, error) {
 	slog.Debug("rss update start", "feeds_len", len(feeds))
 
 	for _, feed := range feeds {
-		body, err := r.updateFeed(ctx, &feed)
+		rssUpdateResult, err := r.updateFeed(ctx, &feed)
 		if err != nil {
 			errs = append(errs, err)
 			slog.Warn("feed update failed", "feed_id", feed.ID, "err", err)
 			continue
 		}
 
-		if len(body) <= 0 {
+		if len(rssUpdateResult.Rendered) <= 0 {
 			continue
 		}
 
-		updated := fmt.Sprintf("# %s\n%s", feed.Title, body)
+		rssUpdateResult.Rendered = fmt.Sprintf("# %s\n%s", feed.Title, rssUpdateResult.Rendered)
 
-		res = append(res, updated)
+		res = append(res, *rssUpdateResult)
 	}
 
 	if len(errs) > 0 {
@@ -154,42 +155,52 @@ func (r *RealRSSService) Update(ctx context.Context) ([]string, error) {
 	return res, nil
 }
 
-func (r *RealRSSService) updateFeed(ctx context.Context, feed *db.RSSFeed) (string, error) {
-	var updated strings.Builder
+func (r *RealRSSService) updateFeed(ctx context.Context, feed *db.RSSFeed) (*model.RSSUpdateResult, error) {
+	var rendered strings.Builder
+	var ids []int64
 
 	_, items, err := r.parser.ParseURL(feed.Url)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	// Create a transaction.
 	tx, err := r.db.BeginTx(ctx, nil)
 	if err != nil {
-		return "", fmt.Errorf("create tx failed: %w", err)
+		return nil, fmt.Errorf("create tx failed: %w", err)
 	}
 
 	qtx := r.q.WithTx(tx)
 	for _, item := range items {
 		item.FeedID = feed.ID
-		if err := qtx.CreateRSSItem(ctx, &db.CreateRSSItemParams{
+		itemID, err := qtx.CreateRSSItem(ctx, &db.CreateRSSItemParams{
 			FeedID:      item.FeedID,
 			Guid:        item.Guid,
 			Link:        item.Link,
 			Title:       item.Title,
 			Description: item.Description,
-		}); err != nil {
+		})
+		if err != nil {
+			if errors.Is(err, sql.ErrNoRows) {
+				continue
+			}
+
 			// Rollback when error occurs.
 			if txErr := tx.Rollback(); txErr != nil {
-				return "", fmt.Errorf("tx rollback failed: %w", err)
+				return nil, fmt.Errorf("tx rollback failed: %w", err)
 			}
-			return "", fmt.Errorf("insert rss item failed (feed_url=%v, guid=%v): %w", feed.Url, item.Guid, err)
+			return nil, fmt.Errorf("insert rss item failed (feed_url=%v, guid=%v): %w", feed.Url, item.Guid, err)
 		}
 
-		updated.WriteString(render.RssItemMarkdown(feed, &item))
-		updated.WriteString("\n")
+		ids = append(ids, itemID)
+		rendered.WriteString(render.RssItemMarkdown(feed, &item))
+		rendered.WriteString("\n")
 	}
 
-	return updated.String(), tx.Commit()
+	return &model.RSSUpdateResult{
+		Rendered: rendered.String(),
+		ItemIDs:  ids,
+	}, tx.Commit()
 }
 
 func (r *RealRSSService) allFeeds(ctx context.Context) ([]db.RSSFeed, error) {

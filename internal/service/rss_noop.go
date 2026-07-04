@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"codeberg.org/Fovir/mytrix/internal/db"
+	"codeberg.org/Fovir/mytrix/internal/model"
 )
 
 type NoopRSSService struct {
@@ -18,7 +19,7 @@ func (r *NoopRSSService) DeleteFeeds(context.Context, []string) (string, error) 
 	return "", r.err
 }
 
-func (r *NoopRSSService) Update(context.Context) ([]string, error) {
+func (r *NoopRSSService) Update(context.Context) ([]model.RSSUpdateResult, error) {
 	return nil, r.err
 }
 
