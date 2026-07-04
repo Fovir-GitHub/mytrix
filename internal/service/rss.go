@@ -14,6 +14,7 @@ import (
 	"codeberg.org/Fovir/mytrix/internal/feed"
 	"codeberg.org/Fovir/mytrix/internal/model"
 	"codeberg.org/Fovir/mytrix/internal/render"
+	"codeberg.org/Fovir/mytrix/internal/utils"
 )
 
 type RSSService interface {
@@ -169,12 +170,11 @@ func (r *RealRSSService) updateFeed(ctx context.Context, feed *db.RSSFeed) (*mod
 	}
 
 	// Create a transaction.
-	tx, err := r.db.BeginTx(ctx, nil)
+	tx, qtx, err := utils.CreateTransaction(ctx, r.db, r.q, nil)
 	if err != nil {
-		return nil, fmt.Errorf("create tx failed: %w", err)
+		return nil, fmt.Errorf("create tx for updating rss feed failed: %w", err)
 	}
 
-	qtx := r.q.WithTx(tx)
 	for _, item := range items {
 		item.FeedID = feed.ID
 		itemID, err := qtx.CreateRSSItem(ctx, &db.CreateRSSItemParams{
