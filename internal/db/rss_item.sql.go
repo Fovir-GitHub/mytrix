@@ -61,3 +61,44 @@ func (q *Queries) MarkRSSItemPushedByID(ctx context.Context, id int64) error {
 	_, err := q.db.ExecContext(ctx, markRSSItemPushedByID, id)
 	return err
 }
+
+const unpushedRSSItemsByFeedID = `-- name: UnpushedRSSItemsByFeedID :many
+SELECT
+    id, feed_id, guid, link, title, description, pushed
+FROM
+    rss_item
+WHERE
+    pushed = 0
+    AND feed_id = ?
+`
+
+func (q *Queries) UnpushedRSSItemsByFeedID(ctx context.Context, feedID int64) ([]RSSItem, error) {
+	rows, err := q.db.QueryContext(ctx, unpushedRSSItemsByFeedID, feedID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []RSSItem
+	for rows.Next() {
+		var i RSSItem
+		if err := rows.Scan(
+			&i.ID,
+			&i.FeedID,
+			&i.Guid,
+			&i.Link,
+			&i.Title,
+			&i.Description,
+			&i.Pushed,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}

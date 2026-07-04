@@ -16,3 +16,12 @@ SET
     pushed = 1
 WHERE
     id = ?;
+
+-- name: UnpushedRSSItemsByFeedID :many
+SELECT
+    *
+FROM
+    rss_item
+WHERE
+    pushed = 0
+    AND feed_id = ?;

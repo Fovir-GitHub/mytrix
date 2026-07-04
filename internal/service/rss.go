@@ -138,7 +138,7 @@ func (r *RealRSSService) Update(ctx context.Context) ([]model.RSSUpdateResult, e
 		}
 
 		// Feed is up to date.
-		if len(rssUpdateResult.ItemIDs) <= 0 {
+		if rssUpdateResult == nil {
 			continue
 		}
 
@@ -175,6 +175,25 @@ func (r *RealRSSService) updateFeed(ctx context.Context, feed *db.RSSFeed) (*mod
 	if err != nil {
 		return nil, fmt.Errorf("create tx for updating rss feed failed: %w", err)
 	}
+	defer func() {
+		if err != nil {
+			if txErr := tx.Rollback(); txErr != nil {
+				slog.Error("tx rollback failed", "err", err)
+			}
+		}
+	}()
+
+	// Handle unpushed items.
+	unpushed, err := qtx.UnpushedRSSItemsByFeedID(ctx, feed.ID)
+	if err != nil {
+		slog.Warn("query unpushed rss item failed", "feed_id", feed.ID, "err", err)
+	}
+
+	for _, item := range unpushed {
+		rendered.WriteString(render.RssItemMarkdown(feed, &item))
+		rendered.WriteString("\n")
+		ids = append(ids, item.ID)
+	}
 
 	for _, item := range items {
 		item.FeedID = feed.ID
@@ -191,16 +210,16 @@ func (r *RealRSSService) updateFeed(ctx context.Context, feed *db.RSSFeed) (*mod
 				continue
 			}
 
-			// Rollback when error occurs.
-			if txErr := tx.Rollback(); txErr != nil {
-				return nil, fmt.Errorf("tx rollback in updating feed failed: %w", err)
-			}
 			return nil, fmt.Errorf("insert rss item failed (feed_url=%v, guid=%v): %w", feed.Url, item.Guid, err)
 		}
 
 		ids = append(ids, itemID)
 		rendered.WriteString(render.RssItemMarkdown(feed, &item))
 		rendered.WriteString("\n")
+	}
+
+	if len(ids) <= 0 {
+		return nil, nil
 	}
 
 	return &model.RSSUpdateResult{
@@ -254,12 +273,18 @@ func (r *RealRSSService) MarkItemsPushed(ctx context.Context, rssUpdateResults *
 	if err != nil {
 		return fmt.Errorf("create tx for marking items pushed failed: %w", err)
 	}
+	defer func() {
+		if err != nil {
+			if txErr := tx.Rollback(); txErr != nil {
+				slog.Error("tx rollback failed", "err", txErr)
+			}
+		}
+	}()
+
+	defer tx.Rollback() //nolint
 
 	for _, id := range ids {
 		if err := qtx.MarkRSSItemPushedByID(ctx, id); err != nil {
-			if txErr := tx.Rollback(); txErr != nil {
-				return fmt.Errorf("tx roll back in marking items pushed failed: %w", err)
-			}
 			return fmt.Errorf("mark rss item pushed failed (item_id=%v): %w", id, err)
 		}
 	}
