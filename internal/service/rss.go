@@ -161,7 +161,7 @@ func (r *RealRSSService) Update(ctx context.Context) ([]model.RSSUpdateResult, e
 	return res, nil
 }
 
-func (r *RealRSSService) updateFeed(ctx context.Context, feed *db.RSSFeed) (*model.RSSUpdateResult, error) {
+func (r *RealRSSService) updateFeed(ctx context.Context, feed *db.RSSFeed) (_ *model.RSSUpdateResult, err error) {
 	var rendered strings.Builder
 	var ids []int64
 
@@ -184,8 +184,8 @@ func (r *RealRSSService) updateFeed(ctx context.Context, feed *db.RSSFeed) (*mod
 	}()
 
 	// Handle unpushed items.
-	unpushed, err := qtx.UnpushedRSSItemsByFeedID(ctx, feed.ID)
-	if err != nil {
+	unpushed, qErr := qtx.UnpushedRSSItemsByFeedID(ctx, feed.ID)
+	if qErr != nil {
 		slog.Warn("query unpushed rss item failed", "feed_id", feed.ID, "err", err)
 	}
 
@@ -197,20 +197,21 @@ func (r *RealRSSService) updateFeed(ctx context.Context, feed *db.RSSFeed) (*mod
 
 	for _, item := range items {
 		item.FeedID = feed.ID
-		itemID, err := qtx.CreateRSSItem(ctx, &db.CreateRSSItemParams{
+		itemID, insErr := qtx.CreateRSSItem(ctx, &db.CreateRSSItemParams{
 			FeedID:      item.FeedID,
 			Guid:        item.Guid,
 			Link:        item.Link,
 			Title:       item.Title,
 			Description: item.Description,
 		})
-		if err != nil {
+		if insErr != nil {
 			// Item exists.
-			if errors.Is(err, sql.ErrNoRows) {
+			if errors.Is(insErr, sql.ErrNoRows) {
 				continue
 			}
 
-			return nil, fmt.Errorf("insert rss item failed (feed_url=%v, guid=%v): %w", feed.Url, item.Guid, err)
+			err = fmt.Errorf("insert rss item failed (feed_url=%v, guid=%v): %w", feed.Url, item.Guid, err)
+			return nil, err
 		}
 
 		ids = append(ids, itemID)
@@ -219,6 +220,7 @@ func (r *RealRSSService) updateFeed(ctx context.Context, feed *db.RSSFeed) (*mod
 	}
 
 	if len(ids) <= 0 {
+		_ = tx.Rollback()
 		return nil, nil
 	}
 
@@ -267,7 +269,7 @@ func (r *RealRSSService) ExportFeeds(ctx context.Context) (string, error) {
 	return res.String(), nil
 }
 
-func (r *RealRSSService) MarkItemsPushed(ctx context.Context, rssUpdateResults *model.RSSUpdateResult) error {
+func (r *RealRSSService) MarkItemsPushed(ctx context.Context, rssUpdateResults *model.RSSUpdateResult) (err error) {
 	ids := rssUpdateResults.ItemIDs
 	tx, qtx, err := utils.CreateTransaction(ctx, r.db, r.q, nil)
 	if err != nil {
@@ -282,7 +284,7 @@ func (r *RealRSSService) MarkItemsPushed(ctx context.Context, rssUpdateResults *
 	}()
 
 	for _, id := range ids {
-		if err := qtx.MarkRSSItemPushedByID(ctx, id); err != nil {
+		if err = qtx.MarkRSSItemPushedByID(ctx, id); err != nil {
 			return fmt.Errorf("mark rss item pushed failed (item_id=%v): %w", id, err)
 		}
 	}
