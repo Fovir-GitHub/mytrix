@@ -281,8 +281,6 @@ func (r *RealRSSService) MarkItemsPushed(ctx context.Context, rssUpdateResults *
 		}
 	}()
 
-	defer tx.Rollback() //nolint
-
 	for _, id := range ids {
 		if err := qtx.MarkRSSItemPushedByID(ctx, id); err != nil {
 			return fmt.Errorf("mark rss item pushed failed (item_id=%v): %w", id, err)
