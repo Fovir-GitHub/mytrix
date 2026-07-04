@@ -1,7 +1,9 @@
--- name: CreateRSSItem :exec
+-- name: CreateRSSItem :one
 INSERT
     OR IGNORE INTO rss_item (feed_id, guid, link, title, description)
-        VALUES (?, ?, ?, ?, ?);
+        VALUES (?, ?, ?, ?, ?)
+    RETURNING
+        id;
 
 -- name: DeleteRSSItemByFeedID :exec
 DELETE FROM rss_item
