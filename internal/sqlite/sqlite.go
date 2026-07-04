@@ -9,6 +9,16 @@ import (
 
 func Open(dsn string) (*sql.DB, error) {
 	cfg := config.Config.DB
-	pragmas := fmt.Sprintf("?_journal_mode=WAL&_busy_timeout=%d", cfg.BusyTimeout)
-	return sql.Open("sqlite", dsn+pragmas)
+	pragmas := fmt.Sprintf(
+		"?_pragma=journal_mode(WAL)&_pragma=busy_timeout(%d)&_pragma=synchronous(NORMAL)&_pragma=foreign_keys(ON)",
+		cfg.BusyTimeout,
+	)
+	db, err := sql.Open("sqlite", dsn+pragmas)
+	if err != nil {
+		return nil, err
+	}
+
+	db.SetMaxOpenConns(1)
+	db.SetMaxIdleConns(1)
+	return db, nil
 }
