@@ -1,3 +1,5 @@
+// TODO: add `pushed` scheme into RSS item, and filter items that have been pushed.
+
 package handler
 
 import (
@@ -127,6 +129,11 @@ func (h *Handler) handleRSSUpdate(ctx context.Context, evt *event.Event) error {
 
 	for _, item := range updated {
 		if err := reply(item.Rendered); err != nil {
+			errs = append(errs, err)
+			continue
+		}
+
+		if err := h.service.RSS.MarkItemsPushed(ctx, &item); err != nil {
 			errs = append(errs, err)
 		}
 	}

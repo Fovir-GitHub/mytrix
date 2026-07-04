@@ -34,7 +34,20 @@ func (h *Handler) handleRSSSchedule(ctx context.Context) {
 	slog.Info("rss schedule update done", "items", len(updated))
 
 	for _, item := range updated {
-		_ = h.service.Message.Reply(ctx, id.RoomID(roomID), item.Rendered)
+		if err := h.service.Message.Reply(ctx, id.RoomID(roomID), item.Rendered); err != nil {
+			slog.Error("send updated rss items failed",
+				"room_id", roomID,
+				"len", len(item.ItemIDs),
+				"err", err)
+			continue
+		}
+
+		if err := h.service.RSS.MarkItemsPushed(ctx, &item); err != nil {
+			slog.Error("mark rss item pushed failed",
+				"room_id", roomID,
+				"len", len(item.ItemIDs),
+				"err", err)
+		}
 	}
 }
 

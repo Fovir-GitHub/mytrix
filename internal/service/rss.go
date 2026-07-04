@@ -23,6 +23,7 @@ type RSSService interface {
 	Update(context.Context) ([]model.RSSUpdateResult, error)
 	ListFeeds(context.Context) (string, error)
 	ExportFeeds(context.Context) (string, error)
+	MarkItemsPushed(context.Context, *model.RSSUpdateResult) error
 }
 
 type RealRSSService struct {
@@ -192,7 +193,7 @@ func (r *RealRSSService) updateFeed(ctx context.Context, feed *db.RSSFeed) (*mod
 
 			// Rollback when error occurs.
 			if txErr := tx.Rollback(); txErr != nil {
-				return nil, fmt.Errorf("tx rollback failed: %w", err)
+				return nil, fmt.Errorf("tx rollback in updating feed failed: %w", err)
 			}
 			return nil, fmt.Errorf("insert rss item failed (feed_url=%v, guid=%v): %w", feed.Url, item.Guid, err)
 		}
@@ -245,4 +246,23 @@ func (r *RealRSSService) ExportFeeds(ctx context.Context) (string, error) {
 		res.WriteString("\n")
 	}
 	return res.String(), nil
+}
+
+func (r *RealRSSService) MarkItemsPushed(ctx context.Context, rssUpdateResults *model.RSSUpdateResult) error {
+	ids := rssUpdateResults.ItemIDs
+	tx, qtx, err := utils.CreateTransaction(ctx, r.db, r.q, nil)
+	if err != nil {
+		return fmt.Errorf("create tx for marking items pushed failed: %w", err)
+	}
+
+	for _, id := range ids {
+		if err := qtx.MarkRSSItemPushedByID(ctx, id); err != nil {
+			if txErr := tx.Rollback(); txErr != nil {
+				return fmt.Errorf("tx roll back in marking items pushed failed: %w", err)
+			}
+			return fmt.Errorf("mark rss item pushed failed (item_id=%v): %w", id, err)
+		}
+	}
+
+	return tx.Commit()
 }

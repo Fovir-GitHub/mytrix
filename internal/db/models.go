@@ -26,6 +26,7 @@ type RSSItem struct {
 	Link        string `db:"link"`
 	Title       string `db:"title"`
 	Description string `db:"description"`
+	Pushed      int64  `db:"pushed"`
 }
 
 type Room struct {

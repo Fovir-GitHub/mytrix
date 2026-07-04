@@ -8,3 +8,11 @@ INSERT
 -- name: DeleteRSSItemByFeedID :exec
 DELETE FROM rss_item
 WHERE feed_id = ?;
+
+-- name: MarkRSSItemPushedByID :exec
+UPDATE
+    rss_item
+SET
+    pushed = 1
+WHERE
+    id = ?;

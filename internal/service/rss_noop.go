@@ -34,3 +34,7 @@ func (r *NoopRSSService) ListFeeds(context.Context) (string, error) {
 func (r *NoopRSSService) ExportFeeds(context.Context) (string, error) {
 	return "", r.err
 }
+
+func (r *NoopRSSService) MarkItemsPushed(context.Context, *model.RSSUpdateResult) error {
+	return r.err
+}

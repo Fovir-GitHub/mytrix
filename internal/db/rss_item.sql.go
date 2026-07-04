@@ -9,10 +9,12 @@ import (
 	"context"
 )
 
-const createRSSItem = `-- name: CreateRSSItem :exec
+const createRSSItem = `-- name: CreateRSSItem :one
 INSERT
     OR IGNORE INTO rss_item (feed_id, guid, link, title, description)
         VALUES (?, ?, ?, ?, ?)
+    RETURNING
+        id
 `
 
 type CreateRSSItemParams struct {
@@ -23,15 +25,17 @@ type CreateRSSItemParams struct {
 	Description string `db:"description"`
 }
 
-func (q *Queries) CreateRSSItem(ctx context.Context, arg *CreateRSSItemParams) error {
-	_, err := q.db.ExecContext(ctx, createRSSItem,
+func (q *Queries) CreateRSSItem(ctx context.Context, arg *CreateRSSItemParams) (int64, error) {
+	row := q.db.QueryRowContext(ctx, createRSSItem,
 		arg.FeedID,
 		arg.Guid,
 		arg.Link,
 		arg.Title,
 		arg.Description,
 	)
-	return err
+	var id int64
+	err := row.Scan(&id)
+	return id, err
 }
 
 const deleteRSSItemByFeedID = `-- name: DeleteRSSItemByFeedID :exec
@@ -41,5 +45,19 @@ WHERE feed_id = ?
 
 func (q *Queries) DeleteRSSItemByFeedID(ctx context.Context, feedID int64) error {
 	_, err := q.db.ExecContext(ctx, deleteRSSItemByFeedID, feedID)
+	return err
+}
+
+const markRSSItemPushedByID = `-- name: MarkRSSItemPushedByID :exec
+UPDATE
+    rss_item
+SET
+    pushed = 1
+WHERE
+    id = ?
+`
+
+func (q *Queries) MarkRSSItemPushedByID(ctx context.Context, id int64) error {
+	_, err := q.db.ExecContext(ctx, markRSSItemPushedByID, id)
 	return err
 }
