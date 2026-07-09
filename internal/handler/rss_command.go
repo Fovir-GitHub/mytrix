@@ -122,6 +122,9 @@ func (h *Handler) handleRSSUpdate(ctx context.Context, evt *event.Event) error {
 		}
 		if errors.Is(err, service.ErrRSSPartialUpdate) {
 			slog.Warn("rss feed partially updated", "err", err)
+			if err := reply("Partial update failed"); err != nil {
+				errs = append(errs, err)
+			}
 		}
 	}
 
