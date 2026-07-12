@@ -203,7 +203,7 @@ func TestClient_DoJSON_InvalidJSON(t *testing.T) {
 		t.Fatalf("Failed to create request: %v", err)
 	}
 
-	var result map[string]interface{}
+	var result map[string]any
 	err = client.DoJSON(req, &result)
 	if err == nil {
 		t.Fatalf("Expected error for invalid JSON")
