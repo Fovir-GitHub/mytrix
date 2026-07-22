@@ -39,6 +39,10 @@ func (m *Client) SendTextMessage(ctx context.Context, roomID id.RoomID, text str
 	return err
 }
 
+func (m *Client) SendEventMessage(ctx context.Context, roomID id.RoomID, content *event.MessageEventContent) (*mautrix.RespSendEvent, error) {
+	return m.c.SendMessageEvent(ctx, roomID, event.EventMessage, content)
+}
+
 // Sync performs a full synchronization with the Matrix homeserver.
 func (m *Client) Sync() error {
 	return m.c.Sync()
