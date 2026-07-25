@@ -86,3 +86,8 @@ func (r *RoomService) updateRoomState(ctx context.Context, roomID, state string)
 		State: state,
 	})
 }
+
+func (r *RoomService) EventExists(ctx context.Context, roomID id.RoomID, eventID id.EventID) bool {
+	_, err := r.client.GetEvent(ctx, roomID, eventID)
+	return err == nil
+}

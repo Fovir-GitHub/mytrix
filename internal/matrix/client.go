@@ -88,6 +88,10 @@ func (m *Client) MaxMessageLength(ctx context.Context, roomID id.RoomID) int {
 	return features.MaxTextLength - 1000
 }
 
+func (m *Client) GetEvent(ctx context.Context, roomID id.RoomID, eventID id.EventID) (*event.Event, error) {
+	return m.c.GetEvent(ctx, roomID, eventID)
+}
+
 func truncateByBytes(s string, maxBytes int) string {
 	if len(s) <= maxBytes {
 		return s
