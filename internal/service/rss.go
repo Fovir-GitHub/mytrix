@@ -192,7 +192,7 @@ func (r *RealRSSService) updateFeed(ctx context.Context, feed *db.RSSFeed) (_ *m
 	}
 
 	for _, item := range unpushed {
-		rendered.WriteString(render.RssItemMarkdown(feed, &item))
+		rendered.WriteString(render.RSSItemMarkdown(feed, &item))
 		rendered.WriteString("\n")
 		ids = append(ids, item.ID)
 	}
@@ -217,7 +217,7 @@ func (r *RealRSSService) updateFeed(ctx context.Context, feed *db.RSSFeed) (_ *m
 		}
 
 		ids = append(ids, itemID)
-		rendered.WriteString(render.RssItemMarkdown(feed, &item))
+		rendered.WriteString(render.RSSItemMarkdown(feed, &item))
 		rendered.WriteString("\n")
 	}
 
@@ -272,7 +272,7 @@ func (r *RealRSSService) ListFeeds(ctx context.Context) (string, error) {
 	}
 
 	for _, feed := range feeds {
-		res.WriteString(render.RssFeedMarkdown(&feed))
+		res.WriteString(render.RSSFeedMarkdown(&feed))
 		res.WriteString("\n")
 	}
 	return res.String(), nil
