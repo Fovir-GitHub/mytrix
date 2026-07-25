@@ -15,6 +15,7 @@ import (
 	"codeberg.org/Fovir/mytrix/internal/model"
 	"codeberg.org/Fovir/mytrix/internal/render"
 	"codeberg.org/Fovir/mytrix/internal/utils"
+	"maunium.net/go/mautrix/id"
 )
 
 type RSSService interface {
@@ -24,6 +25,7 @@ type RSSService interface {
 	ListFeeds(context.Context) (string, error)
 	ExportFeeds(context.Context) (string, error)
 	MarkItemsPushed(context.Context, *model.RSSUpdateResult) error
+	SetThreadRoot(ctx context.Context, feedID int64, roomID id.RoomID, eventID id.EventID) error
 }
 
 type RealRSSService struct {
@@ -224,10 +226,30 @@ func (r *RealRSSService) updateFeed(ctx context.Context, feed *db.RSSFeed) (_ *m
 		return nil, nil
 	}
 
+	if err := tx.Commit(); err != nil {
+		return nil, err
+	}
+
+	if feed.EventID == nil {
+		return &model.RSSUpdateResult{
+			Rendered: rendered.String(),
+			ItemIDs:  ids,
+			Event:    nil,
+			FeedID:   feed.ID,
+		}, nil
+	}
+
+	event, err := r.q.GetFeedThreadRootEventByID(ctx, feed.ID)
+	if err != nil {
+		return nil, err
+	}
+
 	return &model.RSSUpdateResult{
 		Rendered: rendered.String(),
 		ItemIDs:  ids,
-	}, tx.Commit()
+		Event:    &event,
+		FeedID:   feed.ID,
+	}, nil
 }
 
 func (r *RealRSSService) allFeeds(ctx context.Context) ([]db.RSSFeed, error) {
@@ -290,4 +312,40 @@ func (r *RealRSSService) MarkItemsPushed(ctx context.Context, rssUpdateResults *
 	}
 
 	return tx.Commit()
+}
+
+func (r *RealRSSService) SetThreadRoot(ctx context.Context, feedID int64, roomID id.RoomID, eventID id.EventID) error {
+	eventExists := true
+	threadRootEvent, err := r.q.GetEventByRoomIDAndEventID(ctx, &db.GetEventByRoomIDAndEventIDParams{
+		RoomID:  roomID.String(),
+		EventID: eventID.String(),
+	})
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			eventExists = false
+		} else {
+			return err
+		}
+	}
+
+	if eventExists {
+		return r.q.UpdateEventByID(ctx, &db.UpdateEventByIDParams{
+			RoomID:  roomID.String(),
+			EventID: eventID.String(),
+			ID:      threadRootEvent.ID,
+		})
+	}
+
+	newEventID, err := r.q.CreateEvent(ctx, &db.CreateEventParams{
+		EventID: eventID.String(),
+		RoomID:  roomID.String(),
+	})
+	if err != nil {
+		return err
+	}
+
+	return r.q.UpdateFeedThreadRootEventByID(ctx, &db.UpdateFeedThreadRootEventByIDParams{
+		EventID: &newEventID,
+		ID:      feedID,
+	})
 }

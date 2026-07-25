@@ -5,6 +5,7 @@ import (
 
 	"codeberg.org/Fovir/mytrix/internal/db"
 	"codeberg.org/Fovir/mytrix/internal/model"
+	"maunium.net/go/mautrix/id"
 )
 
 type NoopRSSService struct {
@@ -36,5 +37,9 @@ func (r *NoopRSSService) ExportFeeds(context.Context) (string, error) {
 }
 
 func (r *NoopRSSService) MarkItemsPushed(context.Context, *model.RSSUpdateResult) error {
+	return r.err
+}
+
+func (r *NoopRSSService) SetThreadRoot(ctx context.Context, feedID int64, roomID id.RoomID, eventID id.EventID) error {
 	return r.err
 }

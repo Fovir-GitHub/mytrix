@@ -9,6 +9,7 @@ import (
 	"codeberg.org/Fovir/mytrix/internal/config"
 	"codeberg.org/Fovir/mytrix/internal/service"
 	"maunium.net/go/mautrix/event"
+	"maunium.net/go/mautrix/id"
 )
 
 // handleRSSCommand processes the !rss command with various subcommands (add, delete, list, export, update, help).
@@ -128,10 +129,28 @@ func (h *Handler) handleRSSUpdate(ctx context.Context, evt *event.Event) error {
 		}
 	}
 
+	roomID := evt.RoomID
 	for _, item := range updated {
-		if err := reply(item.Rendered); err != nil {
-			errs = append(errs, err)
-			continue
+		// Need to re-create thread root.
+		if item.Event == nil ||
+			!h.service.Room.EventExists(ctx, id.RoomID(roomID), id.EventID(item.Event.EventID)) {
+			// Response current update directly, and record the response infomration.
+			resp, err := h.service.Message.Reply(ctx, id.RoomID(roomID), item.Rendered)
+			if err != nil {
+				errs = append(errs, err)
+				continue
+			}
+
+			// Set the event ID of current feed.
+			if err := h.service.RSS.SetThreadRoot(ctx, item.FeedID, id.RoomID(roomID), resp.EventID); err != nil {
+				errs = append(errs, err)
+			}
+		} else {
+			// Reply in thread.
+			if _, err := h.service.Message.ReplyThread(ctx, id.RoomID(roomID), id.EventID(item.Event.EventID), item.Rendered); err != nil {
+				errs = append(errs, err)
+				continue
+			}
 		}
 
 		if err := h.service.RSS.MarkItemsPushed(ctx, &item); err != nil {
