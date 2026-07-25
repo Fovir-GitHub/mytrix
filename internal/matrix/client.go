@@ -29,14 +29,14 @@ func New(c *mautrix.Client) *Client {
 // It converts Markdown and HTML according to the message configuration.
 // TODO:
 //   - Capture the error code and retry sending messages.
-func (m *Client) SendTextMessage(ctx context.Context, roomID id.RoomID, text string) error {
+func (m *Client) SendTextMessage(ctx context.Context, roomID id.RoomID, text string) (*mautrix.RespSendEvent, error) {
 	cfg := config.Config.Msg
 	maxLen := m.MaxMessageLength(ctx, roomID)
 
 	text = truncateByBytes(text, maxLen)
 	content := format.RenderMarkdown(text, cfg.AllowMarkdown, cfg.AllowHTML)
-	_, err := m.c.SendMessageEvent(ctx, roomID, event.EventMessage, content)
-	return err
+	resp, err := m.c.SendMessageEvent(ctx, roomID, event.EventMessage, content)
+	return resp, err
 }
 
 func (m *Client) SendEventMessage(ctx context.Context, roomID id.RoomID, content *event.MessageEventContent) (*mautrix.RespSendEvent, error) {
