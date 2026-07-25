@@ -36,3 +36,28 @@ SET
     state = ?
 WHERE
     id = ?;
+
+-- name: CreateEvent :one
+INSERT
+    OR IGNORE INTO event (event_id, room_id)
+        VALUES (?, ?)
+    RETURNING
+        id;
+
+-- name: GetEventByRoomIDAndEventID :one
+SELECT
+    *
+FROM
+    event
+WHERE
+    event_id = ?
+    AND room_id = ?;
+
+-- name: UpdateEventByID :exec
+UPDATE
+    event
+SET
+    room_id = ?,
+    event_id = ?
+WHERE
+    id = ?;

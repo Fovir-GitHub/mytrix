@@ -5,18 +5,25 @@
 package db
 
 import (
-	"database/sql"
+	"time"
 )
 
+type Event struct {
+	ID      int64  `db:"id"`
+	EventID string `db:"event_id"`
+	RoomID  string `db:"room_id"`
+}
+
 type Migration struct {
-	Name      string       `db:"name"`
-	AppliedAt sql.NullTime `db:"applied_at"`
+	Name      string     `db:"name"`
+	AppliedAt *time.Time `db:"applied_at"`
 }
 
 type RSSFeed struct {
-	ID    int64  `db:"id"`
-	Url   string `db:"url"`
-	Title string `db:"title"`
+	ID      int64  `db:"id"`
+	Url     string `db:"url"`
+	Title   string `db:"title"`
+	EventID *int64 `db:"event_id"`
 }
 
 type RSSItem struct {

@@ -11,7 +11,7 @@ import (
 
 const allFeeds = `-- name: AllFeeds :many
 SELECT
-    id, url, title
+    id, url, title, event_id
 FROM
     rss_feed
 ORDER BY
@@ -27,7 +27,12 @@ func (q *Queries) AllFeeds(ctx context.Context) ([]RSSFeed, error) {
 	var items []RSSFeed
 	for rows.Next() {
 		var i RSSFeed
-		if err := rows.Scan(&i.ID, &i.Url, &i.Title); err != nil {
+		if err := rows.Scan(
+			&i.ID,
+			&i.Url,
+			&i.Title,
+			&i.EventID,
+		); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
@@ -66,9 +71,28 @@ func (q *Queries) DeleteRSSFeed(ctx context.Context, id int64) error {
 	return err
 }
 
+const getFeedThreadRootEventByID = `-- name: GetFeedThreadRootEventByID :one
+SELECT
+    e.id,
+    e.event_id,
+    e.room_id
+FROM
+    event AS e
+    INNER JOIN rss_feed AS f ON e.id = f.event_id
+WHERE
+    f.id = ?
+`
+
+func (q *Queries) GetFeedThreadRootEventByID(ctx context.Context, id int64) (Event, error) {
+	row := q.db.QueryRowContext(ctx, getFeedThreadRootEventByID, id)
+	var i Event
+	err := row.Scan(&i.ID, &i.EventID, &i.RoomID)
+	return i, err
+}
+
 const selectFeedByID = `-- name: SelectFeedByID :one
 SELECT
-    id, url, title
+    id, url, title, event_id
 FROM
     rss_feed
 WHERE
@@ -79,6 +103,30 @@ LIMIT 1
 func (q *Queries) SelectFeedByID(ctx context.Context, id int64) (RSSFeed, error) {
 	row := q.db.QueryRowContext(ctx, selectFeedByID, id)
 	var i RSSFeed
-	err := row.Scan(&i.ID, &i.Url, &i.Title)
+	err := row.Scan(
+		&i.ID,
+		&i.Url,
+		&i.Title,
+		&i.EventID,
+	)
 	return i, err
+}
+
+const updateFeedThreadRootEventByID = `-- name: UpdateFeedThreadRootEventByID :exec
+UPDATE
+    rss_feed
+SET
+    event_id = ?
+WHERE
+    id = ?
+`
+
+type UpdateFeedThreadRootEventByIDParams struct {
+	EventID *int64 `db:"event_id"`
+	ID      int64  `db:"id"`
+}
+
+func (q *Queries) UpdateFeedThreadRootEventByID(ctx context.Context, arg *UpdateFeedThreadRootEventByIDParams) error {
+	_, err := q.db.ExecContext(ctx, updateFeedThreadRootEventByID, arg.EventID, arg.ID)
+	return err
 }

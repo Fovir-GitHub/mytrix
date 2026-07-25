@@ -9,6 +9,26 @@ import (
 	"context"
 )
 
+const createEvent = `-- name: CreateEvent :one
+INSERT
+    OR IGNORE INTO event (event_id, room_id)
+        VALUES (?, ?)
+    RETURNING
+        id
+`
+
+type CreateEventParams struct {
+	EventID string `db:"event_id"`
+	RoomID  string `db:"room_id"`
+}
+
+func (q *Queries) CreateEvent(ctx context.Context, arg *CreateEventParams) (int64, error) {
+	row := q.db.QueryRowContext(ctx, createEvent, arg.EventID, arg.RoomID)
+	var id int64
+	err := row.Scan(&id)
+	return id, err
+}
+
 const createRoom = `-- name: CreateRoom :exec
 INSERT
     OR IGNORE INTO room (id, state)
@@ -23,6 +43,28 @@ type CreateRoomParams struct {
 func (q *Queries) CreateRoom(ctx context.Context, arg *CreateRoomParams) error {
 	_, err := q.db.ExecContext(ctx, createRoom, arg.ID, arg.State)
 	return err
+}
+
+const getEventByRoomIDAndEventID = `-- name: GetEventByRoomIDAndEventID :one
+SELECT
+    id, event_id, room_id
+FROM
+    event
+WHERE
+    event_id = ?
+    AND room_id = ?
+`
+
+type GetEventByRoomIDAndEventIDParams struct {
+	EventID string `db:"event_id"`
+	RoomID  string `db:"room_id"`
+}
+
+func (q *Queries) GetEventByRoomIDAndEventID(ctx context.Context, arg *GetEventByRoomIDAndEventIDParams) (Event, error) {
+	row := q.db.QueryRowContext(ctx, getEventByRoomIDAndEventID, arg.EventID, arg.RoomID)
+	var i Event
+	err := row.Scan(&i.ID, &i.EventID, &i.RoomID)
+	return i, err
 }
 
 const isRoomExists = `-- name: IsRoomExists :one
@@ -73,6 +115,27 @@ func (q *Queries) IsRoomLeft(ctx context.Context, id string) (bool, error) {
 	var column_1 bool
 	err := row.Scan(&column_1)
 	return column_1, err
+}
+
+const updateEventByID = `-- name: UpdateEventByID :exec
+UPDATE
+    event
+SET
+    room_id = ?,
+    event_id = ?
+WHERE
+    id = ?
+`
+
+type UpdateEventByIDParams struct {
+	RoomID  string `db:"room_id"`
+	EventID string `db:"event_id"`
+	ID      int64  `db:"id"`
+}
+
+func (q *Queries) UpdateEventByID(ctx context.Context, arg *UpdateEventByIDParams) error {
+	_, err := q.db.ExecContext(ctx, updateEventByID, arg.RoomID, arg.EventID, arg.ID)
+	return err
 }
 
 const updateRoomState = `-- name: UpdateRoomState :exec
