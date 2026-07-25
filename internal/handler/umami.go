@@ -20,7 +20,7 @@ func (h *Handler) handleUmamiCommand(ctx context.Context, evt *event.Event) erro
 		"start", interval.Start.String(),
 		"end", interval.End.String())
 	report := h.service.Umami.FetchReport(interval)
-	return h.service.Message.Reply(ctx, evt.RoomID, report)
+	return h.service.Message.ReplyWithoutResp(ctx, evt.RoomID, report)
 }
 
 // getUmamiInterval extracts the Umami interval from the given message string.
@@ -56,7 +56,7 @@ func (h *Handler) handleUmamiSchedule(ctx context.Context, interval *model.Umami
 	slog.Debug("handle umami schedule", "interval", interval)
 	roomID := config.Config.RoomID
 	report := h.service.Umami.FetchReport(interval)
-	_ = h.service.Message.Reply(ctx, id.RoomID(roomID), report)
+	_ = h.service.Message.ReplyWithoutResp(ctx, id.RoomID(roomID), report)
 }
 
 // UmamiScheduleList returns a list of scheduled jobs for Umami report generation.

@@ -17,10 +17,10 @@ func (h *Handler) handleWakapiSchedule(ctx context.Context, interval model.Wakap
 	report, err := h.service.Wakapi.FetchReport(interval)
 	if err != nil {
 		slog.Error("fetch wakapi report failed", "interval", interval, "err", err)
-		_ = h.service.Message.Reply(ctx, id.RoomID(roomID), "Failed to fetch Wakapi report")
+		_ = h.service.Message.ReplyWithoutResp(ctx, id.RoomID(roomID), "Failed to fetch Wakapi report")
 		return
 	}
-	_ = h.service.Message.Reply(ctx, id.RoomID(roomID), report)
+	_ = h.service.Message.ReplyWithoutResp(ctx, id.RoomID(roomID), report)
 }
 
 // WakapiScheduleList returns a list of scheduled jobs for Wakapi report generation.

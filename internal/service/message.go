@@ -22,9 +22,10 @@ func NewMessageService(c *matrix.Client) *MessageService {
 	return &MessageService{client: c}
 }
 
-// Reply sends a text message to the specified room.
-func (s *MessageService) Reply(ctx context.Context, roomID id.RoomID, text string) error {
-	if err := s.client.SendTextMessage(ctx, roomID, text); err != nil {
+// ReplyWithoutResp sends a text message to the specified room without returning `*mautrix.RespSendEvent`
+func (s *MessageService) ReplyWithoutResp(ctx context.Context, roomID id.RoomID, text string) error {
+	_, err := s.client.SendTextMessage(ctx, roomID, text)
+	if err != nil {
 		slog.Error("send message failed", "roomID", roomID.String(), "text", text, "err", err)
 		return err
 	}
@@ -58,7 +59,7 @@ func (s *MessageService) ReplyThread(ctx context.Context, roomID id.RoomID, even
 
 // Ping sends a "pong" response to the specified room.
 func (s *MessageService) Ping(ctx context.Context, evt *event.Event) error {
-	return s.Reply(ctx, evt.RoomID, "pong")
+	return s.ReplyWithoutResp(ctx, evt.RoomID, "pong")
 }
 
 // UserID returns the user ID of the Matrix client.
@@ -68,5 +69,5 @@ func (s *MessageService) UserID() id.UserID {
 
 // Version sends current version of mytrix.
 func (s *MessageService) Version(ctx context.Context, evt *event.Event) error {
-	return s.Reply(ctx, evt.RoomID, version.Version)
+	return s.ReplyWithoutResp(ctx, evt.RoomID, version.Version)
 }

@@ -19,5 +19,5 @@ func (h *Handler) handleGotify(ctx context.Context, event *model.WsEvent) error 
 		return err
 	}
 
-	return h.service.Message.Reply(ctx, id.RoomID(config.Config.RoomID), render.GotifyMarkdown(msg))
+	return h.service.Message.ReplyWithoutResp(ctx, id.RoomID(config.Config.RoomID), render.GotifyMarkdown(msg))
 }

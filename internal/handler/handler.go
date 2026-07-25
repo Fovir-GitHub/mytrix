@@ -37,6 +37,6 @@ func NewHandler(s *service.Service) *Handler {
 
 func (h *Handler) getReply(ctx context.Context, evt *event.Event) func(string) error {
 	return func(s string) error {
-		return h.service.Message.Reply(ctx, evt.RoomID, s)
+		return h.service.Message.ReplyWithoutResp(ctx, evt.RoomID, s)
 	}
 }
