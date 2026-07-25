@@ -8,10 +8,10 @@ import (
 
 	"codeberg.org/Fovir/mytrix/internal/config"
 	"codeberg.org/Fovir/mytrix/internal/crypto"
+	"codeberg.org/Fovir/mytrix/internal/render"
 	"maunium.net/go/mautrix"
 	"maunium.net/go/mautrix/crypto/cryptohelper"
 	"maunium.net/go/mautrix/event"
-	"maunium.net/go/mautrix/format"
 	"maunium.net/go/mautrix/id"
 )
 
@@ -30,11 +30,10 @@ func New(c *mautrix.Client) *Client {
 // TODO:
 //   - Capture the error code and retry sending messages.
 func (m *Client) SendTextMessage(ctx context.Context, roomID id.RoomID, text string) (*mautrix.RespSendEvent, error) {
-	cfg := config.Config.Msg
 	maxLen := m.MaxMessageLength(ctx, roomID)
 
 	text = truncateByBytes(text, maxLen)
-	content := format.RenderMarkdown(text, cfg.AllowMarkdown, cfg.AllowHTML)
+	content := render.RenderMessage(text)
 	resp, err := m.c.SendMessageEvent(ctx, roomID, event.EventMessage, content)
 	return resp, err
 }

@@ -5,6 +5,7 @@ import (
 	"log/slog"
 
 	"codeberg.org/Fovir/mytrix/internal/matrix"
+	"codeberg.org/Fovir/mytrix/internal/render"
 	"codeberg.org/Fovir/mytrix/internal/version"
 	"maunium.net/go/mautrix"
 	"maunium.net/go/mautrix/event"
@@ -44,17 +45,14 @@ func (s *MessageService) Reply(ctx context.Context, roomID id.RoomID, text strin
 }
 
 func (s *MessageService) ReplyThread(ctx context.Context, roomID id.RoomID, eventID id.EventID, text string) (*mautrix.RespSendEvent, error) {
-	content := &event.MessageEventContent{
-		MsgType: event.MsgText,
-		Body:    text,
-	}
+	content := render.RenderMessage(text)
 
 	content.SetThread(&event.Event{
 		ID:     eventID,
 		RoomID: roomID,
 	})
 
-	return s.client.SendEventMessage(ctx, roomID, content)
+	return s.client.SendEventMessage(ctx, roomID, &content)
 }
 
 // Ping sends a "pong" response to the specified room.
